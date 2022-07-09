@@ -5,66 +5,196 @@
 
 
 
+
 [FORM 에 관한 모든것]========================================================================================================================================================================================================
 
-<form>
-1. <input type=""> 
-2. <textarea></textarea>
-3. <select></select>
-4. <button>submmit</button>
-</form>
 
-** 폼은 반드시 <form></form> 태그 안에 감싼 이후에 쓰도록 하자!!!
-** <form></form> 태그별로 각각 다른 기능을 적용시킬 것이기 때문이다!!!!
-** <form></form> 안에 들어있는 양식은 <button></button> 등에 의해서 서버에 제출된다!
-    감싸지 않으면 제출되지도 않고 작동되지도 않는다!
+[0. 폼은 서버로 보내기 위해 존재한다. 모든 폼의 내용은 URL과 개발자도구의 네트워크에서 확인 할 수 있다.]
 
-대부분의 인풋들은  inline-block 이 기본으로 적용되어있다.
+[1. 폼의 형식]
 
+    <form>
 
-5. form 탭에는 action과 method 를 추가할 수 있다. [백엔드와 연계]
+        <input type=""> 
 
-    <form action="" method="">
+        <textarea></textarea>
+
+        <select></select>
+
+        <button>submmit</button>
 
     </form>
+    
+    ** 폼은 반드시 <form></form> 태그 안에 감싼 이후에 쓰도록 하자!!!  ************
 
+
+    ** <form></form> 태그별로 각각 다른 기능을 적용시킬 것이기 때문이다!!!!
+    ** <form></form> 안에 들어있는 양식은 <button></button> 등에 의해서 서버에 제출된다!
+        감싸지 않으면 제출되지도 않고 작동되지도 않는다!
+    
+    *대부분의 인풋들은  inline-block 이 기본으로 적용되어있다.
+
+    *button은 폼을 제출할때 사용하며, URL과 네트워크 탭을 이용해 제출된 값을 확인할 수 있다.
+    
+    
+[2. form 탭에는 action과 method 를 추가할 수 있다. [백엔드와 연계]] 
+    
+    <form action="" method="">
+    
+    </form>
+    
     action : 어디로(URL) 이 정보를 보낼까요?
+
         ex) action="/user-data"  ==>> 도메인 전체
-                ==>> 이렇게 되면 메인 페이지의 도메인 (내것의 경우 http://127.0.0.1:5500)
-                    으로 경로가 지정된다. [개발자페이지 - 네트워크 탭 - 해당html파일 - 헤더 가면 잘보임]
-            
+                    ==>> 이렇게 되면 메인 페이지의 도메인 (내것의 경우 http://127.0.0.1:5500)
+                        으로 경로가 지정된다. [개발자페이지 - 네트워크 탭 - 해당html파일 - 헤더 가면 잘보임]
+                
             action ="/"   ==>> 메인페이지
-                ==>> 이렇게 되면 메인페이지로 경로를 지정한 경우이다.
-                    method에 GET을 사용하고 action="/"을 하면 [ 메인페이지를 가져와라 ] 라는 뜻이 된다.
-
-
+                    ==>> 이렇게 되면 메인페이지로 경로를 지정한 경우이다.
+                        method에 GET을 사용하고 action="/"을 하면 [ 메인페이지를 가져와라 ] 라는 뜻이 된다.
+    
+    
     method : 서버로 전송되어야 하는 네트워크 요청의 종류
-
+    
         ex) method = "POST"  
-                : POST는 서버에 요청해서 [서버야 보낸 데이터를 저장해라] 라고 요청하는 것
-                : 대부분의 로그인 처럼 유저데이터를 저장하라고 보내는 경우에는 POST를 사용한다!!
-                : POST를 사용하려면 [백엔드]의 도움이 필요하므로
-                : 아무것도 없는 지금 사용하면 오류가 나버린다.
-
+                    : POST는 서버에 요청해서 [서버야 보낸 데이터를 저장해라] 라고 요청하는 것
+                    : 대부분의 로그인 처럼 유저데이터를 저장하라고 보내는 경우에는 POST를 사용한다!!
+                    : POST를 사용하려면 [백엔드]의 도움이 필요하므로
+                    : 아무것도 없는 지금 사용하면 오류가 나버린다.
+    
         ex2) method ="GET"
-                : GET은 서버에 요청해서 [데이터를 가져오겠다 달라] 라고 요청하는 것
-
+                    : GET은 서버에 요청해서 [데이터를 가져오겠다 달라] 라고 요청하는 것
+    
         *** 가장 중요한 차이 = [POST] : 데이터를 보냄
-                              [GET]  : 데이터를 보내지 않음!
+                                  [GET]  : 데이터를 보내지 않음!
+    
+[3. 폼의 종류와 활용]
+
+    1. name
+        <input type="text" name="ms-text">
+
+    POST 등과 같이 무언가의 양식을 제출할 때 오류가 날 경우
+        내 어떤 양식이 이상한지, 요청되었던 데이터는 무엇인지 알고싶으면 특별한 이름을 추가하여야 한다.
+    
+        [그것이 바로 name 이다]
+    
+        name은 양식제출에 사용되는 id 같은 것이다.
+        양식에 제출되었을때 이것이 무엇인지 알려면 고유식별자 [name] 이 필요하고
+            html의 태그에 고유식별자는 [id] 인 것과 비슷하다.
+    
+        [name을 입력하고] [POST] 요청으로 입력하면 [개발자페이지 - 네트워크 탭 - 해당html파일 - 페이로드]
+            에서 오류가 나더라도 [보냈던 데이터]는 확인 할 수 있다.
+    
+        [만약 name 을 입려하지 않았다면] [보냈던 데이터는 확인 할 수 없고 그저 사라진다.]
+
+    2. label
+        <label></label>
+
+    label은 [사용자를 위해 특정 폼을 위한 이름표]로 사용 된다.
+
+    label은 [특정 폼과 1:1로 사용되어지기 때문에 for 을 붙여, 그 폼의 id에 연결한다]
+
+    label [for=""] 에서 for에는 [폼의 name이 아니라! [id]와 같이 연결하여 사용한다!]
+
+    [label for = " 특정 폼의 id "]
+
+    [label for 로 연결하면] 화면에서 label을 클릭했을때, 자동으로 연결된 텍스트로 가진다!
+
+        *button이며 label이며, input이며 전부 바꿀 수 있지만,
+        브라우저의 디폴트 스타일이 더 강하여, 상속받은 것을 쓸 수 없을 것이다.
+        *그럴 때는 직접 태그를 직접 입력해 디폴트 스타일보다 강하게 덮어 씌우거나
 
 
-6. name
+        * inherit; 코드를 입력하여 강제로 상속받게 만든다.
 
-POST 등과 같이 무언가의 양식을 제출할 때 오류가 날 경우
-    내 어떤 양식이 이상한지, 요청되었던 데이터는 무엇인지 알고싶으면 특별한 이름을 추가하여야 한다.
+    3) text
 
-    [그것이 바로 name 이다]
+    4) email ==> 기능1) 모바일상에서 이메일치기 편한 키보드 
+                     기능2) 자동으로 이메일주소 형식을 검증 ( @없으면 제출자체가 안됌)
 
-    name은 양식제출에 사용되는 id 같은 것이다.
-    양식에 제출되었을때 이것이 무엇인지 알려면 고유식별자 [name] 이 필요하고
-        html의 태그에 고유식별자는 [id] 인 것과 비슷하다.
 
-    [name을 입력하고] [POST] 요청으로 입력하면 [개발자페이지 - 네트워크 탭 - 해당html파일 - 페이로드]
-        에서 오류가 나더라도 [보냈던 데이터]는 확인 할 수 있다.
+    5) number ==> 숫자 (다른 글자는 칠 수 없음)
+            <input type="number" step="0.5">
+                step = " 한번에 올리고 싶은 숫자"
 
-    [만약 name 을 입려하지 않았다면] [보냈던 데이터는 확인 할 수 없고 그저 사라진다.]
+    6) date ==> 날짜선택가능
+            <input type="date">
+
+    7) password  ==> 안보이는 텍스트박스
+            <input type="password">
+
+    8) radio  ==> 여러개중 하나만 선택 가능
+                  ==> 라디오 버튼의 연결은 [name] 이다
+                  ==> 또한 [서버에 제출하기 위해] 반드시! [name 을 입력]하도록 하자
+                  ==> label의 연결은 [id] 이다
+            
+            <input type="radio" id="banana" name="radioBtn" value="banana">
+            <label for="banana"> bananabn</label>
+
+            <input type="radio" id="grape" name="radioBtn" value="grape">
+            <label for="grape"> grape</label>
+
+            <input type="radio" id="apple" name="radioBtn" value="apple">
+            <label for="apple"> apple</label>
+
+                ==> 선택했을때 [서버]에는 [어떤 값이 제출될까??]
+                ==> 바로 [Value] 값이 전송된다.
+
+    9) checkbox ==> 체크박스
+
+            <input type="checkbox" id="terms" name="terms">
+            <label for="terms">agree to terms?</label>
+
+                ==> 체크박스 또한 [서버에 값을 제출하기 위해 name을 반드시 입력하도록 한다]
+
+
+    9-1) bunch of checkbox ==>> 체크박스의 묶음
+                ==> 체크박스가 [하나만 있을 경우] [on off 값 단 두가지로 서버에 제출되기에 문제가없다]
+                    그러나 [여러 체크박스가 있을 경우 특정 값을 서버에 내야 하므로 value 값 필요하다]
+
+                ==> [묶어주는 것은 radio 와 같이 당연히 name 이다]
+
+
+                <input type="checkbox" id="via-to-phone" name="via-to" value="phone">
+                <label for="via-to-phone">phone?</label>
+
+                <input type="checkbox" id="via-to-notebook" name="via-to" value="notebook">
+                <label for="via-to-notebook">labtop?</label>
+
+                <input type="checkbox" id="via-to-com" name="via-to" value="com">
+                <label for="via-to-com">computer?</label>
+                
+
+    10) file ==> 서버가 있을 경우 업로드 같은 것들을 가능
+
+    11) textarea
+
+            <label for="txtarea"> free-area</label>
+            <textarea id="txtarea" name="txtarea-name">
+            </textarea>
+
+    12. select [드롭다운 방식의 리스트]
+
+            <label for="favorite color"> your favorite color</label>
+            <select id="favorite color" name="favorite-color">
+                <option> RED </option>
+                <option> BLUE </option>
+                <option> ORANGE </option>
+            </select>
+
+              ==> 서버의 제출을 위해 당연히 name이 필요하며 label 연결을 위해 id를 부여했다.
+              ==> 또한, [혹시나 표기되는 값과 서버에 전달되는 값이 다르길 원한다면] 
+                                (굳이 하지 않아도 어차피 누르면 서버에 favorite-color=RED 처럼 잘 표시되지만)
+                                
+                    [각각의 옵션에 value 를 따로 지정해서 서버에 전달되는 값을 다르게 지정할 수 있다.]
+
+                <option value="Actually it's blue"> RED </option> 처럼
+
+        등등...
+
+    
+
+
+[etc 가상선택자]
+
+:foucs ==> 텍스트 상자를 포커스 했을 때, 바뀌는 상태
