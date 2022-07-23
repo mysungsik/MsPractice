@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&family=Ribeye&display=swap');
+
+body{
+    font-family: 'Nanum Myeongjo', serif;
+    text-align: center;
+    background-color: bisque;
+}
+
+h1{
+    color: brown;
+    font-size: 48px;
+    margin: 15px 10px;
+}
+
+header p{
+    background-color: #9f84ca;
+}
+
+ul{
+    padding:0px;
+    width: 500px;
+    margin: 30px auto 0 auto;
+}
+
+li{
+    list-style: none;
+    margin: 15px;
+    background-color: #9f84ca;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 5px 3px 2px gainsboro;
+}
+
+
+a{
+    background-color: rgb(217, 143, 39);
+    color: #2a69ae;
+    text-decoration: none;
+    padding: 5px;
+    display: inline-block;
+    margin: 10px;
+}
+
+a:hover{
+    background-color: #5d2aae;
+    text-decoration: none;
+}
+
+ul h2{
+    color: azure;
+}
+ul p{
+    color: bisque;
+}
+.highlight-goal{
+    background-color: #5d2aae;
+    
+}
