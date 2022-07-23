@@ -1,0 +1,13 @@
+div {
+    margin: 10rem 0;
+}
+
+#text1{
+    display: block;
+}
+label{
+    display: block;
+    width: 5rem;
+    height: 1.5rem;
+    border: 1px solid black;
+}

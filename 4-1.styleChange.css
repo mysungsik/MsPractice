@@ -1,0 +1,43 @@
+body{
+    background-color: lightslategray;
+}
+
+.nemo {
+    width: 80%;
+    height: 10rem;
+    margin:  40px auto;
+    background-color: antiquewhite;
+    border-radius: 5px;
+   
+
+}
+.nemo-in{
+    padding: 2rem;
+}
+
+
+.nemo label{
+    display: block;
+}
+.nemo input{
+    margin: 1rem 0;
+    width: 80%;
+    
+}
+.nemo input:focus{
+    background-color: blanchedalmond;
+}
+.nemo button{
+    display: block;
+}
+span{
+    display: inline-block;
+    width: 2rem;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.warning{
+    background-color: orange;
+}
