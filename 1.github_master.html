@@ -1,0 +1,45 @@
+
+
+
+[[[[[[[[[[[[[[[                 github 사용                     ]]]]]]]]]]]]]]]]]]]]]]]
+
+
+
+[1. remote로 저장소 연결]
+
+   1)   git remote add [리모트저장소이름] [저장소주소(github)]
+    
+        * 대부분의 리모트저장소이름은 [origin] 얼마든지 바꿔도 됌
+        ex) git remote add origin https://github.com/mysungsik/MsPractice.git
+
+    2) [remote 저장소 이름 확인]
+
+        git remote -v
+
+    3) [remote 저장소 구체적인 확인 ]
+    
+        git remove show [저장소주소(github)]
+
+    4) [remote 저장소 이름 변경, 저장소 이름 삭제]
+        
+        git remote remove [저장소이름]
+        git remote rename [기존저장소이름] [바꿀저장소이름]
+
+        
+[2. 저장소로 push (보내기)]
+
+    1) git push [리모트저장소이름] [브랜치이름]
+
+        *리모트 저장소 이름은 역시나 대부분 [origin]이며 얼마든지 바꿔도 된다.
+        *Branch 이름은 초기는 [master]
+
+        * git branch -m [브랜치이름] 으로 변경 가능하다
+
+
+
+[3. 저장소에서 가져오기]
+
+    1) git pull [저장소이름] [브랜치이름]
+
+        ex) git pull origin master
+        
