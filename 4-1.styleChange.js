@@ -14,9 +14,16 @@ function calculationTextLength(event){
     
     let caculated_Number = -(textT - text1.maxLength);
     textSpan.textContent = caculated_Number;
+
 }
 
 textTarget.addEventListener("input",calculationTextLength)
+
+
+
+
+
+
 
 
 // [클래스 이름의 변경] - className
@@ -46,3 +53,4 @@ textSpan.className = "notWarning warning"
 textSpan.classList.add("newClass2")
 textSpan.classList.remove("newClass2")
 textSpan.classList.replace("notWarning","thisIsWarning")
+

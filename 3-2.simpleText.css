@@ -1,5 +1,5 @@
 body{
-    background-color: lightslategray;
+    background-color: darkcyan;
 }
 
 .nemo {
@@ -15,7 +15,6 @@ body{
     padding: 2rem;
 }
 
-
 .nemo label{
     display: block;
 }
@@ -25,7 +24,7 @@ body{
     
 }
 .nemo input:focus{
-    background-color: blanchedalmond;
+    background-color: blueviolet;
 }
 .nemo button{
     display: block;

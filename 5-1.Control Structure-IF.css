@@ -8,7 +8,6 @@ body{
     margin:  40px auto;
     background-color: antiquewhite;
     border-radius: 5px;
-   
 
 }
 .nemo-in{
@@ -38,6 +37,14 @@ span{
     text-align: center;
 }
 
-/* .warning{
+
+
+input.warning:focus{
     background-color: orange;
-} */
+}
+
+input.error:focus{
+    background-color: red;
+}
+
+/* CSS 규칙을 잘 생각하고 적자!! [ .nemo input ]은 [ .warning ]보다 강하다. 더 강한 [input.warning:focus ]를 적어야 한다 */
