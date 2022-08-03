@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tae Toe</title>
+    <link rel="stylesheet" href="/style/2-0.Index.css">
+    <link rel="stylesheet" href="/style/2-1.overLay.css">
+    <link rel="stylesheet" href="/style/2-2.game.css">
+    
+    <script src="/JsFile/config.js" defer></script>
+    <script src="/JsFile/game.js" defer></script>
+    <script src="/JsFile/app.js" defer></script>
+
+</head>
+<body>
+    <div class="back-drop"></div>   <!--backdrop 이란 것을 만들어서 검은 오버레이가 되면 검은 배경화면이 나오게 만든다.-->
+    <header>
+        <h1>Play Tic Tac Toe</h1>
+        <p> Built with HTML, CSS, JaveScript and -of course - lots of love!</p>
+    </header>
+    <main>
+        <aside class="overlay"> <!-- 오버레이메뉴  == 유저 정보 입력 필드-->
+            <h2> Choose Your Name</h2>
+            <form>
+                <div>
+                    <label for ="user-Id"> Player Name</label>
+                    <input type="text" id="user-Id" name="playerId" required>
+                </div>
+                <p id="error-message"></p>
+                <div>
+                    <button type="reset" id="cancel"> Cancel</button>
+                    <button type="submit" id="submit-button"> Confirm</button>
+                </div>
+            </form>
+        </aside>
+
+        <section id="section-top">  <!--  유저 생성 필드 -->
+            <div id= "main-section">
+                <div class="playerSetup">
+                    <h2>player1</h2>
+                    <h3 id = "player-1-data">playerName </h3>
+                    <p>X</p>
+                    <button class="edit-Button" id="edit-Button1" data-playerid ="1">Edit</button>
+                </div>
+                <div class="playerSetup">
+                    <h2>player2</h2>
+                    <h3 id="player-2-data">playerName</h3>
+                    <p>O</p>
+                    <button class="edit-Button" id="edit-Button2" data-playerid="2">Edit</button>
+                </div>
+            </div>
+            <div>
+                <button type="button">start new game</button>
+            </div>
+        </section> 
+
+        <section id="active-game">  <!--  게임필드 -->
+            <div id="choose-winner-div">
+                <h2><span id="won-player"> Player! </span>You Win!</h2>
+                <p> Click "Start New Game", to start a new game</p>
+            </div>
+            <p> it's Your Turn! <span id="active-player-name"> Player Name! </span></p>
+            <ol>
+                <li class="disabled">X</li>
+                <li>O</li>
+                <li>3</li>
+
+                <li>4</li>
+                <li>O</li>
+                <li>6</li>
+
+                <li>7</li>
+                <li>O</li>
+                <li>9</li>
+            </ol>
+        </section>
+    </main>
+</body>
+</html>

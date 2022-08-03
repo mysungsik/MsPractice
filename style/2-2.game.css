@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans&family=Mochiy+Pop+One&display=swap');
+
+html{
+    --Header-font :'Mochiy Pop One', sans-serif;
+    --Body-font :'Albert Sans', sans-serif;
+
+    --Button-background-color: rgb(222, 104, 104);
+    --Button-font-color: wheat;
+
+    --game-play-tile-color: rgb(255, 233, 145);
+    --game-play-tile-color-hover: rgb(222, 104, 104);
+}
+
+#active-game{
+    text-align: center;
+}
+
+#choose-winner-div{
+    background-color: rgb(15, 13, 45);
+    color: white;
+    padding: 1rem;
+    width: 80%;
+    margin: 0 auto;
+}
+#choose-winner-div h2{
+    font-size: 2.5rem;
+    margin: 0 0.5rem;
+}
+
+
+#active-game ol{
+    padding: 0;
+    list-style-type: none;
+    display: grid;
+    /* grid-template-columns: 5rem 5rem 5rem; */
+    grid-template-columns: repeat(3, 5rem);
+    grid-template-rows: repeat(3, 5rem);    /* 높이대신에 반드시 이걸 써야한다!! */
+    justify-content: center;    /* 컬럼의 넓이를 지정하고, 안에 공간이 남으면 잘 적용된다!! */
+    align-items: center;        /* grid-template-rows: repeat(3, 5rem); 하면 center 잡힌다!!*/
+    gap: 0.5rem;
+}
+
+#active-game ol li{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-color: var(--game-play-tile-color);
+    border-radius: 4px;
+
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 1rem;
+}
+
+#active-game ol li:hover{
+    background-color: var(--game-play-tile-color-hover);
+}
+#active-game ol li:active{
+    transform: scale(1.02);
+}
+
+#active-game ol li.disabled{    /* 이미 클릭된것은 더이상 클릭효과가 없도록*/
+    
+    background-color: var(--game-play-tile-color);
+    cursor: default;
+}
+
+#active-player-name{
+    display: inline-block;
+    background-color: rgb(15, 13, 45);
+    color: white;
+    padding: 0 0.5rem;
+    border-radius: 2px;
+}
+
+
+@media (max-width: 35rem ){
+    #main-section{
+        grid-template-columns: 1fr;
+    }
+}
+

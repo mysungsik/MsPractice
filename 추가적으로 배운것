@@ -1,0 +1,189 @@
+0. 섹션별로 분할하여, CSS코드를 작성하고, 한 폴더 안에 전부 집어넣어, 관리를 편하게 하는 방법을 알았다.
+
+1. 백그라운드 컬러에 4번째 요소 [0~1] 는 투명도를 결정한다.
+
+2. 오버레이를 띄우고, 백그라운드까지 어둡게 만드는 방법을 쉽게 터득했다.
+    * 여러 오버레이가 있을때, CSS 의 순서의 중요성을 다시 깨달았다.
+
+3. position: abosolute, fixed 일때, 강력한 [정가운데 맞추기]방법을 다시 확인했다.
+
+4. 오버레이상에서 텍스트를 입력하고, 오버레이가 없어지면, 그 안의 값을 리턴해서
+    span의 값을 바꾸는 방법을 알았다.
+
+5.  grid-template-columns: repeat(3, 1fr) 를 통해 [repeat 3줄, 1fr 넓이로] 라는 편한 단축키를 알았따.
+5-1. grid-template-rows : repeat(3, 1fr) 를 통해 [정확히 3x3 네모칸을 만들었고]
+5-2. *** 사실상 fr보다는 정확한 크기를 위한 rem 으로 적어서 크기 변형을 방지했다!!
+최종: grid-template-columns: repeat(3, 5rem)
+      grid-template-rows : repeat(3, 5rem)
+
+
+6-1. [Grid] 에서 [justify-content : center] 가 먹히지 않앗던 이유는
+    : 이미 컨텐츠가 좌우로 꽉차있었기 때문에, 사실상 이미 center였다.
+    : width를 지정하면 그때부턴, justify-content 가 먹힌다!!
+
+6-2. [Grid] 에서 [align-item : center ] 가 먹히지 않았던 이유는
+    : 멍청하게 [자손] 에게 적용했기 때문이 첫째요, 
+    : [grid] 임에도 불구하고, [grid-template-rows] 를 적지 않고, 
+                                 그저 [height] 를 적어 크기를 늘렸기 때문이다!!!
+    : [부모에게 적용시키고, rows를 적용시키면 align-item : center 잘먹힌다! ]
+
+* [새로운 문제] : OL에 [align-item : center ] 넣어서 중앙 정렬 했지만,
+                    [자손인 LI에 HEIGHT를 지정하는 순간 그것이 풀린다!!] 어찌하면 좋은가?
+
+6-3. [유레카!!!!] 자손의 높이, 넓이를 지정해도, 정가운데로 맞추는 방법!!
+    [자손에게 flex를 심어주고, 센터로 정렬하면 된다!!]
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+7. 자바스크립트를 한 폴더에 몰아넣고, [function], [logic], [app]을 따로 분리하여
+    사용하면 깔끔하고 더 많은 양의 스크립트코드르 짤 수 있다.
+    *중요한 것은 [그들의 순서이다]
+7-1. [스크립트 코드의 순서]
+    1. function (function 만 전문적으로 몰아넣은 파일)
+    2. logic
+    3. app (HTML 코드를 [선택]하고 [집행(Listener)] 하는 파일)
+    * 집행을 항상 최종에 두어야 한다.
+    * 왜 선택도 거기서 하는지는 모르겠지만, 하여튼 정상작동 된다.
+
+8. [문자열의 [ 앞과 뒤의 ]공백 자르는 내장메서드]
+    .trim()
+
+    ex) let name = "    안녕 하세요      " 
+        name.trim()    ==>> "안녕 하세요"
+    
+
+9. [Object 형태를 지시하는 'new' 와  Object 형태로 form양식을 가져오는 FormData()]
+    1. new : Object형태의 것을 function에서 사용할때 사용된다.
+
+    2. FormData() : [form 에서 쓰인 모든 데이터를 불러오는 코드]다
+        Object 형태로 가져오며 event.target 이라는 property 를 요구한다.
+
+    3. FormData(event.target) 으로 불러와진 정보는 [하나의 변수로 저장]하여
+        [변수.get("불러오고싶은 HTML태그의 [name]")]으로 콕 찝어 불러온다. 
+
+    예시)
+    function savePlayerConfig(event){                                 
+        event.preventDefault(); // Submit 버튼의 기본동작을 방지하는 코드                 
+        const formData = new FormData(event.target)
+        let enteredPlayerName = formData.get("playerId").trim(); HTML 인풋텍스트의 name
+    }
+        
+10. [HTML에 required 를 사용해서, 반드시 입력하기로 했지만, 스페이스바만 눌러, 통과되는 불상사를 방지하기 위한 더블체크 방법]
+
+    1. required를 해도, 빈공간을 넣고 엔터를 치면 넘어가진다.
+    2. 그러므로 자바스크립트를 통해, 더블체크 할것이다.
+
+    3. if(!변수명){
+        
+    }
+        *전제조건: 변수명에 .trim()을 해서 빈공간만 있다면, 공백. 즉 false 가 되게 만든다
+        * 자바스크립트에서  ["" or 0 ] = false   [1] = true
+        * 그렇다면, 빈공간이라면 !변수명 을 통해, if조건이 참이되어 실행될것이다.
+        * if 가동조건은 ==> [조건= ture] 이므로
+
+        혹은 그냥 [변수명 === ""] 이라는 조건을 직관적으로 달아도 된다. (!변수명) 대신에
+
+11. [return의 두가지! 기능!]
+    1. 값 반환
+    2. [return 이후에 있는 function의 코드]는 더이상 [작동을 중지함]
+
+
+12. [배열 안에 Object 를 넣을 수 있다. 그리고 그것은 여전히 배열이다]
+    let player = [
+        {   name : "",
+            symbol : "X"
+        },
+        {   name : "";
+            symbol : "X";
+        }
+    ]
+    당연하게도 접근은 player[0] or player[1]
+        그곳의 name 이나 symbol에 접근하고 싶다면
+            player[0].name
+            player[0].symbol
+    결론적으로, 이것은 배열이고, 안에 객체를 담았을 뿐이다.
+
+13. [[input type:text] 에서는 그 안의 값을 [text.value] 로 접근해야 한다는 사실을 까먹지 말자]
+
+14. [+를 통해 "문자열"을 "숫자형태" 로 변경시킬수 있다.]
+    ex) +"2" ==> 2
+
+
+15. [HTML의 data-식별자] [JS에서 받는 .dataset.식별자]
+    1. HTML 코드에서
+        한 태그의 뒤에 data-"식별자" = "숫자"
+
+    2. JS에서
+        function asd(event){
+            "변수이름" = +event.target.dataset."식별자";
+        }
+
+    를 활용하면, 함수를 실행할때, "변수이름" 안으로, "식별자의 숫자" 가 들어간다.
+    이것을 활요하면, 여러가지 곳에 쓸 수 있다.
+
+
+15-1.[HTML의 data-식별자] [JS에서 받는 .dataset.식별자] 활용 *********************************
+
+    // 1. [data- 의 활용]
+    //
+    //  : HTML코드의 data-식별할이름 = "1" or 2 3 4... 를 통해서, 
+    //      [두개의 다른 오버레이를 켜는 버튼]에 [다른 식별자]를 생성한다.
+    //  : [하나의 오버레이]일 지라도, [어떤 버튼을 클릭했느냐에 따라 다른 곳으로 연결]되는 것이다.
+    //      ex) HTML코드에... data-playerid = "1"
+
+    // 2. [JS의 플레이어의 DATA 식별번호를 가질 변수 생성하기]
+    //
+    //   :  ex) let SelectedPlayerId = "0"
+    //
+    //    이 변수는 앞으로, DATA 식별번호를 가질 [동적인 변수]가 될것이다. value는 신경쓸필요 없다.
+
+    // 3. [JS에서, 각 Edit 버튼으로 따로 접근하도록 function 코드 고치기]
+    //
+    //   : [오버레이를 껏다 켜는 함수에], [event.target 으로], 눌려질 [버튼의 액세스 권한]에 접근한후, 
+    //     ***** [event.target.dataset.식별이름]; 
+    //       * 식별이름은 [HTML태그의 data-식별이름과 동일해야한다]
+    //   : [오버레이를 켜는 버튼]을 눌렀을 경우, 단순히 오버레이가 뜨는 것이 아니라, 
+    //      [식별자에 의해 선택된 곳의 오버레이가 뜨는 함수]로 변경하는것
+    //
+    //   ex) SelectedPlayerId = +event.target.dataset.playerid;
+    //    우리는 식별자를 playerid ="1" ,  playerid ="2" 로 했으므로 1 or 2의 수를 가질것이다.
+    //       * 만약 식별할 이름에 - 가 들어가면 [대괄호]를 써야한다. ex) dataset["player-id"]
+    //      *** [중요] : + 를 붙이는 이유는 [문자열]을 [숫자형식] 으로 바꿔주기 위함이다.
+    //    
+    //   : 그렇다면 이제, [오버레이를 켜는 함수가 실행되는 순간]
+    //      함수 자체가 player 버튼을 식별하여 선택할 능력을 가진다.
+
+    // 4. [양식 제출하는 함수에, 각각에 맞는 HTML태그를 선택하기]
+    //
+    //   : HTML 태그에 적은 [플레이어 식별 번호를 저장하는 변수] SelectedPlayerId 를 2번에서 만들었다.
+    //   : [오버레이 팝업 함수를 실행하면] SelectedPlayerId 에 [플레이어 식별번호가 저장되고]
+    //   : 그렇다면 그것을 활용해, [동적으로 JS에서 HTML 태그를 선택할것이다! 동적으로!]
+
+    //    : 만약 선택해야할 id 값이 각각, [player-1-data], [player-2-data] 라면
+    //        document.getElementById("player-" + SelectedPlayerId + "-data")
+    //      로, 동적으로 선택하여 각각의 id값에 접근할 수 있다!
+
+    //
+    // 이 4단계를 종합하면, [한 함수에서 시작되는] [한 오버레이]에서 나오는 데이터를 
+    //      [각각의 원하는 곳]에 [제출할 수 있다.] 
+
+
+16. [함수 안에도, 미리 지정한 다른 함수도 사용할 수 있다.]
+
+17. [Submit버튼의 기본동작을 자바스크립트 함수로 억제시키기]
+
+    : event.preventDefault()
+
+    : Submit 버튼을 집어넣으면, 브라우저는 HTTP 요청을 통해 서버로 데이터를 전송시킨다.
+        데이터가 서버에 닿으면, 서버에서 무언가 처리하지만,
+        서버에 아무런 동작이 없다면 그 브라우저는 요청하기 전으로 리셋된다.
+        리셋을 방지하고자 Submit 버튼의 기본동작을 막아야한다
+    
+    함수 안에서는 [기본메서드 preventDefault()] 로 동작을 막을 수 있다.
+    * property를 event로 정했을 경우
+
+    
+
+
+        

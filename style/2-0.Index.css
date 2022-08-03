@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans&family=Mochiy+Pop+One&display=swap');
+
+html{
+    --Header-font :'Mochiy Pop One', sans-serif;
+    --Body-font :'Albert Sans', sans-serif;
+
+    --Button-background-color: rgb(222, 104, 104);
+    --Button-font-color: wheat;
+}
+
+body{
+    margin: 0;
+    font-family: var(--Body-font);
+    background-color: beige;
+}
+header{
+    background-color: rgb(106, 106, 255);
+    display: grid;
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--Header-font);
+    color: aliceblue;
+}
+
+
+header h1 {
+    margin: 0;
+}
+
+
+#section-top{
+    text-align: center;
+    margin-bottom: 2rem;
+}
+#main-section{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    text-align: center;
+    width: 80%;
+    margin: 2rem auto;
+    gap: 2rem;
+}
+
+
+.playerSetup{
+    box-shadow: 1px 1px 3px grey;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+.playerSetup p{
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 1rem;
+}
+
+button{
+    border: none;
+    background-color: var(--Button-background-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    color: var(--Button-font-color);
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;    /* 손가락효과 */
+}
+
+button:active{
+    transform: scale(1.05);
+}
+button:hover{
+    background-color: var(--Button-font-color);
+    color: var(--Button-background-color);
+}
+
+
+
