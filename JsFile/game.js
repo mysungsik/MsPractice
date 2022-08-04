@@ -2,9 +2,8 @@ function reSetGame(){
     // 리셋하려면, 게임데이터, 플레이어이름데이터, 필드데이터, 전부 리셋
     gameRound = 1;
     activePlayerSymbol = 0; // 플레이어 턴 알려주는 값
-    msmsms.innerHTML = '<span id="won-player"> Player! </span> You Win!' // 승자 알려주는 div 리셋
     gameOverDiv.style.display = "none"  //승리 div 없애기
-
+    
     let gameBoardIndex =0;
     gameisovered = false
 
@@ -36,9 +35,10 @@ function gameStart(){
     }   // 리턴이 되면, 멈춘다를 꼭 기억하자
 
     
-
-    reSetGame() // 위치 아주 중요! 이름은 리셋되지 않기에 여기가 딱 맞음! + 게임판 보여야 하니까!
     activePlayerName.textContent = player[0].name
+    
+    reSetGame() // 위치 아주 중요! 이름은 리셋되지 않기에 여기가 딱 맞음! + 게임판 보여야 하니까!
+    
     gameField.style.display = "block"
     
 }

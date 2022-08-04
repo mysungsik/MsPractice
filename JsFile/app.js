@@ -50,6 +50,7 @@ let gameRound = 1;  // 라운드 알려주는 값
 let gameisovered = false
 
 
+
 let player = [
     {name : "", symbol : "X"} , 
     {name : "", symbol : "O"}
@@ -81,6 +82,3 @@ let gameData = [
     [0, 0, 0],
     [0, 0, 0]
 ];
-
-
-console.log(wonPlayer.parentElement.tagName)
