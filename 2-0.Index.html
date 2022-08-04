@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="/style/2-1.overLay.css">
     <link rel="stylesheet" href="/style/2-2.game.css">
     
-    <script src="/JsFile/config.js" defer></script>
-    <script src="/JsFile/game.js" defer></script>
-    <script src="/JsFile/app.js" defer></script>
+    <script src="/JsFile/config.js" defer></script> <!-- function-->
+    <script src="/JsFile/game.js" defer></script>   <!-- 게임로직-->
+    <script src="/JsFile/app.js" defer></script> <!-- 지정, 집행 ***-->
 
 </head>
 <body>
@@ -52,28 +52,28 @@
                 </div>
             </div>
             <div>
-                <button type="button">start new game</button>
+                <button type="button" id="start-game">start new game</button>
             </div>
         </section> 
 
         <section id="active-game">  <!--  게임필드 -->
             <div id="choose-winner-div">
-                <h2><span id="won-player"> Player! </span>You Win!</h2>
+                <h2 id = "msmsms"><span id="won-player"> Player! </span>You Win!</h2>
                 <p> Click "Start New Game", to start a new game</p>
             </div>
             <p> it's Your Turn! <span id="active-player-name"> Player Name! </span></p>
             <ol>
-                <li class="disabled">X</li>
-                <li>O</li>
-                <li>3</li>
+                <li data-col="1" data-row = "1"></li>
+                <li data-col="2" data-row = "1"></li>
+                <li data-col="3" data-row = "1"></li>
 
-                <li>4</li>
-                <li>O</li>
-                <li>6</li>
+                <li data-col="1" data-row = "2"></li>
+                <li data-col="2" data-row = "2"></li>
+                <li data-col="3" data-row = "2"></li>
 
-                <li>7</li>
-                <li>O</li>
-                <li>9</li>
+                <li data-col="1" data-row = "3"></li>
+                <li data-col="2" data-row = "3"></li>
+                <li data-col="3" data-row = "3"></li>
             </ol>
         </section>
     </main>

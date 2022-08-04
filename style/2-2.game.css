@@ -14,6 +14,7 @@ html{
 
 #active-game{
     text-align: center;
+    display: none;
 }
 
 #choose-winner-div{
@@ -22,6 +23,7 @@ html{
     padding: 1rem;
     width: 80%;
     margin: 0 auto;
+    display: none;
 }
 #choose-winner-div h2{
     font-size: 2.5rem;
@@ -53,7 +55,6 @@ html{
 
     font-size: 2rem;
     font-weight: 800;
-    margin: 1rem;
 }
 
 #active-game ol li:hover{
@@ -65,7 +66,7 @@ html{
 
 #active-game ol li.disabled{    /* 이미 클릭된것은 더이상 클릭효과가 없도록*/
     
-    background-color: var(--game-play-tile-color);
+    background-color: var(--game-play-tile-color-hover);
     cursor: default;
 }
 

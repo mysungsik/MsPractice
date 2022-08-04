@@ -87,6 +87,15 @@
 11. [return의 두가지! 기능!]
     1. 값 반환
     2. [return 이후에 있는 function의 코드]는 더이상 [작동을 중지함]
+        ex) function (){
+            쭉쭉...
+            if (){
+                aasdasd
+                return;
+            }
+            다음꺼 쭉쭉....
+        }
+        여기서 if값이 ture로 판명되  return이 진행된다면 다음꺼쭉쭉... 은 일어나지 않는다.
 
 
 12. [배열 안에 Object 를 넣을 수 있다. 그리고 그것은 여전히 배열이다]
@@ -183,7 +192,20 @@
     함수 안에서는 [기본메서드 preventDefault()] 로 동작을 막을 수 있다.
     * property를 event로 정했을 경우
 
+18. [태그의 이름을 알려주는 tagName]
+    function(event){
+        console.log(event.target.tagName);
+    }
+    하면 누른 것의 태그네임이 쫙쫙!
     
 
+19. [세가지 이상의 것을 동시비교 하는것은 불가능하다. 반드시 [&&] 나 [||] 로 추가하여, 두개씩 비교하자 ]
 
+20. [for 두번 돌려서!!, 2차원 표 전부!! 0으로 만들어보기]
+
+    for(let i=0; i <3; i++){
+        for(let j=0; j <3; j++){
+            gameData[i][j] = 0
+        }
+    }
         

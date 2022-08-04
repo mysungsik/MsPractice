@@ -98,12 +98,19 @@ function savePlayerConfig(event){   // event 라고 되어있는 property 는 �
     // 이 4단계를 종합하면, [한 함수에서 시작되는] [한 오버레이]에서 나오는 데이터를 
     //      [각각의 원하는 곳]에 [제출할 수 있다.] 
 
-    let playerChangeName = document.getElementById("player-"+selectedPlayerId+"-data")
+    const playerChangeName = document.getElementById("player-"+selectedPlayerId+"-data")
     playerChangeName.textContent=enteredPlayerName
+    // 플레이어 각각의 이름을 enteredPlayerName 즉, 인풋텍스트에서 나온 밸류로 바꾸고
 
-    
 
-    const winnerPlayer = player[selectedPlayerId-1].name
+    player[selectedPlayerId-1].name = enteredPlayerName
+    // 또한 인풋텍스트에서 나온 밸류를, player 라는 [배열]의 [각 인덱스의 name]에 할당
+    //  HTML이 아니라, 자체적인 JavaScript 내에 값을 저장한다. 나중에 또 쓰려고!!
+    // ** 큰 실수를 범했따 ==>>
+    //  enteredPlayerName  = player[selectedPlayerId-1].name
+    // 라고 하니 enteredPlayerName라는 변수에  player[selectedPlayerId-1].name를 집어넣으려 한 꼴이다.
+    // player[selectedPlayerId-1].name 안에 enteredPlayerName를 넣게 정 상적으로 바꾸니 잘된다.
+
     /*
     if (selectedPlayerId === 1){
         player[0].name = winnerPlayer
