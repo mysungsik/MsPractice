@@ -1,0 +1,37 @@
+
+main{
+    margin-top: 5rem;
+}
+
+#carouselExampleCaptions{
+    width: 100%;
+    max-width: 50rem;
+    height: 30rem;
+    margin: 2rem auto;
+}
+
+
+#carouselExampleCaptions img{
+    height: inherit;
+    object-fit: fill;
+    box-sizing: border-box;
+}
+
+.carousel-inner{
+    height: 30rem;
+}
+
+form{
+    width: 30rem;
+    max-width: 50rem;
+    margin: 2rem auto;
+}
+#Parallax-Section{
+    text-align: center
+
+}
+
+#Parallax-Section img{
+    width: 30rem;
+    height: 45rem;
+}
