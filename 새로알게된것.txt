@@ -1,0 +1,65 @@
+****** [중요]
+****** [다시한번 함수와 IF문의 기본!!]
+****** [함수와 IF문 안에 있는 수는 바깥으로 나오지 않는다!! 나오려면 return 후 전역변수처리!]
+****** [function 안에서 구문을 처리하고싶어? 그럼 전부 function 안에 때려넣고, 작업 완료 시킬것.]
+
+[1] 함수의 프로퍼티를 제대로 활용
+
+    function calculate(n1 , n2 ,n3 ){
+    }
+    라 함은, 함수를 사용할 때 있어서,
+
+    calculate(Number1, operator, Number2)
+    라고 사용할때, 아주 잘 써먹을 수 있다.
+
+
+ex)
+    function calculate(n1, operator, n2){
+        let result = 0
+        if(operator == "+"){
+            result = n1 + n2
+        }
+        return String(result)
+    }
+
+    let number1 = calculate(1, "+", 2)
+    console.log(number1);
+
+[2] 방금의 예제처럼, if문 또는 function 안에 있는 코드를 꺼내고싶다면
+    return result 처럼 값을 return 받아야한다!!
+
+
+[3] 부모요소 안의 클래스를 선택할 수 있는 선택자 [js]
+    .classList[0]
+
+    ex) function 안에서
+    let classListItem = event.target.classList[0]
+
+[4] event.target 이라는 것은 [엘리먼트에 대한 정보]를 가지고있다.
+    : 연결된 것 안의(혹은 연결할 것의) 
+        let information = event.target;
+        information.textContent = 그것의 HTML 텍스트정보 할당
+        information.classList[0] = 그것의 클래스 정보 할당
+
+
+[5] input type = "text" 라고 하는 순간 
+    그 안은  .textContent 가 아니고 .value 이다!!
+    textContent 는 일반 div, p ,h 등에 쓰는 거다!
+
+[6] function 안이나 if 안에 있는 값을 쓰려면
+
+    : 그 안의 값을 return 해야할 뿐 아니라
+    전역변수로 만들어서 값을 재사용 해야하기 때문에
+    변수를 function 혹은 if 안이 아닌 밖에 정의한 후, 함수나 IF문 안에서는 return을 하여, 전역변수의 값을 바꾼후 사용한다.
+
+
+[7] if 문을 읽는데, 스캔처럼 읽는 것을 명심하자. 한번쫙, 한번쫙, 한번쫙,
+
+[8] 계산기 등과 같이 숫자를 누를때마다 추가되는 값을 만들고 싶을때는
+    숫자를 문자라고 생각하고, 쭉쭉 넣게 한 다음에,
+    최종적인 문자의 값을 저장해 숫자로 변경하면 깔끔하다.
+
+[9] 문자열에도 + 가 있음을 다시 기억
+
+[10] 거대한 function 안에 수많은 if문이 있고, if 문 안의 값을 function 안에서 사용하려 한다면
+        한 function 안에 둘러 쌓인 값들이므로, 전부 서로 사용가능하다.
