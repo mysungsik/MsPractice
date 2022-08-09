@@ -1,5 +1,6 @@
 const numberPadParent = document.getElementById("number-pad-parent")   // 버튼 총집합
 let calculationSectionDisplay = document.querySelector("#calculation-section-display") // 디스플레이
+
 let firstNum = "";  // 오퍼레이터 사용전 저장될 수
 let SecondNum = ""; // 오퍼레이터 사용후 저장될 수
 let operatorSymbol = "";    // 오퍼레이터 누르면 심볼이 저장될 값
@@ -109,7 +110,93 @@ function active(event){ // 안에 들어갈것 = 숫자누르면 숫자표시, �
 
 }
 
+function changeColor(event){
+    
+    let numberpad = event.target.textContent;
+
+    if(numberpad ==0){
+        numberpad = Number(numberpad) + 16;
+    }
+    else if(numberpad <=3){
+        numberpad = Number(numberpad) +Number(3);
+    }
+    else if(numberpad >=4 && numberpad <=6){
+        numberpad = Number(numberpad) +4;
+    }
+    else if(numberpad >=7 && numberpad <=9){
+        numberpad = Number(numberpad) +5;
+    }
+    else if(numberpad == "()"){
+        numberpad =2
+    }
+    else if(numberpad == "%"){
+        numberpad =3
+    }
+    else if(numberpad == "*"){
+        numberpad =7
+    }
+    else if(numberpad == "-"){
+        numberpad =11
+    }
+    else if(numberpad == "+"){
+        numberpad =15
+    }
+    else if(numberpad == "/"){
+        numberpad =18
+    }
+
+    for(i=0; i<=19; i++){
+        if(i == numberpad){
+            numberPadParent.children[i].classList.add("changeColor")
+        }
+    }
+}
+
+function removeColor(event){
+    
+    let numberpad = event.target.textContent;
+
+    if(numberpad ==0){
+        numberpad = Number(numberpad) + 16;
+    }
+    else if(numberpad <=3){
+        numberpad = Number(numberpad) +Number(3);
+    }
+    else if(numberpad >=4 && numberpad <=6){
+        numberpad = Number(numberpad) +4;
+    }
+    else if(numberpad >=7 && numberpad <=9){
+        numberpad = Number(numberpad) +5;
+    }
+    else if(numberpad == "()"){
+        numberpad =2
+    }
+    else if(numberpad == "%"){
+        numberpad =3
+    }
+    else if(numberpad == "*"){
+        numberpad =7
+    }
+    else if(numberpad == "-"){
+        numberpad =11
+    }
+    else if(numberpad == "+"){
+        numberpad =15
+    }
+    else if(numberpad == "/"){
+        numberpad =18
+    }
+
+    for(i=0; i<=19; i++){
+        if(i == numberpad){
+            numberPadParent.children[i].classList.remove("changeColor")
+        }
+    }
+}
+
 numberPadParent.addEventListener("click",active)    // 연결은 OL로 했지만, 사실 클릭되는건 LI
+numberPadParent.addEventListener("mousedown",changeColor)
+numberPadParent.addEventListener("mouseup",removeColor)
 
 
 // 최종:

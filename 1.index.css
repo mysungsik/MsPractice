@@ -1,5 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+
+html{
+    --number-pad-section-color : antiquewhite;
+    --number-pad-element-color : blanchedalmond;
+    --number-pad-element-color-push : rgba(246, 172, 107, 0.501);
+    --number-pad-clear-color :rgba(153, 138, 2, 0.432);
+    
+}
+
 body{
     margin: 0;
+    background-color: rgba(74, 74, 74, 0.501);
 }
 
 main{
@@ -10,28 +21,35 @@ main{
 }
 
 #calculation-section{
-    border: 1px solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     width: 100%;
     height: 20%;
     box-sizing: border-box;
     padding: 1rem;
+    background-color: rgb(252, 204, 145);
 }
 
 #calculation-section-display{
-    border: 1px solid;
+    box-shadow: 2px 2px 2px gainsboro;
     height: 100%;
-    width: 100%;
+    width: 90%;
     text-align: end;
     font-size: 2.5rem;
     font-weight: 800;
+    box-sizing: border-box;
+    padding: 2rem;
 }
 
 #number-pad-section{
-    border: 1px solid;
     width: 100%;
     height: 80%;
     box-sizing: border-box;
     padding: 3rem;
+    padding-top: 0.5rem;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color:var(--number-pad-section-color);
 }
 
 #number-pad-parent{
@@ -42,20 +60,30 @@ main{
     width: 100%;
     height: 100%;
     padding: 0;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 #number-pad-section li{
-    border: 1px solid;
+    box-shadow: 2px 2px 4px gray;
     font-size: 2rem;
     font-weight: 700;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 4px;
+    background-color: var(--number-pad-element-color);
+}
+#number-pad-section p{
+    padding: 0;
+    margin: 0;
+    font-family: 'Black Han Sans', sans-serif;
+}
+
+#number-pad-section li:active{
+    transform: scale(1.05);
 }
 
 #calculation-button{
-    border: 1px solid;
     list-style-type: none;
 }
 
@@ -65,4 +93,15 @@ main{
 
 .zero{
     grid-column: span 2;
+}
+input{
+    border: none
+}
+
+.clear-pad, .back-space, .enter{
+    background-color: var(--number-pad-clear-color)!important;
+}
+
+.changeColor{
+    background-color: var(--number-pad-element-color-push)!important;
 }

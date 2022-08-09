@@ -63,3 +63,6 @@ ex)
 
 [10] 거대한 function 안에 수많은 if문이 있고, if 문 안의 값을 function 안에서 사용하려 한다면
         한 function 안에 둘러 쌓인 값들이므로, 전부 서로 사용가능하다.
+
+[11] [addEventListener] 마우스 누를때(mousedown) 땔때(mouseup) 확인!
+    [또한 한 버튼에 여러개 리스너 달수 있다는 것도 알았다!]
