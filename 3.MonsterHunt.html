@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONSTER HUNT</title>
+    <link rel="stylesheet" href="/3.MonsterHunt.css">
+    <script src="/3.MonsterHunt.js" defer></script>
+</head>
+<body>
+    <aside class="winner-div" >
+        <div>
+            <h2 id="draw-div"><span id="winner"></span> win!</h2>
+
+        </div>
+    </aside>
+    <section id="health-bar-section">
+        <div>
+            <h3> MONSTER HEALTH</h3>
+            <div id="monster-health-bar" class="health-bar"></div>
+        </div>
+        <div>
+            <h3> PLAYER HEALTH</h3>
+            <div id="palyer-health-bar" class="health-bar"></div>
+        </div>
+    </section>
+    <section id="player-move-section">
+        <ul id="player-move-lists">
+            <li id="attack">Attack</li>
+            <li id="strong-attack">StrongAttack</li>
+            <li id="heal">Heal</li>
+            <li id="show-log">ShowLog</li>
+        </ul>
+    </section>
+    <section>
+        <p>1. 기본공격은 10의 데미지를 입힌다. <br>
+        2. 강력공격은 30%의 확률로 30의 데미지를 입힌다.<br>
+        3. heal은 20의 체력을 회복한다.
+        4. 매턴마다 몬스터는 70%의 확률로 20의 데미지를 가한다.</p>
+    </section>
+    
+</body>
+</html>
