@@ -1,0 +1,285 @@
+[1]  여러개의 버튼을 querySelectorAll 로 지정하고, [for of 을 이용해 ][한번에 이벤트 리스너 달기]
+
+****** [중요]
+****** [다시한번 함수와 IF문의 기본!!]
+****** [함수와 IF문 안에 있는 수는 바깥으로 나오지 않는다!! 나오려면 return 후 전역변수처리!]
+****** [function 안에서 구문을 처리하고싶어? 그럼 전부 function 안에 때려넣고, 작업 완료 시킬것.]
+
+[1] 함수의 프로퍼티를 제대로 활용
+
+    function calculate(n1 , n2 ,n3 ){
+    }
+    라 함은, 함수를 사용할 때 있어서,
+
+    calculate(Number1, operator, Number2)
+    라고 사용할때, 아주 잘 써먹을 수 있다.
+
+
+ex)
+    function calculate(n1, operator, n2){
+        let result = 0
+        if(operator == "+"){
+            result = n1 + n2
+        }
+        return String(result)
+    }
+
+    let number1 = calculate(1, "+", 2)
+    console.log(number1);
+
+[2] 방금의 예제처럼, if문 또는 function 안에 있는 코드를 꺼내고싶다면
+    return result 처럼 값을 return 받아야한다!!
+
+
+[3] JS에서 HTML 태그의 클래스를 선택할 수 있는 선택자 [js]
+
+    .classList[0]
+
+    ex) function 안에서
+    let classListItem = event.target.classList[0]
+
+[4] event.target 이라는 것은 [엘리먼트에 대한 정보]를 가지고있다.
+    : 연결된 것 안의(혹은 연결할 것의) 
+        let information = event.target;
+        information.textContent = 그것의 HTML 텍스트정보 할당
+        information.classList[0] = 그것의 클래스 정보 할당
+
+
+[5] input type = "text" 라고 하는 순간 
+    그 안은  .textContent 가 아니고 .value 이다!!
+    textContent 는 일반 div, p ,h 등에 쓰는 거다!
+
+[6] function 안이나 if 안에 있는 값을 쓰려면
+
+    : 그 안의 값을 return 해야할 뿐 아니라
+    전역변수로 만들어서 값을 재사용 해야하기 때문에
+    변수를 function 혹은 if 안이 아닌 밖에 정의한 후, 함수나 IF문 안에서는 return을 하여, 전역변수의 값을 바꾼후 사용한다.
+
+
+[7] if 문을 읽는데, 스캔처럼 읽는 것을 명심하자. 한번쫙, 한번쫙, 한번쫙,
+
+[8] 계산기 등과 같이 숫자를 누를때마다 추가되는 값을 만들고 싶을때는
+    숫자를 문자라고 생각하고, 쭉쭉 넣게 한 다음에,
+    최종적인 문자의 값을 저장해 숫자로 변경하면 깔끔하다.
+
+[9] 문자열에도 + 가 있음을 다시 기억
+
+[10] 거대한 function 안에 수많은 if문이 있고, if 문 안의 값을 function 안에서 사용하려 한다면
+        한 function 안에 둘러 쌓인 값들이므로, 전부 서로 사용가능하다.
+
+[11] [addEventListener] 마우스 누를때(mousedown) 땔때(mouseup) 확인!
+    [또한 한 버튼에 여러개 리스너 달수 있다는 것도 알았다!]
+
+[12] `` 안에서, 결과값을 출력하고 싶다면 , ${} 를 쓰면 된다.    
+
+        ** 다만 반드시 ` ` 안에 써야한다. "" 도아니고, '' 도 아니고 ``이다.!!
+        console.log( `안녕 나는 ${1+1+1} 이야`)
+            ==>> 안녕 나는 3 이야
+
+[13] `` 안에 글자를 적으면, 아무리 엔터를 쳐도 다 허용된다
+` 난
+나다
+명식
+이다
+`
+    ==> 난 나다 명식 이다
+
+[14] \n 은 줄바꿈이다.
+
+[15] 함수의; 위치는 전혀 관계없다.
+    JS는 함수를 가장 먼저 읽고 시작한다. 어디다 두어도 가장 먼저 읽고 시작한다.
+
+[16] 전역변수는 함수 안에서 사용가능하지만
+        함수 안에 있는 수는 [return 을 한후, 함수를 작동시켜 새 변수에 지정하여 밖으로 꺼내지 않는 이상] 밖으로 나오지 않는다.
+
+[17] return이 선언되면 그 이후 함수의 코드는 읽히지 않는다.
+[18] return은 하나만 사용하도록 한다. [많은 양의 데이터를 반환하는것은 나중에 알아보자]
+
+[19] 함수를 사용할때는, 최대한 전역변수의 사용을 자제하도록 한다.
+        용도가 분명한 전역변수는 사용해도 무관하다.
+
+[20] 문자열을 숫자로 바꾸러면 
+        1. 앞에 +를 붙여준다.
+        2. parseInt() 로 감싸준다.
+        3. parseFloat() 으로 감싸면 소숫점이 있는 수로 바뀐다.
+            [ +가 쓰기에는 매우 편하지만, 명시적이지 못한 단점이 있다.]\
+        4. Number() 로 감싸준다.
+
+
+***[=중요]
+[21] 1. [함수 안에서 정의한 수]는 [함수 안에서는 편하게 사용 할 수 있다].
+     2. [함수 안에 있는 여러개의 if문에서 하나가 참이라면, 그 값은 함수 안에서 자유롭게 사용 가능하다 [if문 끼리는 제외하고]]
+
+[22] 코드 단축 스니펫
+    1-1) firstNumber = firstNumber +1
+        ==> firstNumber++
+
+    1-2) firstNumber = firstNumber -1
+        ==> firstNumber--
+
+    1-3) firstNumber = firstNumber -1               ==>> 이것은 firstNumber가 수정된 후의 값을 반환함 [그다지 큰 차이는 없지만 log하면 보임]
+        ==> ++firstNumber
+
+    1-4) firstNumber = firstNumber -1               ==>> 역시나 firstNumber가 수정된 후의 값을 반환함 [그다지 큰 차이는 없지만 log하면 보임]
+        ==> --firstNumber
+
+
+
+    2-1) firstNumber = firstNumber + secondNumber
+        ==> firstNumber += secondNumber                 와아아아우!!
+
+    2-2) firstNumber = firstNumber * secondNumber
+        ==> firstNumber *= secondNumber  
+    
+[23] 배열명.push(넣을값)
+    배열명 array 안으로 값을 집어넣는 명령어 
+    
+
+[24] undefined ,null, NaN
+
+    1) undefined : 변수는 생성했지만, 그 안의 값이 없다. [사용하는 값은 아니고, 그저 나타나는 값이다.]
+    2) null : [값을 null로 입력해 사용한다]. 빈칸 이라는 뜻이다 innerHTML = null 과 같이
+    3) NaN : 숫자와 문자를 곱하는 것처럼 이상한 일이 생기면 나온다. [숫자와 문자의 잘못된 조합에서 나온다.]
+
+[25] typeof 값
+    : 값의 유형을 알려준다.
+
+    1) typeof 1
+        = "number"
+    2) typeof true
+        = "boolean"
+    3) typeof "hi"
+        = "Stiring
+    4) let ms = "hi"
+       typeof ms
+       = "String"
+
+[26] 파일, 기본설정, 바로가기키 에 많은 기능이 있다. 
+
+     [바로가기키를 잘 활용해보자!] !!!
+
+
+
+[22년 08월 13일]================================================================
+
+[1] 구글 검색법
+
+javascript 치고, 원하는것 깔끔하게
+
+ex1) javascript how to make random number 
+ex2) javascript how to return function value
+
+[2] IF문 안에 있는 값을 빼서 재사용하는것은 [불가능]하다
+
+[3] function 안에 있는 값은 
+    return [a,b,c] 를 통해 여러개도 동시에 뺄 수 있고,
+        배열로 저장된다.
+[4] 객체키는 객체이름.객체키 를 통해 변경, 추가할 수 있다.
+
+[5] 체력창을 나타내기 좋은, 로딩창을 나타내기 좋은 HTML태그
+    <progress max ="100", value = "20"> </progress>
+    max = 프로그레스 바 값
+    value = 프로그레스 바 안에 채워진 값
+
+[6] function 은 항상 [쪼개서] 하나하나 분류하는 것이 좋다.
+    [버튼을 누르면, 데미지를 계산해서, 시전자에게 맞춰 들어간다면]
+    [ 시전자 찾는  function]
+    [ 데미지 계산 function]
+    [ 버튼을 누르면 기본적으로 들어갈 function]
+    으로 전부 분리해서 사용하는 것이 좋다.
+    [ 물론 큰 function 안에서 작은 function의 값을 쓸때는
+    return 한 값을 받아서 사용하면 된다. ]
+
+
+[7] IF문을 줄여서 [삼항 연산자]로 표기가 가능하다.
+
+    const logEvent = ms==="msms" ? "wow" : "now"
+        로그이벤트는 = [ms가 "msms"] 가 참이면 "wow" // [ms가 "msms"] 거짓이면 "now" 를 저장한다
+            라는 뜻이다.
+
+[8] !! 를 사용해서 [ture or false] 값을 만들어 낼 수 있다.
+        + 빈 문자열[""] 은 false 값이다.
+
+    let ms = ""
+    const isValid = !!ms
+    console.log(isValid)
+        ==> false
+
+    ==>> 이 코드는, 아이디나, 비밀번호가 [빈 문자열]일 경우를 [검증] 할때, 주로 사용할 수 있다.
+
+
+===================================
+
+[9]~[10] : 사용자에 의해 값을 받아, 프로그래머가 오류발생을 통제할 수 없는 경우 사용
+
+[9] 오류를 나타내는 코드, [ throw ]
+
+    throw{mssage: this is InValid error! }
+
+    throw를 입력하면, [실제로 오류가 발생한 것으로 처리]되어, 코드 실행이 멈춘다.
+    사용자가 잘못된 값의 타입을 입력했을때, 사용할 수 있다.
+
+[10] 오류를 받았을때, 강제로 다른 값으로 바꾸어 처리하는 코드, [ try, catch ]
+
+let ms;
+function msms(){
+    ms = "hithere"
+    if( ms !=3){
+        throw {message: "this is not 3"};
+    }
+}
+
+try{msms()}
+catch(error){
+    console.log(error);
+    ms = 3;
+    console.log(ms)
+}
+
+    ==> 여기서 말하는 console.log(error) 는 throw에 있는 메시지를 출력한다.
+        ms=3 은 폴백 값으로 [오류가 났을때 강제로 바꿔지는 값이다.]
+
+[[[[[[[[[[[[[[[[[[[             FUNCTION 과 IF문 과의 관계 최종정리!!           ]]]]]]]]]]]]]]]]]]]]]]]]]
+
+1. IF문은 IF문 안에 있는 값을 바깥으로 절대로! 빼낼 수 없다.
+    단, [삼항 연산자] *[7번] 문항
+        로 만든 단순한 IF 문장이라면, 가능하다 ( IF 로직을 안쓰고, 단순히 한줄로 정의되기 떄문에)
+
+2. 단! IF문이 FUNCTION 안에 있다면, [FUNCTION 안에서는] IF문이 [아직은 잠시 저장되어 있는 상태]이므로
+    [FUNCTION 안에서 정의한 변수는], [FUNCTION이 끝날 때 까지는,] [ IF문을 거쳐 나온 값으로 변경되어 사용 가능하다]
+
+EX) function FUNCTION1(){
+    let ms = "ms"
+    let js = "js"
+    
+    if(ms = "ms"){
+        js = "msms"
+    }
+
+    console.log(js)
+}
+        ==>> "msms" 가 나온다.
+
+3. FUNCTION안에서 [다른 FUNCTION 값을 사용]하려면, [다른 FUNCTION 코드 마지막에 return을 하여, 다른 변수에 저장하여 언제든 사용가능하다]
+
+EX) 
+function miniFunction(){
+    let number = 3 + 3;
+    return number
+}
+
+function FUNCTION2(){
+    let newNumber = miniFunction()
+    let number = 4 + newNumber;
+    return number
+}
+
+let lastNumber = FUNCTION2()
+
+console.log(lastNumber)
+
+==> 10
+
+4. IF문 안에서 전역변수를 바꾸는 방법
+    1) pssh
+
