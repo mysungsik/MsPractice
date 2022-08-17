@@ -1,0 +1,57 @@
+1. 함수
+    1) 시작 : 자바스크립트 코드를 읽기 시작하고 나면, 가장 먼저 읽힌다.
+
+    2) parameter(매개변수) 와 Argument(인수)
+        : [매개변수]는 함수를 정의할때 괄호안에 넣어 지정하는 변수
+        : [인수]는 실제로 값을 호출할때, 함수에 전달햐는 구체적인 값
+
+        function ms( parameter ){
+            console.log(parameter)
+        }
+        ms("max")
+                 "max" : Argument
+                parameter: Parameter
+
+2. 메서드
+    : 객체 안에 들어있는 함수
+
+    const person = {
+        greet : function greet(){
+            console.log("hi there")
+        },
+        name : "ms",
+        age : 30
+    }
+    person.greet()
+    person.name;
+    // person 이라는 객체 안에, function 이 들어있다. ==> greet() 은 메서드다
+    
+    //다시말해
+    // startBtn.addEventListener("click",startGame)
+    // 에서 addEventListener는 startBtn이라는 개체 안에 메서드다
+
+3. 함수는 객체다!
+    
+4. 함수를 선언 VS 함수 표현식
+    가장 큰 차이점 : [표현식은] 반드시 [정의 한 이후에] [사용]해야한다.
+                    [선언]은 아무때나 function을 선언 하더라도 관계가 전혀 없다.
+    
+        [표현식]은 [호이스팅]을 하더라도 값이 없는 상태로 호이스팅하므로, 사용불가
+        
+        [표현식에서 function의 이름을 [쓰지않는 함수]를 [익명함수]라 부른다.]
+
+5. 화살표함수의 사용
+    : 간단한 함수에는 화살표 함수를 사용할 수 있따.
+    : 조건은 [반드시 변수 안에 저장해야한다. == 표현식 함수를 사용해야한다]
+
+    ex) const msms = (a,b) => { a + b}
+        const msms2 = function(a,b){
+            return a + b
+        }
+        const msms3 = a => {a*a}
+        // 파라미터가 하나일경우
+
+        const msms4 = () => console.log("hi")
+        // 파라미터가 없을 경우
+
+    

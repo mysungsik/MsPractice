@@ -84,9 +84,22 @@
            alert( 변수명.키2 )
 
 
-1. [값의 호출]
-    alert()
+1. [값의 호출과 상호작용] [alert(), prompt(), confirm()]
+
+    1] alert()
     : 화면에 띄워준다.
+        ex) alert("hi")
+
+    2] prompt(x,y)
+    : x를 화면에 띄운 후, y를 반환한다.
+    : 이때 y는 굳이 입력하지 않아도 되는 기본값이다.
+        ex) let age = prompt("what is yor age", 30)
+            alert(age)
+            ==> "what is yor age" 라는 글씨와 함께, 텍스트창이 하나 나타나며, 기본값으로는 30이 지정되어있다. 바꿔도 된다.
+                그리고, 바뀐 값이 alert 된다.
+
+    3] comfirm()
+    : 괄호 안의 값을 화면에 띄운다. [yes = true], [no = false] 로 값을 반환한다.
 
 
 2. [함수의 사용]

@@ -128,3 +128,12 @@ function receiveTextToLabel2(event){
 textListen3.addEventListener("input",receiveTextToLabel2)
 
 //  ==> [결론] : 따로따로 let 두번씩 쓰지말고, value.length; 로 한번에 글자 수의 값을 저장하자.
+
+
+// [연습4. 값, 값이 없으면 자신이 원하는 값 표시하는 함수 만들기]
+//  간단하게 || 을 사용하여 만들 수 있다.
+
+function showText(){
+    let value = textInput.value;
+    console.log(value || "nope")
+}
