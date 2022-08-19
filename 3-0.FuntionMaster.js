@@ -75,3 +75,63 @@ console.log(winner2)
 
 // if, else if , else if, else if , else 
 // 처럼 계속해서 붙여 사용할 수도 있다.
+
+
+
+// 5. REST 연산자[...] 를 이용한 유연한 파라미터의 함수 만들기
+
+// 무한한 파라미터를 가진 함수를 가정하자, 그리고 그 파라미터를 전부 더하는 함수를 만들어본다.
+// 중요한것은 [파라미터에 대하여 유연함을 가져야한다.]
+
+//  방법1 : 파라미터를 [배열]로 잡아서 전부 다 더하게 만들기
+
+const sumUp = (number) => {
+    let sum = 0;
+    for(let num of number){
+        sum = sum + num
+    }
+    return sum
+}
+console.log(sumUp([1,3,67,2,65,-10]))
+
+// 방법2 : REST 연산자를 이용한 방법[...]
+//       : 전개연산자(스프레드 연산자)와 사용법은 같지만 동작이 다르다
+
+const sumUp2 = (...number) => {
+    let sum = 0;
+    for(let num of number){
+        sum = sum + num
+    }
+    return sum
+}
+console.log(sumUp2(1,3,67,2,65,-10))
+
+// 전개연산자인 REST 연산자를 사용하면, 자동으로 [추가적인 파라미터를 유연하게 사용가능하게 해준다.]
+// 전개연산자는 반드시 [마지막 파라미터에만 적용해야하며], [그 앞에는 파라미터를 써도되지만 REST 연산자 뒤로는 쓰면 안된다.]
+// EX) (a,b,c, ...number) 가능 
+//      (...number, a,v) 불가능
+// 전개연산자를 사용함으로써, argument에 배열을 쓰지 않고 간단히, argumnet를 쓸 수 있다.
+
+
+
+
+// 6. 콜백함수 만들기
+
+const callBackF = (result, ...numbers) => {
+    let sum = 0;
+    for(let num of numbers){
+        sum += num
+    }
+    result(sum)
+}
+
+const showAnswer = (answer) =>{
+    alert("your sum answer is" + answer)
+} 
+
+callBackF(showAnswer, 1,2,3,4,5,6)
+
+// 1. result의 argumnet로 showAnswer 이 들어가니
+// 2. showAnswer(sum) 이 완성되고
+// 3. showAnswer(sum) 에서 [sum이 파라미터 answer의 argument 로 들어가므로]
+// 4. sum 이 alert 된다.
