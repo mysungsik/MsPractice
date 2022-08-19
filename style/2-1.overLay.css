@@ -9,7 +9,6 @@ html{
     --Button-font-color: wheat;
 }
 
-
 .back-drop{
     position: fixed;
     top: 0;
@@ -19,6 +18,7 @@ html{
     background-color: rgba(49, 47, 47, 0.7);  /* backgruondColor에 4번째 요소(0~1사이)를 입력하면, 투명도가 결정된다.*/
     display: none;
 }
+
 .back-drop-up{
     display: block;
 }
