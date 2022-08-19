@@ -1,0 +1,112 @@
+[1. http 패키지 불러오기]  
+const http = require(http)      // 물론 변수이름은 마음대로 
+
+        HTTP PAKEAGE 둘러보기 ==>> https://nodejs.org/dist/latest-v18.x/docs/api/http.html
+        [노드JS에서 제공하는] 유틸리티 [메서드와 프로퍼티]로 가득찬 [객체]가 반환된다.
+
+[2. sever 만들기]
+const sever = http.createServer()
+
+[3. sever에 수신대기 포트 만들기]
+server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이다.
+                            // [여기까지 입력하면, 포트3000에 대한 요청을 수집하라 라는 코드이다.]
+
+[4. 요청과, 응답 함수를 만들어서 서버에 집어넣기]
+
+    - 앞선 2번의 서버만드는 코드에 추가
+
+    const http = require(http) 
+
+    function handleRequest(request, response){
+        response.statusCode = 200;
+        response.end("HTML태그 입력")
+    }
+    const sever = http.createServer( handleRequest )
+
+    server.listen(3000)
+
+    - createServer() 의 첫번째 파라미터로 [requestListener] 를 요구하므로, 집어넣는 것이다.
+    - 또한, 만들어진 서버[포트번호 3000]에 요청이 들어올때마다, handleRequest 함수가 실행될것이다.
+
+    [statusCode] 는 브라우저에게 [요청이 성공했는지에 대한 여부를 알리는 방법이다.]
+    https://developer.mozilla.org/ko/docs/Web/HTTP/Status
+    [200] 은 OK 를 나타내는 코드이다.
+
+[5. statusCode, end()]
+
+    1) statusCode
+        : [브라우저]에게 [요청의 성공여부를 알려주는 코드]
+    2) end()
+        : 요청에 성공했다면, [응답준비를 마치고, 응답에 대한 것을 보낼 수 있다.]
+        : [기본적으로 HTML태그를 보내보자.]
+
+
+[6. request 와 response]        ****************************************************************
+
+    1) request : [브라우저에서 서버로 보내는 요청들 중 하나]
+                대표적으로 [request.url] 으로 포트 뒤의 URL 주소를 받아온다.
+    2) response : [ 서버에서 브라우저로 보내는 응답 ]
+                대표적으로 response.statusCode = ""
+                          response.end()
+
+[7. new Date().toISOString()]
+
+    new Date() ==> 날짜 객체를 생성
+    toISOString() ==> 문자열로 변환 함수
+
+[8. [node.JS] 그리고 [타사패키지 Express.js]]
+
+    nodeJS
+    nodeJS의 한계
+    타사패키지 설치
+    Express.js 의 장점
+    Express.js 의 사용
+
+[9. node express의 사용]
+[ 파일을 주는 get, 파일을 받는 post ]
+[ 파일을 주는 res, 파일을 받는 req ]
+************************* [   get("", function(req,res){})   ] , [   post("", function(req,res){})  ]   ] **************************************
+
+    1) get("", function(req,res){})
+        :nodeJS 의 request와 response 를 합친 형태 중, *** [보내는 형태] ***
+
+        get("/jsjs",  function(req, res){
+            res.send("<h1> hi </h1>")
+        })
+
+        ==>> localhost:3000/jsjs 에 접근했다면, [응답하라(res)] = "<h1> hi </h1>" 을 적음으로써!
+
+
+
+    2) post("", function(req,res){})
+        :nodeJS 의 request와 response 를 합친 형태 중, *** [받는 형태] ***
+
+        post("/msms", function(req,res){
+            const userName = req.body.username;
+            res.send("<h1> hi </h1>")
+        })
+
+        ==>> localhost:3000/msms 에 접근했다면, 
+
+            req.body.username  ==>> [받아라(req)], [username] 이라는 [HTML의 name]을 [가진 요소의 데이터]를
+
+            [응답하라(res)], "<h1> hi </h1>" 라고 나타냄으로써!
+
+    - 파일을 줄것이면 애초에 [get] 으로 접근하고.
+    - 파일을 받을 것이면 애초에 [post] 로 접근한다.
+    - [POST] 로 접근한 이유는 <form aciton="url 뒤의 주소" method = "POST"> 로 method를 post로 설정했기 때문이다.
+
+
+    - 장점 = 간단하다, 사용방도가 많다, 
+    -       statusCode 가 기본으로 200 으로 되어있어서 쓸 필요가 없다.
+
+[10. 받아온 데이터를 다시 자바스크립트 코드로 변환하기] [use 를 사용하여!] + [미들웨어 함수]
+    : 폼 양식을 통해, [브라우저에서 서버로] [데이터를 보냈다.]
+        [그럼에도 불구하고, 데이터는 [자바스크립트코드가 아닌] [그저 데이터의 일부일뿐]]
+        [ 그러므로, 자바스크립트에서 읽을 수 있도록 구문 분석을 해야한다.]
+
+    const express = require("express")
+    let app = express()
+
+    app.use(express.urlencoded({extended : false}))
+    ==>> [미들웨어 함수로], [서버에서 데이터를 받기 전, 자바스크립트코드로 구문분석해준다]
