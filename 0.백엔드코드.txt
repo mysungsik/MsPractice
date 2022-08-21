@@ -89,6 +89,8 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
         ==>> localhost:3000/msms 에 접근했다면, 
 
             req.body.username  ==>> [받아라(req)], [username] 이라는 [HTML의 name]을 [가진 요소의 데이터]를
+        -   req.body   ==>> [form에서 나온 데이터 [전부]!]
+        -   req.body.username ==> [forem에서 나온 데이터중, username이라는 name 을 가진 데이터만]
 
             [응답하라(res)], "<h1> hi </h1>" 라고 나타냄으로써!
 
@@ -175,3 +177,21 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
             2. [ [원시 텍스트 데이터]는 코드로 작업 할 수 없다!]
             2-1. [ [자바스크립트 코드 데이터]는 코드로 작업 할 수 있다!]
                 * 코드작업을 하려면 [텍스트데이터를] [자바스크립트 코드 데이터로] 변경해주는 JSON.parse() 가 필요하다.
+
+[13. res.send() 의 오류(새로고침시, 양식을 다시제출하는)를 방지하는,  res.redirect()]
+
+    - recommend 페이지에, form 에서 값을 받아오고, 저장후에, 확인페이지로 넘어가는 작업
+
+    app.get("/recommend", function(){
+        res.sendFile(HTML파일경로)
+    })
+    app.post("/recommend", function(){
+        const fileData = req.body;
+        ...
+        fs.wirteFileSync(JSON.(파일데이터))
+
+        res.redirect("/confirm")
+    })
+
+    ==>> 자신의 폼에 submit 을 하면, 그대로 자신의 페이지에서 값을 받아, 파일에 저장하고
+            /confirm 페이지로 이동한다

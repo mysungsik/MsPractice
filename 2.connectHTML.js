@@ -5,6 +5,7 @@ const express = require("express")
 const app = express()
 
 app.use(express.urlencoded({extended:false}))
+app.use(express.static("public"))
 
 app.get("/", function(req, res){
     res.send("<h1> Hello World ! HI! </h1>")
@@ -31,6 +32,30 @@ app.get("/recommend", function(req,res){
     const htmlFilePath = path.join(__dirname,"views","recommend.html")
     res.sendFile(htmlFilePath)
 })
+
+app.post("/recommend", function(req,res){
+    const restaurant = req.body;
+    const filePath = path.join(__dirname,"data","restaurant.json")
+    const fileText = fs.readFileSync(filePath)
+    const fileJava = JSON.parse(fileText)
+
+    fileJava.push(restaurant)
+    fs.writeFileSync(filePath, JSON.stringify(fileJava))
+
+    res.redirect("/confirm")
+})
+// 1. get과 post를 같은 주소에 대하여 동시에 쓸 수 있다.
+// 2. HTML 파일에 form 안의 method를 post로 넣을 것이기 때문에, 역시나 값을 받을 경우 post를 쓸것이다.
+// 3. res.send()   를 HTML태그로 할 경우,  [양식을 다시 제출하게 만드는 경고문을 받는다.]
+//      ==>> redirect()
+// 4. redirect() 란 : [post를 끝내고 나면], [다른 페이지로 넘어가야한다고 브라우저에게 전달하는 코드]
+
+// [헷갈리는점] 
+//  * [/recommend 페이지]에서 [form 양식을 제출하면] [action 으로] [다시 본인의 페이지로 돌아온다.]
+//  * 이전에 배울때는 form 양식을 제출하면 action 에 의해 [다른페이지로 갔지만], [이번에는 본인 페이지에 머무는 것이다]
+//  * [그러므로, get과 post 라우터를 두개 다 자신의 페이지에 걸어두고,]
+//  *   [redirect로 confirm 으로 이동하는것이다.]
+
 
 // 인덱스
 app.get("/index", function(req,res){
@@ -61,7 +86,17 @@ app.get("/about", function(req,res){
 //             [ 그렇다고, 수백, 수천개의 이미지파일, css파일, javascript 파일에 전부 경로를 입력할 수는 없다] - 정적파일
 //             [ 그렇다면, express() 의 도움을 받아 편하게 처리해보자]
 //                      *CSS, JAVASCRIPT 파일은 미리 적어두고 [서버측에서 변경하지 않기 때문에] [정적파일 (static file) 이라고 부른다.]
-//                      * html은 정적이지만, 서버에 의해 바뀔것이라, [동적으로 변할 것이다.] 
+//                      * html은 정적이지만, 서버에 의해 바뀔것이라, [동적으로 변할 것이다.]
+
+//      해결 : 미들웨어함수 app.use(express.static(" 정적파일이 들어있는 폴더"))
+
+//              ex) app.use(express.static("public"))
+
+//      헷갈리는점:  * [HTML 파일에 링크되어있는] CSS, JAVASCRIPT파일들은 [상대경로] 로 지정되어있어서, [정적파일 경로상]에는 문제가 없다.
+//                                                  ex) href="styles/shared.css"    [앞에 / 가 없는, 어디든 style 폴더안에 shared.css 가 있으면되는]
+//                  * 또한, [HTML에 링크된 파일을 불러와달라는] [브라우저에서 요청은] [미들웨어함수로 처리] 했으니 완벽하게 작동한다. 
+
+
 
 
 app.listen(3000)

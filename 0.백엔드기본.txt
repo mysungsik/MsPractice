@@ -57,7 +57,10 @@
     3. path  ==> 간단한 방법으로, 모든 운영체제에서 작동하는 [완전한 경로]를 [쉽게 구성할 수 있는 패키지]
 
 [9. 라우트]
-     : 특정 HTTP 메소드(GET, POST)및 경로를 찾아 일부 로직을 실행하는 핸들러
+    : 특정 HTTP 메소드(GET, POST)및 경로를 찾아 일부 로직을 실행하는 핸들러
+    : app.get()
+    : app.post()
+     가 속한다.
 
 [10. 미들웨어]
     : 모든 들어오는 요청에 대해 실행시키는, 요청 처리기
@@ -88,6 +91,17 @@
         혹시라도 폴더를 지웠다면, [ npm install ] 명령어를 통해 다시 깔수 있으니, 걱정할 것 없다.
 
 [2. HTML, CSS, javaScript, nodejs 연결!]
+    HTML 파일
+        : [get, post] 안의 [함수에서], [res.sendFile(   HTML 파일이름이 담긴 PATH  )] 로 연결
+    CSS, JavaScript 파일
+        :   [정적 파일]로서, [폴더를 하나 만들어, 집어넣고]  
+
+        :   [HTML 파일 안에서는 link 와 script로 연결하고 (웬만하면, [상대경로]로 연결)]
+                                * 상대경로 = [ / ] 가 없는  [style/ms.css]의 형태,   [ /style.ms.css] 가 아니라
+
+        :   [ExpressJS 안에서는, 미들웨어함수로 위치를 받아 연결]
+
+                *app.use(express.static("정적파일있는 폴더이름"))
 
 
 
