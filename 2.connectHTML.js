@@ -4,8 +4,12 @@ const path = require("path")
 const express = require("express")
 const app = express()
 
+
 app.use(express.urlencoded({extended:false}))
 app.use(express.static("public"))
+
+app.set("veiws", path.join(__dirname,"views"))
+app.set("view engine","ejs")
 
 app.get("/", function(req, res){
     res.send("<h1> Hello World ! HI! </h1>")
@@ -23,14 +27,24 @@ app.get("/", function(req, res){
 
 // 레스토랑
 app.get("/restaurants", function(req,res){
-    const htmlFilePath = path.join(__dirname,"views","restaurants.html")
-    res.sendFile(htmlFilePath)
+    const filePath = path.join(__dirname,"data","restaurant.json")
+
+    const fileText = fs.readFileSync(filePath)
+    const storedRestaurants = JSON.parse(fileText)
+
+    res.render("restaurants", {numberOfRestaurant : storedRestaurants.length})
+    // restaurants.ejs 파일을 랜더해라(실행해라), 그 안에있는 numberOfRestaurant 라는 ejs 구문이 있다면,
+    //                                                          그 안에는 storedRestaurants.length 값을 집어넣어라
+    
+    // [ejs 탬플릿을 사용],  [ejs 엔진을 사용함으로써], res.sendFile() 대신 쓰는,
+    //                                           [HTML 을 동적으로 바꿔주는 아주 유용한 기능]
+
 })
 
 // 추천
 app.get("/recommend", function(req,res){
-    const htmlFilePath = path.join(__dirname,"views","recommend.html")
-    res.sendFile(htmlFilePath)
+
+    res.render("recommend")
 })
 
 app.post("/recommend", function(req,res){
@@ -59,20 +73,17 @@ app.post("/recommend", function(req,res){
 
 // 인덱스
 app.get("/index", function(req,res){
-    const htmlFilePath = path.join(__dirname,"views","index.html")
-    res.sendFile(htmlFilePath)
+    res.render("index")
 })
 
 //확인
 app.get("/confirm", function(req,res){
-    const htmlFilePath = path.join(__dirname,"views","confirm.html")
-    res.sendFile(htmlFilePath)
+    res.render("confirm")
 })
 
 // 소개
 app.get("/about", function(req,res){
-    const htmlFilePath = path.join(__dirname,"views","about.html")
-    res.sendFile(htmlFilePath)
+    res.render("about")
 })
 
 // 문제 1: 기존에 작성했던 HTML 파일에 [앵커태그 주소]에는 [HTML파일명] 으로 저장되어 있어서, [서버에서 사용하기에는 적합하지않다.]

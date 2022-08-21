@@ -178,6 +178,21 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
             2-1. [ [자바스크립트 코드 데이터]는 코드로 작업 할 수 있다!]
                 * 코드작업을 하려면 [텍스트데이터를] [자바스크립트 코드 데이터로] 변경해주는 JSON.parse() 가 필요하다.
 
+
+[12. HTML 파일과 node.js[서버] 사이의 연결]
+        * res.sendFile()
+
+    app.get("/recommend", function(req,res){
+        const htmlFilePath = path.join(__dirname,"views","recommend.html")
+        res.sendFile(htmlFilePath)
+    })
+    app.get("/restaurants", function(req,res){
+        const htmlFilePath = path.join(__dirname,"views","restaurants.html")
+        res.sendFile(htmlFilePath)
+    })
+    ...
+    
+        
 [13. res.send() 의 오류(새로고침시, 양식을 다시제출하는)를 방지하는,  res.redirect()]
 
     - recommend 페이지에, form 에서 값을 받아오고, 저장후에, 확인페이지로 넘어가는 작업
@@ -195,3 +210,45 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
 
     ==>> 자신의 폼에 submit 을 하면, 그대로 자신의 페이지에서 값을 받아, 파일에 저장하고
             /confirm 페이지로 이동한다
+
+[14. 템플릿과, 템플릿 엔진의 사용 ejs  [1단계 - 세팅]]
+    1. npm install ejs
+
+    2. app.set("views",path.join(__dirname,"views"))
+    3. app.set("view engine","ejs")
+
+    4. [모든 HTML 파일 확장자] [.ejs 로 변경]
+
+[14-1. 템플릿과, 템플릿 엔진의 사용 ejs  [2단계 - 사용 ,장점]]
+
+    [1. 간단해지는 코드 ]
+        * res.render("ejs파일이름")
+
+        app.get("/recommend", function(req,res){
+            res.render("recommend")
+        })
+        app.get("/restaurants", function(req,res){
+            res.render("restaurants")
+        })
+        ...
+
+    [2. HTML 코드의 [서버측에서 동적인 사용!] ********************************************************** ]
+        -   이게 진짜 사용 이유!!
+            * res.render("ejs파일이름", {동적으로작동시킬코드이름 : 값}) **********************************
+    
+        1) HTML 코드 안에서 <%= 동적으로작동할코드이름 %>
+        2) [서버측에서] [동적으로 작동한 HTML 코드이름 과 연결]
+        3) 동적으로 작동시키기
+
+            ex) <p>  "hi" <%= numberOfRestaurant %>   </p>                      // HTML [P 태그 안]에 [SPAN 처럼 입력]
+
+                app.get("/restaurants", function(req,res){
+                    const filePath = path.join(__dirname, "data","restaurants.json")
+                    const fileText = fs.readFileSync(filePath)
+                    const storedRestaurants = JSON.parse(fileText)              // json 파일에 접근해, 읽고, 자바코드로
+
+                    res.render("restaurants", {numberOfRestaurant : storedRestaurants.length} ) // [HTML파일의 동적으로 작동할코드]를 [동적으로 변경시킴]
+                })
+            
+                
+

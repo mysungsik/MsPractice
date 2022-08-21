@@ -1,0 +1,58 @@
+[1.     1.app.js]   
+
+
+[2.     2.connectHTML.js]
+
+    1. express의 사용
+        - npm init
+        - npm install express
+    2. 미들웨어 [ app.use(express.static("정적파일폴더"))       ] 
+                    : node로 불러온 html의 CSS, javaScript 파일을 연결
+                [ app.use(express.urlencoded({extended: false}))           ]
+                    : 받아온 텍스트데이터를 자동으로 자바스크립트 코드로
+    3. get과 post의 사용
+    4. 양식 재 제출을 방지하는 [    res.redirect()  ]
+    5. fs와 path 패키지
+    6. 자동으로 서버를 재시작해주는 [ nodemon 의 사용 ]
+        - npm init
+        - npm install nodemon
+        - package.json 파일의  "scripts" 에서 
+            "start" = "nodemon 2.connectHTML.js"
+        - npm start 로 서버시작
+    7. get 과 post 라우터를 동시에 한 페이지에서
+    8. 받아온 파일의 저장 
+        - json파일에서 빈 배열 만들기
+        - 데이터 받아올 때, 전체 다 받아오기        res.body
+        -               , name 별로 따로 받아오기  res.body.name
+
+    9. 템플릿의 사용
+        - 템플릿 엔진의 사용이유
+            : 서버에 HTML 파일을 [동적으로 사용하기 위해]
+            :    [특별한 EJS 구문을 사용함으로써!]
+        - 템플릿엔진 ejs의 사용
+        - npm install ejs
+        - app.set() 의 사용 [ express의 세팅창 ]
+            * app.set("views", path.join(__dirname, "views"))
+                ==> [처리하는 탬플릿파일이 있는 위치는 "views"폴더이다.]
+            * app.set("view engine", "ejs")
+                ==> [탬플릿을 읽는 엔진을 사용할건데] 이름은 [EJS] 엔진이다.
+        - HTML파일의 확장자를 전부 .ejs 로 변경
+
+        - res.render() 의 사용
+            * 특징 : [이미 set() 에서 views 폴더를 지정했기에,]
+                    [,  또한 render 라는 코드가 ejs 파일을 찾아 사용할것이기 때문에]
+                    ==>> 1. 확장자를 따로 적지 않고, 파일이름만 적는다
+                         2. 경로를 따로 지정하지 않고 그저 파일이름만 적는다.
+                         
+            * 기존 :    app.get("/asd",function(){
+                        const filePath = path.join(__dirname,"views","index.html")
+                        res.send(filePath)
+                        })
+            * 사용후 :  app.get("/asd",function(){
+                        res.render("index")
+                        })
+
+        - HTML (=EJS) 에  <%= EJS태그 %> 로 특별한 탬플릿구문을 사용
+        - res.render("파일이름", { EJS태그 : 값 } )
+            * ejs에서 사용가능한 코드 render( =ejs파일이 읽히는것)
+            ==>> 동적으로 HTML(=EJS) 코드가 변경됌 [ 서버측에서 ]
