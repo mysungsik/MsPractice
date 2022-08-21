@@ -11,8 +11,6 @@ const clickBtn = document.getElementById("click-button")
 const textInput = document.getElementById("text1")
 
 
-
-
 // [6] 원시값과 참조값의 차이
 
 // : 원시값 : 값이 간단하여 직접저장    [ String, Number, null, Boolean 등의 간단한 값]
