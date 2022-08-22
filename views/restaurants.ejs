@@ -1,18 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eatwell - Make The World A Tastier Place</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles/shared.css" />
-    <link rel="stylesheet" href="styles/restaurants.css" />
-    <script src="scripts/responsive.js" defer></script>
+    <%-include("includes/head")%>
+    <link rel="stylesheet" href="/styles/restaurants.css" />
   </head>
   <body>
     <%- include("includes/header") %> 
@@ -26,21 +16,10 @@
           <p> how many restaurant you find <%= numberOfRestaurant %> restaurants</p>
           <ul id="restaurants-list">
             <% for(const restaurant of restaurants) { %>
-              <li class="restaurant-item">
-                <article>
-                  <h2> <%= restaurant.name %> </h2>
-                  <div class="restaurant-meta">
-                    <p><%= restaurant.cuisine %></p>
-                    <p><%= restaurant.address %></p>
-                  </div>
-                  <p>
-                    <%= restaurant.description %>
-                  </p>
-                  <div class="restaurant-actions">
-                    <a href=" <%= restaurant.website %>">View Website</a>
-                  </div>
-                </article>
-              </li>
+              <%- include("includes/restaurantitem",{restaurant : restaurant}) %> 
+                        <!-- 앞의 restaurant : restaurantitem에 적은 키 // 뒤의 restaurant : const restaurant 의 그것. -->
+                        <!-- include도 render("참조위치", 키 : 밸류값) 와 같이 사용되기때문 [restaurantitem]의 키값에 밸류를 집어넣은것 -->
+                        <!--    ex) render("참조값", {rid : restaurant.name}) 처럼 html안의 rid가 restaurant.name로 바뀌듯 -->
             <% }%>
         <%} %>
 

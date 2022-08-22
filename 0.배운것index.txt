@@ -3,7 +3,7 @@
 
 [2.     2.connectHTML.js]
 
-    1. express의 사용
+    1. [express의 사용]
         - npm init
         - npm install express
     2. 미들웨어 [ app.use(express.static("정적파일폴더"))       ] 
@@ -13,19 +13,18 @@
     3. get과 post의 사용
     4. 양식 재 제출을 방지하는 [    res.redirect()  ]
     5. fs와 path 패키지
-    6. 자동으로 서버를 재시작해주는 [ nodemon 의 사용 ]
+    6. get 과 post 라우터를 동시에 한 페이지에서
+    7. 받아온 파일의 저장 
+        - json파일에서 빈 배열 만들기
+        - 데이터 받아올 때, 전체 다 받아오기        res.body
+        -               , name 별로 따로 받아오기  res.body.name
+    8. 자동으로 서버를 재시작해주는 [ nodemon 의 사용 ]
         - npm init
         - npm install nodemon
         - package.json 파일의  "scripts" 에서 
             "start" = "nodemon 2.connectHTML.js"
         - npm start 로 서버시작
-    7. get 과 post 라우터를 동시에 한 페이지에서
-    8. 받아온 파일의 저장 
-        - json파일에서 빈 배열 만들기
-        - 데이터 받아올 때, 전체 다 받아오기        res.body
-        -               , name 별로 따로 받아오기  res.body.name
-
-    9. 템플릿의 사용 = 진정한 [동적인 웹사이트]
+    9. [템플릿의 사용] = 진정한 [동적인 웹사이트]
         - 템플릿 엔진의 사용이유
         - 템플릿엔진 ejs의 사용
         - npm install ejs
@@ -43,4 +42,17 @@
         - HTML 안에서 Javascript 구문 사용하기
         - <%    %> 의 사용 
             [ if, for 같은 구문들]
+
+[3. dynamicRoute]
+
+    1. 동적인 route의 id를 사용
+    2. 오류해결을 위해, [CSS link], [JavaScripts src]의 경로를 [절대경로로] * [앞에 / 가 있는]
+    3. uuid 패키지 의 설치 및 사용
+        const uuid = require("uuid") 
+        * uuid.v4()
+    4. 동적 route 주소로 접근하는 get("domain/:id")
+    5. 동적 URL 주소 ID를 받아오는 [req.params.id]    // 4,5번의 id(단어는 마음대로 정하는것)은 동일한 것이다.
+    6. 두가지 이상의 값을 받는 렌더링 // res.render("domain"{a : ms , b : js})
+    7. .json 배열을 비교할때, [for-of 문]을 사용하여 비교하기 + [return 으로 멈추기]
+
 
