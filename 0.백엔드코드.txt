@@ -192,7 +192,21 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
     })
     ...
     
-        
+[12-1. CSS, javaScript 같은 정적파일과 nodejs 연결!]
+
+    HTML 파일
+        : [get, post] 안의 [함수에서], [res.sendFile(   HTML 파일이름이 담긴 PATH  )] 로 연결
+
+    CSS, JavaScript 파일
+        :   [정적 파일]로서, [폴더를 하나 만들어, 집어넣고]  
+
+        :   [HTML 파일 안에서는 link 와 script로 연결하고 ( [상대경로]로 연결)]
+                                * 상대경로 = [ / ] 가 없는  [style/ms.css]의 형태,   [ /style.ms.css] 가 아니라
+
+        :   [ExpressJS 안에서는, 미들웨어함수로 위치를 받아 연결]
+
+                *app.use(express.static("정적파일있는 폴더이름"))
+
 [13. res.send() 의 오류(새로고침시, 양식을 다시제출하는)를 방지하는,  res.redirect()]
 
     - recommend 페이지에, form 에서 값을 받아오고, 저장후에, 확인페이지로 넘어가는 작업
@@ -214,8 +228,8 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
 [14. 템플릿과, 템플릿 엔진의 사용 ejs  [1단계 - 세팅]]
     1. npm install ejs
 
-    2. app.set("views",path.join(__dirname,"views"))
-    3. app.set("view engine","ejs")
+    2. app.set("views",path.join(__dirname,"views"))        // 탬플릿(기존 html) 이 있는 곳은 views 라는 폴더이다
+    3. app.set("view engine","ejs")                         // 탬플릿을 읽는 엔진으로는 "ejs" 템플릿 엔진을 사용하겠다.
 
     4. [모든 HTML 파일 확장자] [.ejs 로 변경]
 
@@ -236,9 +250,10 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
         -   이게 진짜 사용 이유!!
             * res.render("ejs파일이름", {동적으로작동시킬코드이름 : 값}) **********************************
     
-        1) HTML 코드 안에서 <%= 동적으로작동할코드이름 %>
-        2) [서버측에서] [동적으로 작동한 HTML 코드이름 과 연결]
-        3) 동적으로 작동시키기
+        - 1. HTML 코드에, EJS 구문을 넣고, [동적으로 작동시키기]
+            1) HTML 코드 안에서 <%= 동적으로작동할코드이름 %>
+            2) [서버측에서] [동적으로 작동한 HTML 코드이름 과 연결]
+            3) 동적으로 작동시키기
 
             ex) <p>  "hi" <%= numberOfRestaurant %>   </p>                      // HTML [P 태그 안]에 [SPAN 처럼 입력]
 
@@ -250,5 +265,67 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
                     res.render("restaurants", {numberOfRestaurant : storedRestaurants.length} ) // [HTML파일의 동적으로 작동할코드]를 [동적으로 변경시킴]
                 })
             
-                
+        - 2. HTML 코드에, EJS 구문을 넣어, [HTML 코드 반복시키기] + 동적으로 작동시키기 + [ if 문 작성하여 HTML 코드 동적으로 바꾸기]
 
+        <% if (numberOfRestaurant ===0) { %>
+            <p> no recommend restaurant exist </p>
+        <% } else { %>
+    -       <% for (const restaurant of restaurants) { %>  
+                <li class="restaurant-item">
+                    <article>
+    -               <h2>     <%= restaurant.name %>     </h2>
+                    <div class="restaurant-meta">
+    -                   <p> <%= restaurant.cuisine %>  </p>
+    -                   <p> <%= restaurant.name %>  </p>
+                    </div>
+                    <p>
+    -                   <%= restaurant.description %> 
+                    </p>
+                    <div class="restaurant-actions">
+    -                   <a href=""> <%= restaurant.website %> </a>
+                    </div>
+                    </article>
+                </li>
+    -       <% } %>
+        <% } %>
+        * 열고닫는 태그를 [HTML에도 쓸 수 있어진다.] ==>> [for 반복문을 JavaScript처럼 사용 할 수 있다!!]
+        * [.json의 값들을] 가져와서 [HTML 코드]를 [동적으로 바꿀 수 있다.]
+        * [.js] 에서 할 일은 [추가적인 render()의 키,값 쌍을 집어넣는 것이다.]
+
+            res.render("restaurant", numberOfRestaurant : storedRestaurants.length, restaurants : storedRestaurants)
+
+        해석 : HTML 코드를 [.json의 배열에 대해 반복문을 작성] [for - of 반복문]
+                [한 배열 안에 있는 객체들을 하나씩 소환], [각 값의 동적인 값으로 적용]
+
+        [중요한점]:  1. ejs의 [구문은] <%   %> 로 표시한다.
+                    2. ejs의 [단일 값들] 은 <%=   %> 로 표시한다.
+                    3. ejs의 [구문을 사용할 때에는] <% for(){  %>  처럼 [한쪽 중괄호만 표시하고]
+                        [HMTL 코드 에서, 구문을 종료하고 싶을 때]    <% } %> 처럼, [다른쪽 중괄호로 닫는다.]
+
+        - 3. [단순히 딱 떨어진 HTML 코드를 잘라], [파일에 넣고], [한 폴더에 집어넣으면] [어디든 그 코드를 끼워넣을 수 있다.]
+                * HTML 코드의 [변수화?]
+
+            <header id="main-header">
+            <div id="logo"><a href="/index">Eatwell</a></div>
+
+            ...
+
+            <span></span>
+            </button>
+            </header>          
+            
+            * 이러한 header HTML 코드를 잘라, [header.ejs] 에 집어넣고, [include] 라는 폴더를 만들어 집어넣어준다.
+            
+            ** 우리는 모든 HTML 파일에 이 header가 들어가므로, 
+                        [모든 HTML 파일의 header 안에 있는 코드들 대신]
+                <head>
+            -   <%-  include("include/head") %>
+                </head>
+                <main>
+            -   <%-  include("include/header") %>
+            -   <%-  include("include/aside") %>
+                </main>
+                        처럼 사용하면, [마치 변수에 저장하고 사용하듯, HTML 코드를 사용할 수 있다.]
+            
+            사용 : 모든 반복되는 구문에 대하여 사용 
+                        EX) header, aside, footer 등 [모든 페이지가 같은 코드이름]

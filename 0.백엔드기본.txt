@@ -65,7 +65,33 @@
 [10. 미들웨어]
     : 모든 들어오는 요청에 대해 실행시키는, 요청 처리기
 
-[11. 템플릿]
+[11. 템플릿과 템플릿의 사용 이유]
+
+    - 템플릿 엔진의 사용이유
+    : 서버에 HTML 파일을 [동적으로 사용하기 위해]
+    :    [특별한 EJS 구문을 사용함으로써!]
+    - 템플릿엔진 ejs의 사용
+    - npm install ejs
+    - app.set() 의 사용 [ express의 세팅창 ]
+    * app.set("views", path.join(__dirname, "views"))
+        ==> [처리하는 탬플릿파일이 있는 위치는 "views"폴더이다.]
+    * app.set("view engine", "ejs")
+        ==> [탬플릿을 읽는 엔진을 사용할건데] 이름은 [EJS] 엔진이다.
+    - HTML파일의 확장자를 전부 .ejs 로 변경
+
+    - res.render() 의 사용
+    * 특징 : [이미 set() 에서 views 폴더를 지정했기에,]
+            [,  또한 render 라는 코드가 ejs 파일을 찾아 사용할것이기 때문에]
+            ==>> 1. 확장자를 따로 적지 않고, 파일이름만 적는다
+                2. 경로를 따로 지정하지 않고 그저 파일이름만 적는다.
+                
+    * 기존 :    app.get("/asd",function(){
+                const filePath = path.join(__dirname,"views","index.html")
+                res.send(filePath)
+                })
+    * 사용후 :  app.get("/asd",function(){
+                res.render("index")
+                })
 
 [12. npm]
 

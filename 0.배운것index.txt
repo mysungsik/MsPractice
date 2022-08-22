@@ -25,34 +25,22 @@
         - 데이터 받아올 때, 전체 다 받아오기        res.body
         -               , name 별로 따로 받아오기  res.body.name
 
-    9. 템플릿의 사용
+    9. 템플릿의 사용 = 진정한 [동적인 웹사이트]
         - 템플릿 엔진의 사용이유
-            : 서버에 HTML 파일을 [동적으로 사용하기 위해]
-            :    [특별한 EJS 구문을 사용함으로써!]
         - 템플릿엔진 ejs의 사용
         - npm install ejs
         - app.set() 의 사용 [ express의 세팅창 ]
-            * app.set("views", path.join(__dirname, "views"))
-                ==> [처리하는 탬플릿파일이 있는 위치는 "views"폴더이다.]
-            * app.set("view engine", "ejs")
-                ==> [탬플릿을 읽는 엔진을 사용할건데] 이름은 [EJS] 엔진이다.
         - HTML파일의 확장자를 전부 .ejs 로 변경
-
         - res.render() 의 사용
-            * 특징 : [이미 set() 에서 views 폴더를 지정했기에,]
-                    [,  또한 render 라는 코드가 ejs 파일을 찾아 사용할것이기 때문에]
-                    ==>> 1. 확장자를 따로 적지 않고, 파일이름만 적는다
-                         2. 경로를 따로 지정하지 않고 그저 파일이름만 적는다.
-                         
-            * 기존 :    app.get("/asd",function(){
-                        const filePath = path.join(__dirname,"views","index.html")
-                        res.send(filePath)
-                        })
-            * 사용후 :  app.get("/asd",function(){
-                        res.render("index")
-                        })
-
-        - HTML (=EJS) 에  <%= EJS태그 %> 로 특별한 탬플릿구문을 사용
+        - HTML (=EJS) 에  <%= EJS태그 %> 로 특별한 탬플릿구문을 사용 
         - res.render("파일이름", { EJS태그 : 값 } )
-            * ejs에서 사용가능한 코드 render( =ejs파일이 읽히는것)
-            ==>> 동적으로 HTML(=EJS) 코드가 변경됌 [ 서버측에서 ]
+        - 동적인 HTML값의 사용
+        - <%=   %> 의 사용 
+            [ 단일값 ]
+        - HTML 태그 잘라내어, 파일로 저장, 부분부분 붙여넣기
+        - <%- include("폴더이름/파일이름")   %> 
+            [ HTML태그 붙이기]
+        - HTML 안에서 Javascript 구문 사용하기
+        - <%    %> 의 사용 
+            [ if, for 같은 구문들]
+

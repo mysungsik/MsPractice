@@ -20,19 +20,19 @@ app.get("/", function(req, res){
 
 
 
-
 // [node.js에서 html을 연결하는 방법]
 //  : [파일 경로 지정] , [ sendFile 을 통해, 파일 자체를 불러옴]
 // 물론 라우터경로는 자기마음대로지만   [대게, html 파일 이름을 기능에 잘맞게 짓기때문에, 그대로 따라가면 좋다.]
 
 // 레스토랑
+
 app.get("/restaurants", function(req,res){
     const filePath = path.join(__dirname,"data","restaurant.json")
 
     const fileText = fs.readFileSync(filePath)
     const storedRestaurants = JSON.parse(fileText)
 
-    res.render("restaurants", {numberOfRestaurant : storedRestaurants.length})
+    res.render("restaurants", {numberOfRestaurant : storedRestaurants.length, restaurants : storedRestaurants})
     // restaurants.ejs 파일을 랜더해라(실행해라), 그 안에있는 numberOfRestaurant 라는 ejs 구문이 있다면,
     //                                                          그 안에는 storedRestaurants.length 값을 집어넣어라
     
