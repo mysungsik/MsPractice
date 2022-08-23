@@ -14,6 +14,10 @@
           <p> you are not have restaurant recommend</p>
         <% } else {  %>
           <p> how many restaurant you find <%= numberOfRestaurant %> restaurants</p>
+          <form action="/restaurants" method="get">
+            <input type="hidden" value="<%= orderLaw %>" name="order">
+            <button class="btn"> change order</button>
+          </form>
           <ul id="restaurants-list">
             <% for(const restaurant of restaurants) { %>
               <%- include("includes/restaurantitem",{restaurant : restaurant}) %> 
