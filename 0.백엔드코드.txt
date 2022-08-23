@@ -1,4 +1,29 @@
 [1. http 패키지 불러오기]  
+[2. sever 만들기]
+[3. sever에 수신대기 포트 만들기]
+[4. 요청과, 응답 함수를 만들어서 서버에 집어넣기]
+[5. statusCode, end()]
+[6. request 와 response]
+[7. new Date().toISOString()]
+[8. [node.JS] 그리고 [타사패키지 Express.js]]
+[9. node express의 사용]
+[10. 받아온 데이터를 다시 자바스크립트 코드로 변환하기] [use 를 사용하여!] + [미들웨어 함수]
+[11. 파일에 접근하기 위한, 내장패키키지와 사용]
+[12. HTML 파일과 node.js[서버] 사이의 연결]
+[12-1. CSS, javaScript 같은 정적파일과 nodejs 연결!]
+[13. res.send() 의 오류(새로고침시, 양식을 다시제출하는)를 방지하는,  res.redirect()]
+[14. 템플릿과, 템플릿 엔진의 사용 ejs  [1단계 - 세팅]]
+[14-1. 템플릿과, 템플릿 엔진의 사용 ejs  [2단계 - 사용 ,장점]]
+[15. 동적 라우트를 연결]
+
+
+
+
+
+
+
+
+[1. http 패키지 불러오기]  
 const http = require(http)      // 물론 변수이름은 마음대로 
 
         HTTP PAKEAGE 둘러보기 ==>> https://nodejs.org/dist/latest-v18.x/docs/api/http.html
@@ -191,7 +216,8 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
         res.sendFile(htmlFilePath)
     })
     ...
-    
+
+
 [12-1. CSS, javaScript 같은 정적파일과 nodejs 연결!]
 
     HTML 파일
@@ -404,4 +430,194 @@ server.listen(3000)         // 3000은 마음대로 입력한 [포트번호]이�
                         * IF문의 CHECK는 
                             [URL에 입력되어, ID값으로 받아와진 값] === [.JSON 에 입력된 ID 값]
                             이라는 조건이 들어가야한다.
-                    [그 값으로 각각의 요소를 채운다.]                
+                    [그 값으로 각각의 요소를 채운다.]
+
+
+16. 상태코드 추가한 후, render 하기
+        res.status(코드번호).render()
+
+
+17. [다른 폴더에, 다른 파일을 만들어!! ] [코드를 쪼개 함수를 만들어, 중복되는 코드 줄이기]
+        * 리팩토링
+        
+        ==>> 장점 :  [중복된 코드의 제거]
+                    [ 코드 변경시, 한 파일에 있는 것만 변경해도 한번에 전부 같은것들이 변경됌]
+
+                비슷한것 : [ejs의 중복된 HTML코드 제거] include()
+
+        * KEY : module.exports( { 외부에서사용할키: 정의한이름 } )
+                module.exports( router )
+                각 파일에, 각각 패키지 require하기 [필요한것들에 한해서]
+                [함수를 불러올때], [사용할 곳]에 [함수가 들어있는 내 파일 이름]을 [require 하기]
+                path.join(__dirname) 은 자신의 위치가 기준이점, [상위 폴더로 가려면] [".."] 을 추가해야하는 점
+
+        * 중요 : app.get( function(){
+                })
+                [안에 있는 모든] [패키지를 사용하는 값이나 연관되어 있는 값들은] [전부 한 파일에 몰아서 저장해야한다]
+                    ==>> 함수의 특성상, [함수 안에 정의한 변수들은, return없이 함수 바깥에서 사용이 불가능하므로!!!]
+
+
+        1) util 폴더 만들기(이름은 고정x), 안에 쪼개넣을 함수를 가진 .js파일 만들기
+
+        2) [중복되는 코드를 가져와 함수형으로 바꾸기]
+
+                *단, 반드시 [한 라우터 내에 쓰였던 모든 함수들은 [전부] 가져와서 한 파일에 묶어야한다.]
+                    : 함수로 정의하는 특성상, 함수 내에 정의한 변수이름은, 밖으로 빼서 사용할 수 없기 때문
+                * __dirname 의 경로는 [자기 자신을 기준점으로 하므로, [".."]을 통해, 상위 폴더로 한번 가 주었다.]
+            const fs = require("fs")
+            const path = require("path")
+                    
+            const filePath = path.join(__dirname,"..","data","restaurant.json")
+                    
+            function bringRestaurantData(){
+                const fileText = fs.readFileSync(filePath)
+                const storedRestaurants = JSON.parse(fileText)
+                    
+                return storedRestaurants     
+            }
+                    
+            function writeRestaturantData(storedRestaurants){
+                fs.writeFileSync(filePath, JSON.stringify(storedRestaurants))
+            }
+
+
+
+        3) [내 파일 노출시키기]  module.exports = {}
+                : 코드를 리팩토링하게 위해 정리한 파일은, [노출시켜야], [상대편에서 받아서] [사용가능하다]
+
+            module.exports = { bringRestaurantData : bringRestaurantData, writeRestaturantData : writeRestaturantData}
+
+                            [앞의 키는 상대편에서 사용할 키, 뒤의 값은 [내가 정한 함수이름]]
+                            * 대부분은 [헷갈리지 않기 위해 같은 값을 사용]
+
+        4) [상대편에서 받아서 사용하기] =>>  const 변수이름 = require(위치)
+            
+            const resData = require(./util/restaurantData)
+                * require 경로는 항상 [확장자가 없음을 명시]
+                * [상대경로를 사용하는것 명시]
+
+        5) [사용]
+                : 함수처럼 사용하돼, [app.get 처럼] require을 담은 변수 객체를 소환하여, 붙여사용
+            
+            const storedRestaurants = resData.bringRestaurantData();
+
+            resData.writeRestaturantData(storedRestaurants) 
+
+
+
+18. [다른 폴더에, 다른 파일을 만들어] [ 라우트들을 쪼개 넣어] [라우트를 깔끔하게 관리하기 ==> 라우터 (get, post 등)]
+    ==>> [리팩토링]이라고 부른다.
+            1] 저장
+                1) routes 폴더 생성, .js 파일 생성
+
+                2) [새 파일에, express 라우트를 생성] 
+                    const express = require("express")
+                    const router = express.Router();
+
+                3) 새파일의 app ==>  router로 교체
+
+                4) [새파일의 라우터 내보내기]
+                    module.exports = router
+
+            2] 사용 ==> require
+                1) 불러오기
+                    const defaultRouter = require("./routes/default")
+
+                2) 사용
+                    app.use("/",defaultRouter)
+                        ==>> [app.use() 는 모든 요청을 처리하는 미들웨어로]
+                            ["/"로  시작되는 모든 값들은 전부 defaultRouter 를 거쳐서 들어와라 ] 라는 뜻이다.
+                            [미들웨어 = 필터] 라고 생각하면 편하다
+                            [defaultRouter] 에 없는 요청이면 다음 app.get 등으로 넘어간다.
+
+                * 리팩토링후, 내 파일을 참조한 resData 같은 것들을, 쓰일 곳에 다시 집어넣어주고, 경로를 잘 조정한다.
+                            사용하는 uuid 나 fs, path 위치도 전부 조정하거나, 삭제하거나, 이동한다.
+                     resData = require("./util/restaurantData")
+
+                        참조: [ "." ==> 같은 위치의 폴더]
+                              [ ".." ==> 상위 위치의 폴더]
+
+
+    유의할점:
+        1) 내 파일을 [내 다른파일에 require 하기]
+         2) 각 파일마다 필요한 패키지는 require 해서 사용하기 [ fs, path 등의 패키지를 쓰는 파일은 각각 전부 해주어야함]
+        3) [쪼갠 코드를 모아놓은 파일에는] [module.exports ={}] 로, 노출하고자 하는 함수를 표기하기 [다른일에서 쓸 키 : 함수이름] 
+                            * 단순히 함수이름만 사용한다 () 없이
+        4) path.join(__dirname,) 을 사용할때, 완전히 다른폴더로 이동하려면 , [".."] 으로 상위폴더로 올라가는 값을 넣어서 위치를 이동해야한다.
+
+19. 쿼리 매개변수(파라미터) 를 사용하여, [레스토랑 리스트 이름차순으로 정렬하기]
+
+    0. [데이터배열]을 [정렬] = 배열.sort()      // 고급함수니 그저 작동법을 외우자
+
+        storedRestaurants.sort(function(resA,resB){
+            if( resA.name > resB.name){
+                return 1
+            }
+            return -1
+        })
+
+        결과 :  1은 그대로, -1은 뒤집힌다. 
+        ==>> 알아서 비교하면서 [알파벳 순서대로 정리될것이다.]
+
+    2. 쿼리 매개변수 생성
+        : [버튼을 눌렀을때, query매개변수를 생성하는 방법]
+
+        : ejs 파일에서, hidden 값으로 <input type = "hidden" name = 이름, value = 값>
+          form을 감싸, button 만들어, 값을 받아내기
+
+    3. 쿼리 매개변수를 받아오기
+        let order = req.query.order                 [마치 post로 받은 form의 객체값을, req.body 로 받듯이]
+
+    4. 혹시나, 쿼리 매개변수가 잘못되었을 것을 확인하며, 검증
+        if( order !== "asc" && order !=="desc"){
+            order = "asc";
+        }
+
+    5. [정방향 정렬], [반대방향 정렬] 코드를 만들기
+
+        if(order =="asc" && resA.name > resB.name){
+            return 1 // 정방향정렬
+        }
+        if(order =="desc" && resB.name > resA.name){
+            return 1 // 역방향정렬
+        }
+        return -1
+        
+        ==>> order가 asc = 정방향
+                    desc = 역방향
+        ==>> 이제 버튼을 눌렀을때, [value가 asc로 되냐], [desc로 되냐] [동적 전달만 하면 된다.]
+
+    6. ejs 파일에가서, 동적으로 전달
+        value = " <%= nextOrder  %> " 
+    
+    7. asc, desc가 바뀌는 논리 만들기 ******************************************************
+        let order = req.query.order;
+        let nextOrder = "desc"
+
+        if(order === "desc"){
+            nextOrder = "asc";
+        }
+        ==> [처음] nextOrder = desc;
+            [클릭] => if체크에 의해 => [order에 desc] => [nextOrder => asc]
+            [클릭] => order는 asc이므로, [nextOrder의 값은 유지] => [nextOrder = desc]
+            [클릭] => if체크에 의해 => [order에 desc] => [nextOrder => asc] ... 
+
+-            let  a = 받아오는값
+-            let b = dasc
+-            처음 은 = b
+-            if( a === dasc)
+-                b= asc
+-            ==> b는 asc로 들어가서 a는 다시 asc가돼
+-            ==> if 체크를 빗겨나가 b=dasc로 다시들어가고
+-            ==> URL은 다시 A를 DASC로 만들고
+-            ==> 그러므다시 b  는 ASC로 되어 URL에 들어가고 ....\
+
+        8. ejs 템플릿에 nextOrder 전달
+            res.render("", {nextOrder:nextOrder})
+
+
+
+
+
+
+            

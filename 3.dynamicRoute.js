@@ -2,6 +2,9 @@ const fs = require("fs")
 const path = require("path")
 const uuid = require("uuid")
 
+// 상대경로로 [내 파일 요청하기] - [노출시킨 파일만 작동가능]
+const resData = require("./util/restaurantData")
+
 const express = require("express")
 const app = express()
 
@@ -18,12 +21,13 @@ app.get("/", function(req, res){
 })
 
 app.get("/restaurants", function(req,res){
-    const filePath = path.join(__dirname,"data","restaurant.json")
+    const storedRestaurants = resData.bringRestaurantData();
 
-    const fileText = fs.readFileSync(filePath)
-    const storedRestaurants = JSON.parse(fileText)
-
-    res.render("restaurants", {numberOfRestaurant : storedRestaurants.length, restaurants : storedRestaurants})
+    res.render("restaurants", 
+    {numberOfRestaurant : storedRestaurants.length, 
+    restaurants : storedRestaurants
+    
+    })
 })
 
 
@@ -31,16 +35,14 @@ app.get("/restaurants", function(req,res){
 app.get("/restaurants/:id" ,function(req,res){
     const retaurantId = req.params.id;                                                   // id인 이유는 "/restaurants/:id" 에서 이름을 id로 정의했기 때문
     
-    const filePath = path.join(__dirname,"data","restaurant.json")
-    const fileText = fs.readFileSync(filePath)
-    const storedRestaurants = JSON.parse(fileText)
+    const storedRestaurants = resData.bringRestaurantData();
 
     for (const restaurant of storedRestaurants){
         if(restaurant.id == retaurantId){
             return res.render("restaurants-detail", {title : restaurant})
-            
         }
     }
+    res.render("404")
     // id가 같은 것을 찾았으면 [루프를 멈추기 위해 return 을 사용]
     // 같은 id를 찾았다면, [어떤 한 배열의 객체가 선택된 것이고,] [storedRestaurants 안의 값들이 restaurant로 받아와지고 ]
     // "restaurants-detail" 에서, [title 이라는 ejs 구문을 가진 코드를], [for 루프의 restaurant, 즉, storedRestaurants로 바꿔준다.]
@@ -65,12 +67,14 @@ app.post("/recommend", function(req,res){
     restaurant.id = uuid.v4();
     // 자바스크립트는 [객체에서 '없는' '속성'에 접근하려 하면, '새로만들어서' 접근하게해준다] 를 이용함
     //      ==>> 객체에 값을 저장할때, 유니크한 아이디와 함께 저장되도록 만들었다.
-    const filePath = path.join(__dirname,"data","restaurant.json")
-    const fileText = fs.readFileSync(filePath)
-    const fileJava = JSON.parse(fileText)
 
-    fileJava.push(restaurant)
-    fs.writeFileSync(filePath, JSON.stringify(fileJava))
+    const storedRestaurantData = resData.bringRestaurantData();
+    // [위치잡고, json파일읽고, 자바로바꾼 함수] ==> 결과물 : 자바로바뀐.json 데이터
+
+    storedRestaurantData.push(restaurant)
+    
+    resData.writeRestaturantData(storedRestaurantData)
+    // 받은 json 자바 데이터를, 텍스트데이터로 바꿔, 다시파일에 쓰는 함수
 
     res.redirect("/confirm")
 })
@@ -87,5 +91,18 @@ app.get("/confirm", function(req,res){
 app.get("/about", function(req,res){
     res.render("about")
 })
+
+
+// [오류처리 페이지] 404, 500 error Page - [미들웨어를 사용한!]
+
+app.use(function (req,res){
+    res.render("404")
+})
+// [일반적으로 localhost:3000 / 이후에 나타나는 url이 잘못되었을 경우 사용 가능한 오류처리] - ex) 주소 잘못입력
+
+app.use(function(error, req, res, next){
+    next.render("500")
+})
+// [4가지의 파라미터를 가지는 [오류처리도구] ] - [파일이 잘못되었을 경우 사용가능] ex) 읽어야하나는 json 파일이 오류가 났다던가... 
 
 app.listen(3000)
