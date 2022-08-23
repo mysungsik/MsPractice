@@ -1,0 +1,45 @@
+1. npm install [nodemon, uuid, express, ejs]
+
+2. 서버측에서 코드실행 [ render 사용]
+
+3. view setting , ejs파일로 변경
+
+4. nodemon setting [ package]
+
+5. CSS, javaScript 연결 [ public 폴더에 넣고 static ]
+    app.use(express.static("public"))
+
+6. 앵커태그 href = "/포트뒤주소" 로 변경, app.get()으로 전부 연결
+
+7. 코드 includes 폴더에 저장후, 치환
+
+[8. recommend에서 받아온 함수로, restaurants에 해당하는 li 을 계속 만들게하기]
+    app.use(express.urlencoded({extended: false}))
+
+9. form 에 action과 method 달아서, 값 가져오기
+    * 새로고침 오류 방지를 위한, action에 자기자신, 나중에 redirection 으로 넘어갈것.\
+
+10. 값가져오기위한 data폴더 생성, restaurants.json 생성
+
+11. recommend에서 [json파일 읽고, 데이터 덮고, 다시 쓰기]
+    * 실수 1. fs.writeFileSync(위치, 텍스트로 만든 파일) 인데, 
+                텍스트변경 x , 위치 쓰기도 x
+
+12. 저장된 파일을 가지고, restaurants에서 자동으로 <li> 만들기
+    +include() 로 치환하여, restaurants-list 로 따로 빼기
+
+13.  restaurants에 자동으로 만들어진 <li> 의 [앵커태그]를 눌렀을때, detail page로 이동하게 작업하기
+ 
+
+13-1. form 값을 받을때,  id 값도 같이 받게하고 json에 저장하기
+13-2. id값을 json에 저장하여, render()의 추가 ejs구문으로, 앵커태그의 href="/restaurants/<%= restaurants.id %>"로, 동적인 앵커태그만들기
+
+13-3. 동적인 앵커태그에 의해, URL 값이 나오면 [그것을 URL 아이디로 받게하기]
+                const URLid =  req.params.id;
+
+13-4. restaurantsDetail 을 ejs 구문을 집어넣어 동적으로 만들기
+
+13-5. [app.js] 의 [for 과 if  구문을 이용해],
+     [앵커태그를 눌렀을때 나오는 URLid와] [모든 json 배열을 뒤져, 나온 id중 URLid가 같은 배열을 찾아]
+         [그 배열 안의 값으로, render한 페이지의 ejs 구문 채우기]
+
