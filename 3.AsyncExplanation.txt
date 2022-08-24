@@ -84,9 +84,9 @@ async : [스스로 return 되지 않음!] *****
         로 에러처리
 
 
-[3. async 와 await 를 사용한, 비동기식처럼 보이는 동기식 처리]
+[3. async 와 await 를 사용한, 동기식처럼 보이는 비동기식 처리]
 
--    [ async , await  :  프로미스 사용시 만 사용가능한 [마치 비동기식으로 보이게 하는 동기식 작용법] ]
+-    [ async , await  :  프로미스 사용시 만 사용가능한 [마치 동기식으로 보이게 하는 비동기식 작용법] ]
 
     async function(){
         let fileData;
@@ -147,7 +147,7 @@ async : [스스로 return 되지 않음!] *****
     }
 
 
--   [4. 비동기식의 사용]  - promise , async, await 를 사용한 [비동기식 처럼 보이는 동기식 사용]
+-   [4. 비동기식의 사용]  - promise , async, await 를 사용한 [동기식 처럼 보이는 비동기식 사용]
 
     const fs = require("fs/promises")
 
@@ -167,8 +167,10 @@ async : [스스로 return 되지 않음!] *****
                 2. file 을 변수에 받아서 쓸 수있음
                 3. require("fs")
                 4. 파일 읽는 도중, 코드 멈춤
+                5. 항상 자동으로 값을 return 함
 
         [비동기식]  1. error 파라미터를 사용해, 오류 처리
                    2. file을 변수에 받아서 쓸 수 없음
                    3. promise 사용시 [require("fs/promises")]
                    4. 파일 읽는 도중에도 코드는 계속 흘러감
+                   5. 자동으로 값을 return 하지 않음!
