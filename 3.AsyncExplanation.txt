@@ -8,8 +8,8 @@ async : 파일이 읽혀지고 실행될때까지, 다음 줄의 코드들은 �
 조건2 [파일을 읽는 도중 다음 코드 줄을 읽어도, [파일과 다음코드줄이 전혀 관계가 없음] ==>> 비동기식으로 해도 전혀 상관 X]
 
 [작동조건]
-sync : [알아서 retrun 되므로] [변수에 저장하여 사용]
-async : [스스로 return 되지 않음!]
+sync : [알아서 retrun 되므로] [변수에 저장하여 사용] ****
+async : [스스로 return 되지 않음!] *****
 
 
 -  [비동기식의 사용] :
@@ -44,6 +44,9 @@ async : [스스로 return 되지 않음!]
 
 -   [콜백함수지옥]
     fs.readFile("data.txt", function(error, fileData){
+        if(error === true){
+            ...
+        }
         asd.function(asd, function(asd,fgdfh){
             asd.function(asd, function(sdf,sdfd){
                 ...
@@ -52,21 +55,120 @@ async : [스스로 return 되지 않음!]
     })
     [코드가 복잡해지고, 읽기 어려워지는 이 콜백함수를 탈출하기 위해] [깔끔하게 정리되는 promise 를 사용할것]
 
+-   [프로미스를 사용한, 비동기식 사용]
 
     const fs = require(fs/promise)
 
-
-
+    function readFilesToPromise(){
+        let fileData
+        fs.readFile("3.AsyncData.txt").then(function(fileData){
+            console.log(fileData.toString())
+        }).then(function(){
+            ...
+        }).then(function(){
+            ...
+        })
+    }
 
     ===>> [promise] 를 통해서, [콜백함수 없이 [구조화되도록] 처리하도록 해본다.]
 
     [완벽한 장점]
         : 코드를 구조화하기 매우 좋다. [가동성이 매우 좋아진다.]
          Promise chain을 통해, 깔끔하고 보기좋은 코드를 만들 수 있다.
-         
+
     [차이점]
-    : [error 처리]
+    : [error 처리] .then(function(fileData)) 대신에
+
         .catch(function(error){
         })
+        로 에러처리
 
 
+[3. async 와 await 를 사용한, 비동기식처럼 보이는 동기식 처리]
+
+-    [ async , await  :  프로미스 사용시 만 사용가능한 [마치 비동기식으로 보이게 하는 동기식 작용법] ]
+
+    async function(){
+        let fileData;
+
+        fileData = await fs.readFile("data.txt")
+    }
+
+    [비동기식 이지만, 마치 동기식처럼 보이고, 파일에 저장하여 쓰는것이 가능해진다]  
+-   [async 와 await 를 통해서!!!]
+
+
+[결론]
+
+-   [1. 동기식의 사용]
+
+    const fs = require("fs")
+
+    function(){
+        const fileData;
+        try{
+            fileData = fs.readFileSync("data.txt")
+        }
+        catch{
+            console.log("you got a error")
+        }
+    }
+
+
+-   [2. 비동기식의 사용]  - 콜백함수*
+
+    const fs = require("fs")
+
+    function(){
+        const fileData;
+        fs.readFile("data.txt", function(error, fileData){
+            if(error === true){
+                console.log("you got a error")
+            }
+            console.log(fileData.toString())
+        })
+    }
+
+-   [3. 비동기식의 사용] - promise , then , catch
+
+    const  fs = require("fs/promises")
+
+    function(){
+        const fileData;
+        fs.readFile("data.txt").then(function(fileData)){
+            console.log(fileData.toString())
+        }.then(function(...){
+            ...
+        }).then(function(){
+            ...
+        })catch(error){
+            console.log(error)
+        }
+    }
+
+
+-   [4. 비동기식의 사용]  - promise , async, await 를 사용한 [비동기식 처럼 보이는 동기식 사용]
+
+    const fs = require("fs/promises")
+
+    async function(){
+        const fileData;
+        try{
+            fileData = await fs.readFile("data.txt")
+        }catch{
+            console.log(error)
+        }   
+       
+        console.log(fileData.toString())
+    }
+
+-   [5. 동기식 비동기식 차이 최종결론]
+        [동기식] 1. try catch 를 통한 오류 처리
+                2. file 을 변수에 받아서 쓸 수있음
+                3. require("fs")
+                4. 파일 읽는 도중, 코드 멈춤
+
+        [비동기식]  1. error 파라미터를 사용해, 오류 처리
+                   2. file을 변수에 받아서 쓸 수 없음
+                   3. promise 사용시 [require("fs/promises")]
+                   4. 파일 읽는 도중에도 코드는 계속 흘러감
