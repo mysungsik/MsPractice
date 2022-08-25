@@ -91,6 +91,7 @@ console.log(hobbies);
 //[7] try catch 를 통해 [함수의 오류를 처리하고, 끊기지 않는 함수 만들기]
 
 const fs = require("fs")
+const { title } = require("process")
 
 function readFile(){
     try{

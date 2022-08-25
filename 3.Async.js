@@ -12,11 +12,15 @@ function readFiles(){
 // 비동기식 작동 - 콜백함수지옥 탈출하기 [ pormise, .then(funtion)]
 
 function readFilesToPromise(){
-    let fileData;
+
     fs.readFile("3.AsyncData.txt").then(function(fileData){
         console.log(fileData.toString())
         console.log("file sync done!")
+    }).catch(function(error){
+        console.log(error)
     })
+       
+    
     console.log("hi there!")
 }
 
@@ -24,4 +28,15 @@ function readFilesToPromise(){
 
 readFilesToPromise()
 
-// 프로미스 안에서 사용하ㅣㄹ await
+// 프로미스 안에서 사용할 await
+
+async function readFileAsync(){
+    try{
+        const readFileData = await fs.readFile("3.AsyncData.txt")
+        console.log(readFileData.toString())
+    }catch{
+        console.log("we got error!")
+    }
+}
+
+readFileAsync();
