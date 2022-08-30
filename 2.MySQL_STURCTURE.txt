@@ -1,0 +1,153 @@
+[0.코드]
+1. CURRENT_TIMESTAMP
+    : DATATIME 타입을 사용할때 [default/Expression] 에 사용
+    => [MySQL의 기본기능]으로, 테이블에 값을 입력할때 자동으로 [시간과 날짜가 받아와진다.]
+
+- [0. 사용]   ***************************************************
+
+    1. 사용하고자 하는 데이터테이블의 연관관계를 미리 정리한다.
+    2. 테이블을 만들며 연결한다.    [id로]
+
+    관계:[one to one]
+        [one to many]
+        [many to many]
+            
+
+
+[0. 데이터를 가져오는 형태]
+
+    [데이터베이스에서 query 를 하여 가져오면]
+    값은 [데이터] , [ 메타데이터] 
+    그중, [데이터] 는
+    [{},{},{},{} ....] 의 형태이다.
+
+
+[1. 서로다른 데이터테이블을 연결하기]
+    : 한 데이터테이블의 행과 열의 값으로, 다른 테이블에 참조하는 방법
+
+-   1) 준비단계
+        연관된 세 테이블을 준비  [A , B, C 테이블이라 가정]
+
+-   2) 테이블 설정하기
+       addresses 테이블에는 [ 음식점 주소값을 저장]
+        types 테이블에는 [ 음식 타입값을 저장]
+        restaurants 테이블에는 [ A,B테이블에서 올 id값을 저장한는 컬럼을 저장]
+
+        ex) adresses id = int
+                    Address = VARCHAR(255)
+                    Street = VARCHAR(255)
+                    city = VARCHAR(255)
+                    country = VARCHAR(255)
+                    ...
+            types   id = int
+                    type = VARCHAR(255)
+                    foodname = VARCHAR(255)
+
+           restaurants  id = int
+                        name = VARCHAR(255)
+                        adress_id = int
+                        type_id = int
+
+        * [내보낼 값의 타입]과 [받을 값의 타입]은 일치해야한다  (int 면 int)
+
+        ==>> 이제 restaurants 테이블에  
+        [adress 테이블 의 값]과 [types 테이블의 값]을 가져올것이다.
+
+-   3) 데이터값 연관짓게 설정하기
+        addresses table과 types 테이블에 각각 데이터를 저장했다면
+        [데이터에 맞는 고유 id가 각각 있을것이다]
+        ==>> [고유 id에 맞게] restaurants 테이블의 [adress_id와] [type_id] 의 값을 
+                [addresses]와 [types] 의 [컬럼 id]의 값으로 넣어준다.
+
+        ex) addresses
+                id = 1, Address = "munin" , Street = "teststreet"... country = "korea"
+                id = 2, Adresss = "sdas" , Street = "roisstreet" ... country = "korea"
+                id = 3, Adresss = "hghfd" , Street = "gfghdstreet" ... country = "USA"
+
+            types
+                id = 1, type = "Italian"
+                id = 2, type = "korea"
+                id = 3, type = "USA"
+
+            restaurants
+                id = 1, name = "KimchiBabhouse" adress_id = 3, type_id = 2
+                id = 2, name = "burgerhouse" adress_id = 2, type_id = 1
+
+                ==>> "KimchiBabhouse" 은 [addresses의 id=3 주소]에 있는, 2번타입(korea)의 음식점이 될것이고
+                ==>> "burgerhouse" 는 [adresses의 id=2 주소]에 있는, 1번타입(Italian)의 음식점이 될것이다.
+
+-   4) 연관지은 데이터값을 [연결하기] ==> 다른 데이터테이블에서 [쿼리하기]
+        : JOIN!     [SELECT, INNER JOIN, ON]
+
+        * 반드시, 값을 받으려는 쪽에서, 컬럼의 데이터값을, 상대방의 id로 잘 적어서 데이터를 저장했어야 한다.
+
+
+        1) [선택한 테이블 안으로 다른 테이블의 값 가져오기]
+            : SELCECT * FROM [A테이블] INNER JOIN [B테이블] ON ([A테이블.원하는컬럼] = [B테이블.원하는컬럼])
+
+-           ex) SELECT * FROM restaurants INNER JOIN addresses ON (restaurants.address_id = addresses.id
+
+
+        2)  [선택적 값 가져오기]
+                :   전부(*) 대신에, 레스토랑 이름과 상대편의 주소 전부를 가져오기
+-           ex) SELECT restaurants.name, addresses.*  FROM restaurants INNER JOIN addresses ON (restaurants.address_id = addresses.id
+
+                ** [두개 이상의 테이블을 사용할때]에는, [당연하게도 반드시 테이블.컬럼으로] 명시해야한다.
+                ** [컬럼만 쓰는일은 없도록 하자]
+
+
+        3)   [여러개 합쳐서 값 가져오기]
+                :  세가지, 네가지 테이블들을 전부 합쳐보자
+-           ex) SELECT restaurants.id, restaurants.name, addresses.* , types.name FROM restaurants
+-               INNER JOIN addresses ON (restaurants.address_id = addresses.id)
+-               INNER JOIN types ON (restaurants.type_id = types.id)
+
+                ** [무한히 INNER JOIN 으로 합칠 수 있다.]
+                ** [줄바꿈을 해서 가독성을 높이자.]
+                ** [물론 WHERE을 사용하여, Rating이 3이상인 것 처럼, 조건을 지정할수도있다.]
+
+
+        4)  [여러개 합쳐서 값 가져오기] + [컬럼이름 바꿔서 가져오기]
+                : AS 를 사요해 컬럼이름을 바꿔서 가져와보자
+
+-           ex) SELECT restaurants.id, restaurants.name, addresses.* , types.name AS type_name FROM restaurants
+-               INNER JOIN addresses ON (restaurants.address_id = addresses.id)
+-               INNER JOIN types ON (restaurants.type_id = types.id)
+
+                * [types 테이블에서 가져온 name 이라는 컬럼의 이름]을 [type_name] 이라고 바꿔서 보이게 해보았다.
+
+
+        5) [여러개 합쳐서 값 가져오기] + [컬럼이름 바꿔서 가져오기]  + [WHERE 조건문달기]
+                : 조건문 WHERE은 마지막에!
+
+-           ex) SELECT restaurants.id, restaurants.name, addresses.* , types.name AS type_name FROM restaurants
+-               INNER JOIN addresses ON (restaurants.address_id = addresses.id)
+-               INNER JOIN types ON (restaurants.type_id = types.id)
+-               WHERE addresses.country = "Germany"
+
+
+
+       6) [매우 중요!!!] - 여러개의 테이블을 [체인식으로 엮을때] [테이블 [A [B  [ C ]]] 처럼]
+
+        *) INNER JOIN [테이블] 이란!
+            : [그 테이블이 합류]하여 [그 테이블에서 값을 빼낼수 있다]는 말이다.
+            :  다시말해, [여러개의 체인을 가진 값들도, 합류시키고, 위치만 정해주면 
+                [FROM 안에 들어있는 본 테이블이 굳이 아니더라도, [제 3의 테이블끼리 서로 데이터를 연관지을 수 있다는 말이다]]]
+            
+-           [** FROM 안에 들어있는 본테이블에 매몰되지말자]
+
+-           ex) SELECT reviews.*, restaurants.*, addresses.*, types.name FROM reviews
+-                INNER JOIN restaurants ON (reviews.restaurant_id = restaurants.id)
+-                INNER JOIN addresses ON (restaurants.address_id = addresses.id)
+-                INNER JOIN types ON (restaurants.type_id = types.id)
+-                WHERE rating > 3
+
+
+            => [reviews 테이블 안에는 restaurant_id 라는 restaurants.id 와 엮을 컬럼만 들어있다]
+                [일단, 둘을 엮은 후, 하나씩 INNER JOIN 하여 필요한 것들을 합치면된다.]
+                사실, [FROM] 은 [뒤에 한 테이블만을 지정하는게 아니라]
+
+                FROM (reviews INNER JOIN restaurants) 처럼 뒤에 있는 모든 테이블을 지정하는것이다.
+-              [다시하지만, [FROM 뒤에 테이블]을 [ 메인 테이블이라고 생각해서 매몰되지말자.]]
+
+            => SELCECT [표시할컬럼들] FROM [컬럼이있는 테이블] INNER JOIN [추가할 테이블] ON [서로 연관지을 값들] WHERE [조건]

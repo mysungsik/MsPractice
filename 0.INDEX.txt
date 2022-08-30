@@ -1,0 +1,41 @@
+- Start
+
+[1. 기존 배우던, 데이터를 파일에 쓰고, 읽고, 수정하는데 문제점]
+[2. CRUD Operations]
+[3. DBMS(DateBase Managament Systems) + 데이터베이스란?]
+[4. 쿼리, 스키마]
+[5. SQL의 동작원리]
+[6. NoSQL의 동작원리]
+[7. SQL VS NpSQL]
+
+- GOAL [ OVERALL ]
+[1. Restaurant 에 대한 ID,Name, Adress, Type 등의 데이터베이스를 작성]
+[2. 리뷰에 대한 Id, reviwerName, Rating, Text, Datet 등의 데이베이스 작성]
+[3. 서로 연관시키기]
+
+- GOAL2 [ SQL DATABASE 사용]
+[1. 설치 (종류 : MySQL, PosgreSQL, MicrosoftSQL 등등... 우리는 MySQL)] 
+    * https://dev.mysql.com/downloads/windows/installer/8.0.html
+[2. SQL 데이터 테이블, 스키마 작성]
+[3. 데이터 삽입, 읽기, 업데이트, 삭제, 필터링 등의 기능 배우기]
+
+-  1.MySQL_CURD
+[1. 시작]
+[2. 용어]
+[3. 시작!]
+
+- 2.MySQL_STURCTURE
+
+
+[0. 데이터베이스에서, 데이터를 가져오는 형태]
+
+- 3.backendConnectDatabase
+
+[1. 사용자에게 메일을 보내는 html태그 <adress></adress>]
+
+[기술]
+[1.데이터베이스에서 [ 동작 라우트 URL ID 와 동일한 ID의 항목만 빼오기 ]]
+[2.자리선택자의 사용 이유와, 활용방법]
+[3. 복습 [동적라우트만들기]]
+[4. if를 사용하여, 페이지 검증하기]
+

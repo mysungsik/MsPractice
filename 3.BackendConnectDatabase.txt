@@ -1,0 +1,294 @@
+- 서버에 데이터베이스 연결하기
+[0. 절대법칙]
+[1. 기본적인 블로그 사이트 만들기]
+[2. 계획]
+[3-2. 연결하기2 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기] 
+[3-1. 연결하기1 : 데이터베이스에 접근해, 데이터베이스 안의 값을, ejs 로 가져오기]
+
+
+
+
+
+
+
+[0. 절대법칙]   *****************************************************************
+
+    : * 절대 [프론트엔드사이드]에 데이터베이스를 연결하지 말것.
+        - 브라우저사이드에서 실행되는 [프론트엔드사이드]에서 [데이터를 연결한다면]
+        - 감춰져야하는 데이터들이 [클라이언트들에게 보이고, 수정될 수 있다] ****
+        - 어쨋건 [자바스크립트코드는  누구든 [개발자도구에서 볼 수 있으니까]]  == 매우 간단한 해킹
+
+    : ** [백엔드서버에] 데이터베이스를 연결해야한다.
+
+
+[1. 기본적인 블로그 사이트 만들기]
+    [기능]
+        1. 간단한 글쓰기
+        2. 글 수정하기
+    [기술]
+        1. 서버측에서 데이터를 작성해 CRUD 하기
+    [계획]
+        1. 데이터베이스 구조 설계
+        2. 데이터베이스와 테이블 만들기 [SQL]
+        3. 간단한 초기데이터 추가 [SQL]
+            ex) 변경되지않는 관리자데이터, 가장 처음 방문한 사람의 데이터 등,..
+-       4. 노드JS에서 [데이터베이스에 연결, 쿼리를 진행[데이터의 CRUD]] [노드JS]
+
+[2. 계획]
+
+
+    1. 데이터베이스 구조 설계 = 데이터 구조회
+
+        [글]
+            id, Title, Summary, Body, Date, Author_id
+
+        [작성자]
+            id, name, Email
+
+    2. 초기 데이터 추가
+
+
+[3-1. 연결하기1 : 데이터베이스에 접근해, [데이터베이스 안의 값을, js로], [js 에서 ejs 로 가져오기]]  
+
+    1. 데이터베이스에 Author 을 만듬 [MySQL]
+
+    2. 데이터베이스와 연결하는 패키지 다운로드
+
+        * node mysql 을 구글에검색 [데이터베이스에 연결할만한 패키지를 찾자]
+        * 우리는 [mysql2] 라는 [패키지를 찾아냈고, npm install 로 설치할것이다.]
+
+
+    3. data폴더를 만들어, [데이터베이스와 연결시키는 코드를 작성]
+        : createPool({연결방법})
+
+        const mysql = require("mysql2")
+
+        const pool = mysql.createPool({
+            host : "localhost"
+            database : "blog"
+            user : "root"
+            password: "내패스워드"
+        });
+
+        module.exports = pool
+
+            * host 는 [데이터베이스 서버의 URL]
+            * database 는 [ 데이터베이스의 schema 이름]
+            * user 는 [기본적으로 root] -MYSQL 보면 이름 나옴
+            * password는 [데이터베이스에 접근하기 위한 비밀번호]
+
+            * [createPool] 은 [createConnection] 보다 [더 많은 양의 데이터를 처리하는데 적합함] createConnection은 개별연결
+
+        =>> createPool 을 사용한 pool은 [앞으로 데이터베이스로 쿼리를 보낼것이다.]
+
+  
+   4. 사용할 곳에, [pool 을 저장한 파일을 require 하여, 사용한다.]
+        : query("SQL코드") 명령어를 통해 데이터베이스에 쿼리를 보낸다.
+
+        ==>>    const db = require("../data/database")
+                db.query("SELECT * FROM author"); 
+
+-       데이터베이스에서 파일을 불러오는 일은 [2~3밀리초 혹은 그 이상이 걸리는 [컴퓨터상에서는 느린] [비동기 작업] 이다] ****
+-       비동기작업의 처리는 [3-2.JavaScriptPlus] 의 [Async] 를 참조하여 다시 보도록하자
+
+        비동기작업의 처리중 [promise] 를 사용한다. [mysql2 패키지는 마침 promise 를 지원한다.]
+        require("mysql2/promises") 후, 사용시 [변수에 저장 후] [ async, await ] 처리
+
+        ==>>    const db = require("../data/database")
+
+                router.get("/new-post", async function(req,res){
+                    const [authors] = await db.query("SELECT * FROM author")
+                    res.render("create-post", {authors : authors})      //렌더시 [앞은 ejs]키, [뒤는 거기들어갈변수] 임을 잊지 말자
+                })
+
+        * render는 이제, 데이터베이스에 쿼리가 된 이후 불러와진다.
+
+        [authors에 대괄호가 쳐져있는 이유] **********
+-       * db.query("") 의 [쿼리에 대한 [데이터베이스부터 온 결과물] 은 [배열형태이다] ]
+-       *  [첫번째 인덱스는] [데이터 = 값], [두번째 인덱스는 메타데이터이다.]
+-       *  [두번째는 필요없고, 첫번째 인덱스인 데이터를 가져와야하기 때문에]
+-       *   [고급 자바스크립트에서 배운] 
+            ==>> [배열을 각각, 변수에 저장하여 가져오기] 를 이용해 [첫번째 인덱스인, 데이터만 가져온것이다]
+            ==>> authors 안에는 [배열형태로, 데이터베이스에서 가져온 값들이 들어가있을것이다.]
+
+    5. 가져온 데이터를 [ejs 파일]에 쓸 곳에 <% %> 를 사용하여 집어넣자
+            : [배열형태로 왔으므로, for-of 를 사용해 사용하는것 잊지말자]
+
+            <% for (const author of authors)  { %>
+                <option value = "<%= author.id %>"> <% author.name %> </option>
+            <% } %>
+
+            ,"
+            * form에서 드롭다운메뉴 만들기 [SELECT,  <option></option>]
+            * option value 는 [form 에서 양식제출시 [서버에 제출되는 값]]
+                - 헷갈리면, 1. HTML Pracitce 의 0.2-all-reference2 의 FORM 참조
+            * authors 는 render("...ejs", { 여기에서 }) 왔음을 까먹지말자
+
+
+    =  [ 데이터베이스에 접근해, [데이터베이스 안의 값을, js로], [js 에서 ejs 로 가져오기] //  정리]
+    1. 데이터베이스에 Author 을 만듬 
+        [MySQL]
+    2. 데이터베이스와 연결하는 패키지 다운로드 
+        [npm install mysql2]
+    3. data폴더를 만들어, [데이터베이스와 연결시키는 코드를 작성]   
+        [const mysql = require("mysql2/promise")], [const pool = mysql.createPool({연결방법})], [module.exports = pool]
+    4. 사용할 곳에, [pool 을 저장한 파일을 require 하여, 사용한다.]
+        [const db = require(../folder/file)] , \ async function(req,res){                      \ [render("ejs파일",{ejs키:넣을값})]
+                                               \     const data = await db.query("쿼리코드")    \
+                                               \ }                                              \
+    5. 가져온 데이터를 [ejs 파일]에 쓸 곳에 <% %> 를 사용하여 집어넣자
+        <%= 넣을값 %>
+
+
+[3-2. 연결하기2 : [INNER JOIN 을 사용해서] 쿼리하여, 연관된 값 전부 가져오기도 당연히 가능하다]  
+
+        router.get("/posts", async function(req,res){
+            const query = `SELECT post.*, authors.name AS author_name FROM post 
+            INNER JOIN authors ON (authors.id = post.author_id)
+            `
+            const [posts] = await db.query(query)  
+            res.render("posts-list")
+        })
+
+
+[3-3. 연결하기3 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기]
+    : [자리선택자] 를 이용한 [데이터 집어넣기 방법]
+
+    1. req.body 로 배열값 가져오기
+    2. db.query("INSERT INTO post (title,summary,body,author_id) VALUES (?)" , [배열값])                                                                      "ㄴㅇ                   
+        :  자리선택자 ? 를 활용하여, [] 안으로 값을 집어넣는 방법이다.
+
+
+      ex)   router.post("/posts", async function(){
+
+                const data =  [req.body.title,
+                req.body.summary,
+                req.body.body,
+                req.body.author]
+
+                await db.query("INSERT INTO post (title,summary,body,author_id) VALUES (?)" , [data])                                                         "ㄴㅇ
+            })
+
+    ==>> [data]에서 나온 값들은 [자리선택자를 통해], 각각의 값에 들어갈것이다.
+        * [req.body.title] 에서 [title] 등은 [ejs 파일의 name 에서 온 사실을 잊지 말자]
+        * async, await 를 통해 [따로 값은 반환하지 않더라도], [비동기작업을 기다려주는 시간을 가져야한다.]
+
+
+
+[4.데이터베이스에서 [ 동작 라우트 URL ID 와 동일한 ID의 항목만 빼오기 ]]
+
+    router.get("/posts/:id", async function(req,res){
+        const pageId = req.params.id
+        const query = `
+        SELECT post.*, authors.name AS author_name, authors.email AS author_email FROM post
+        INNER JOIN authors ON (post.author_id = authors.id)
+        WHERE post.id = ?
+        `
+        const [datas] = await db.query(query, [pageId])
+        res.render("post-detail", {data : datas[0]})
+    })
+
+    AS의 활용 
+        [ authors.name AS author_name ] 이라고 하면 단순히 불러올때 [name 이 author_name 으로 변하는것이다.]
+
+    [특정 id에 맞는 값을 불러왔음을 가정하면 [분명히 값은 하나지만, 컴퓨터는 하나임을 정확히 알지 못한다. (검사 후에 아니까)]    ]
+        [그러므로 render로 데이터를 내보낼때, 배열의 첫번째 항목이란 뜻으로 [0]를 반드시 적어 내보내도록 한다.]
+
+
+
+[5.자리선택자의 사용 이유와, 활용방법]
+    사용이유 : "" 안에 있는 값에, 마치 ` ${ } ` 처럼 [동적인 값을 적용하기 위함이다]!!
+
+    방법: 
+        [쿼리] 안에 ? 를 쓴 후, [두번째 파라미터에 ? 에 들어갈 값을 [] 안에 적는다.]
+
+    router.post("/posts", async function(req,res){
+        const data = [req.body.title,
+        req.body.summary,
+        req.body.content,
+        req.body.author]
+
+        await db.query("INSERT INTO post (title,summary,body,author_id) VALUES (?)",[data])
+        res.redirect("/posts")
+    })                                                                                                                                                      "
+
+==>> ? 자리 안에 [] 의 값이 대신 들어가는 형태가 된다.
+
+
+[6. 복습 [동적라우트만들기]]
+    1) ejs에서 [특정 값을 받아 동적 href 만들기]
+    2) js에서 URL 주소의 특정 ID값을 받아 변수에 저장하기 req.params.id
+    3) URL의 주소와 받아온 ID값이 동일하다는 [조건식 만들어서, 값 넘기기]
+
+
+[7. if를 사용하여, 페이지 검증하기]
+
+    const [datas] = await db.query(query, [pageId])
+
+    if(!datas || datas.length ===0){
+        return res.status(404).render("404")
+    }
+    res.render("post-detail", {data : datas[0]})
+
+        => return 으로 코드를 멈추는 것도 잊지말자
+
+
+[8. 사용자에게 메일을 보내는 html태그 <adress></adress> , mailto:]
+    <adress> <a href = "mailto: [메일주소]"> </a> </adress>
+
+    ==>> 저 앵커태그를 누르면, 메일을 보낼 수 있게된다.
+
+[9. 시간을 알려주는 html태그 <time datetime ="시간값"> 시간값</time>]
+    <time datetime = " 시간값"> 시간값 </time>
+    * 두 시간값은 동일한 것을 넣어줘도되지만
+    * 앞의 시간값은 [기계가 읽는], 뒤는 [사람이 읽을수 있는 화면에 표시되는 값]
+
+[10. white-space와 line-break를 자동관리해주는 CSS 코드 : white-space]
+
+    #body{
+        white-space : pre-wrap 
+    }
+    ==>> 자동 공백생성
+
+[11. [데이터베이스]에서 [가져온 데이터]의 [형식변환]]   
+    :   ... 의 활용
+
+    1) query를 해서 데이터베이스에서 가져온 값 [ ex) data]
+    2) data의 수많은 값들중 하나의 인덱스를 선택[ 혹은! WHERE로 [애초에 한 인덱스만을 선택]]
+    3) [WHERE로 가져왔다면, 그럼에도 불구하고, 첫번째 인덱스임을 강조하는 [0]를 붙인다.]
+
+    4) [데이터 복제하기] - [배열 혹은 객체는 단순복사 = 주소복사 임으로 원본이 훼손됨을 명심]
+        const dataData = {
+            ...data[0],
+            date : post[0].date.toISOString(),
+            humnaReadableDate : ...
+        }
+        ==>> 전체 값을 [...]을 사용하여 [키와 값 만을 빼와서] [객체값을 추가시키거나(humnaReadableDate), 수정한다(date)]
+
+    5) res.render("/", {data : dataData})   
+        ==>> 이제, ejs에서 [data.기존키 ] 뿐 아니라 [data.humnaReadableDate] 처럼 추가한 값 까지 쓸 수 있다.
+
+
+[12. 사람이 읽을 수 있는 시간값으로 변환 [ toLocaleDateString() ]]
+
+    date.toLocaleDateString( "en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day : "numeric"
+    })
+
+    * 참고 : 기계가 읽을 수 잇는 시간값으로 변경 => toISOString()
+    * 자세한건 MDN에 toLocaleDateString 검색
+
+
+=================================================================================================================
+[헷갈리지 말자]
+
+1. [ejs에서] form 형식에서 [A페이지에서 작업을 했더라도] [action을 B 페이지로 넘겼다면]
+    [라우트는] app.post("/B", function(){}) 으로 [ B페이지에서 post로 받는것이다.]
+
+
+2. [include 도 추가로 넘길 값이 있다면, 넘겨야 하는 사실을 잊지 말자]
+    include("폴더/파일", {키값 : 데이터값})
+
