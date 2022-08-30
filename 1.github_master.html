@@ -118,6 +118,13 @@
     4) 마스터 브랜치의 전체 커밋 확인
         git log
 
+    5) 한 파일에서 스테이징(add)을 잘못 했을 경우, 스테이징을 하지 않은 것으로 되돌림
+        git reset 파일이름
+    
+    6) 스테이징 되기 전에 사용하여 마지막 커밋으로 되돌림 
+        git checkout -- .
+
+
 
 
 
@@ -143,8 +150,31 @@
 ** [VSCODE가 망가져서 한글이 쳐지지 않는 현상이 발생할 수 있다. ]
         우측아래 컴퓨터 자체의 키보드 셋팅이 이상하지 않은지 확인하도록 하자
 
-** [pull 이 안되는경우]
+
+** [pull 이 안되는경우] [Already up to date. 오류]
     git fetch --all
     git reset --hard origin/master
+                [저장소이름] / [받을 브랜치이름]
 
     * 강제삭제후, 저장소에 있는거 강제로 가져오기. 다만, 분명한 위험성은 있음
+
+
+** [push가 안되는 경우] 
+
+    1) 일단 원본파일에 git commit 을 해서 커밋을 한번 저장하고,
+    2) [ git pull 저장소이름 브랜치이름 ] 을 한번 해준 뒤, merge를 한번 한 후
+
+    3) 다시 기존의 commit으로 돌아가 파일을 복구시킨후 push하면 아주 잘 된다.
+
+    * 추가적으로, remote를 삭제했다가, 다시 설정하는 방법도 있다.
+
+
+
+
+
+    [실제 실행사항]
+    
+    1-1) github에는 [한개의 repository] 에 [여러개의 branch] 를 저장할 수 있음을 알자.
+    
+    1-2) HTML Practice의 [branch name 은 master]로, JS pracitce의 [branch name 은 js] 로 설정하고 github에 올렸다. 작동이 원활하다.
+    1-3) 역시나 [ git pull origin js ]로 [원격저장소]에 있는 파일을 [로컬저장소]로 [머지 하여 옮기]는 작업도 원활했다.

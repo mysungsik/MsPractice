@@ -264,8 +264,14 @@ p:active { background: #eee; }   /* 활성화한 문단 */ == 꾹 누르고 있�
 
 0. inherit; 을 사용하여 강제로 부모의 속성을 상속시키기
 
-1. [태그를 가운데 정렬시키기] = "margin, transform:translate(-50%,-50%)" 
-
+1. [태그를 가운데 정렬시키기] = 
+margin
+ OR
+top: 50%;
+left: 50%;
+transform: translate(-50%,-50%); 
+*position absoulte 에서 많이 사용
+                             
 2. [이미지 정렬시키기] =  1. body 태그에 text-align을 사용하기
                         text-align은 태그 안의 요소만 중앙 정렬 시키는데 결국 img도 body 태그 안의 요소이므로 중앙정렬이 된다.
 
