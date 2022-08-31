@@ -1,0 +1,68 @@
+[0. mongoDB 의 매뉴얼] 
+쿼리 : https://www.mongodb.com/docs/manual/reference/operator/query/
+    * 알아서 보고 찾아도 되고, 구글링해도되고
+
+
+
+[0. 별점을 주는 데이터베이스의 구조화]
+    1) 레스토랑 [ 레스토랑에 관한 모든것]
+    2) 리뷰 [ 리뷰에 관한 모든것 ] -  레스토랑의 ID와 이어질것이다.
+    3) 타입 [ 사람들이 기준없이 [음식타입]을 적는것을 피하기 위해 나눈 컬렉션] - [레스토랑]의 [타입ID]와 이어질것이다.
+
+        * 리뷰는 한 레스토랑에 엄청나게 많은 수의 리뷰가 나올것이기에, [용량이 크므로 따로 나눈것]
+
+1. DB에 [적당히 구조화된 컬렉션을 만들어 데이터 집어넣기]
+
+    1) 타입에 데이터 집어넣기
+
+        db.types.insertOne({name : "..."})
+        ...
+
+
+    2) 레스토랑컬렉션에 데이터 집어넣기
+
+        db.restaurants.insertOne({name : "pizza House", 
+        address : {street:"Food street", streetNumber :"23b", postalCode : 65465, city:"benecha",country:"Itary"},
+        type : { typeId :ObjectId("630f6091c75c67a63e8479ef"), name:'Italian' } })
+
+-   ==>> [restaurants컬렉션과 types컬렉션은 이어질것이므로] , [restaurants 컬렉션에 따로 type 을 만들어], [types 컬렉션에 있는 id와 name 을 입력해준다.]
+            type : { typeId :ObjectId("630f6091c75c67a63e8479ef"), name:'Italian' }     이부분
+
+    3) 리뷰에 데이터 집어넣기
+
+        db.reviews.insertOne({reviewer:"msms", rating:3, 
+        text:"This pizza was okay - could be better!", date: new Date("2021-09-10"),
+        restaurants:{id:ObjectId("630f62aac75c67a63e8479f2"),name:'pizza House' } })
+
+-   ==>> [리뷰 컬렉션과 레스토랑 컬렉션은 이어질 것이므로,] [리뷰 컬렉션에 따로 restaurants 를 만들어] [restaurants 컬렉션에 있는 id와 name을 지정해주었다.]
+
+    * new Date("날짜") 는 몽고DB에서 날짜를 지정하는 방식이다.
+        [자세한 사항은 mongoDB Date() 를 구글링하자]
+
+2. [복습] [특정 조건을 만족하는 리뷰만 가져오기]
+
+    1) 기본
+    db.reviews.find({rating: {$gt:4}})
+        : rating 이 4 이상인 리뷰만 불러온다.
+        
+        [비교문]
+        * gt(greater than), lt(lower than), gte(greater than equal), lte(lower than equal)
+
+    2) and의 활용
+    db.reviews.find({ $and : [{rating : {$lt:4}}, {rating: {$gt:1}} ]})
+        : rating 이 1보다 크고 4보다 작은 리뷰만 불러온다.
+
+        * https://www.mongodb.com/docs/manual/reference/operator/query/and/#mongodb-query-op.-and 참조 (mongoDB Maunal)
+
+3. [복습] [ 업데이트하기] - updateOne({}, {$set : })
+
+    1) 기본
+    db.restaurants.updateOne({_id: ObjectId("630f652ec75c67a63e8479f3")}, {$set : {"address.street" : "NewYork street"}})
+        : 중첩된 폴더의 address 안에 street 의 주소를 바꾼다.
+
+4. [복습] [ 삭제하기] - deleteOne({})
+
+    1) 기본
+    db.reviews.deleteOne({_id:ObjectId("630f6f93c75c67a63e8479f6")})
+        : 아이디에 해당하는 리뷰 삭제
+    
