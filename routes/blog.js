@@ -13,12 +13,30 @@ router.get("/",function(req,res){
 // ALL POST 페이지에, [집어넣은 데이터베이스의 값을 꺼내, <li> 만들기]
 // INNER JOIN을 활용한, 연관된 데이터베이스 값 가져오기 + 선택해서 가져오기
 router.get("/posts", async function(req,res){
+
+    let queryData = req.query.order;
+    let orderLaw = "right"
+
+    if(queryData === "right"){
+        orderLaw = "left"
+    }
+
     const query = `SELECT post.*, authors.name AS author_name FROM post 
     INNER JOIN authors ON (authors.id = post.author_id)
     `
     const [posts] = await db.query(query)       // 단순히 가독성을 늘리기 위한 `` 임
 
-    res.render("posts-list", {posts : posts})
+    posts.sort(function(A,B){
+        if(orderLaw === "left" && A.title > B.title){
+            return 1
+        }
+        else if(orderLaw === "right" && B.title > A.title){
+            return 1
+        }
+        return -1
+    })
+
+    res.render("posts-list", {posts : posts , orderLaw:orderLaw})
 })
 
 
@@ -32,6 +50,8 @@ router.get("/posts", async function(req,res){
 //   : 자리선택자 ? 는 [query의 두번째 파라미터에 ?를 대신할 값을 넣음으로써 완성된다.]
 
 router.post("/posts", async function(req,res){
+
+
     const data = [req.body.title,
     req.body.summary,
     req.body.content,
@@ -111,5 +131,12 @@ router.get("/new-post", async function(req,res){
 })
 
 
+// [ 블로그포스트에서 데이터베이스 값들 삭제하기]
+//  [삭제하는 SQL 코드] : DELETE FROM [데이터베이스테이블] 
+router.post("/posts/:ids/delete", async function(req,res){
+    const pageId = req.params.ids
+    await db.query("DELETE FROM post WHERE id = ? ", [pageId] );
+    res.redirect("/posts")
+})
 
 module.exports = router;

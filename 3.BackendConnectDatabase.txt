@@ -1,11 +1,25 @@
-- 서버에 데이터베이스 연결하기
+- 3.BackendConnectDatabase (서버에 데이터베이스 연결하기)
+
 [0. 절대법칙]
 [1. 기본적인 블로그 사이트 만들기]
 [2. 계획]
-[3-2. 연결하기2 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기] 
-[3-1. 연결하기1 : 데이터베이스에 접근해, 데이터베이스 안의 값을, ejs 로 가져오기]
+[3-1. 연결하기1 : 데이터베이스에 접근해, [데이터베이스 안의 값을, js로], [js 에서 ejs 로 가져오기]]  -  (db.query 사용)
+[3-2. 연결하기2 : [INNER JOIN 을 사용해서] 쿼리하여, 연관된 값 전부 가져오기도 당연히 가능하다]  
 
-
+[3-3. 연결하기3 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기 = 블로그 글 쓰기] - INSERT INTO
+[4.데이터베이스에서 [ 동작 라우트 URL ID 와 동일한 ID의 항목만 빼오기  = 블로그 값 활용]] - SELECT FROM, WHERE
+[5.자리선택자의 사용 이유와, 활용방법 = 블로그 글 쓰기 추가] -  query(? ,[])
+[6. 복습 [동적라우트만들기]]
+[7. if를 사용하여, 페이지 검증하기]
+[8. 사용자에게 메일을 보내는 html태그 <adress></adress> , mailto:]
+[9. 시간을 알려주는 html태그 <time datetime ="시간값"> 시간값</time>]
+[10. white-space와 line-break를 자동관리해주는 CSS 코드 : white-space]
+[11. [데이터베이스]에서 [가져온 데이터]의 [형식변환]] - **
+[12. 사람이 읽을 수 있는 시간값으로 변환 [ toLocaleDateString() ]]
+[13. 동적라우트 /:id 는 아무대나 붙일 수 있다.]
+[14. ejs에서 받아온 파일로, 데이터베이스 업데이트 = 블로그 글 수정] - UPDATE **
+[15. 데이터베이스 값 삭제하기 = 블로그 글 삭제하기] - DELETE **
+[16. sort(function(A,B)) 를 사용해 , 정렬버튼 만들기 [복습]]
 
 
 
@@ -37,7 +51,7 @@
 [2. 계획]
 
 
-    1. 데이터베이스 구조 설계 = 데이터 구조회
+    1. 데이터베이스 구조 설계 = 데이터 구조화
 
         [글]
             id, Title, Summary, Body, Date, Author_id
@@ -151,7 +165,7 @@
         })
 
 
-[3-3. 연결하기3 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기]
+[3-3. 연결하기3 : 폼(ejs파일)에서 받아온 값을 데이터베이스에 넣고 활용하기 = 블로그 글 쓰기]
     : [자리선택자] 를 이용한 [데이터 집어넣기 방법]
 
     1. req.body 로 배열값 가져오기
@@ -175,7 +189,7 @@
 
 
 
-[4.데이터베이스에서 [ 동작 라우트 URL ID 와 동일한 ID의 항목만 빼오기 ]]
+[4.데이터베이스에서 [ 동작 라우트 URL ID 와 동일한 ID의 항목만 빼오기 ] = 블로그 값 활용]
 
     router.get("/posts/:id", async function(req,res){
         const pageId = req.params.id
@@ -196,7 +210,7 @@
 
 
 
-[5.자리선택자의 사용 이유와, 활용방법]
+[5.자리선택자의 사용 이유와, 활용방법 = 블로그 글 쓰기 추가]
     사용이유 : "" 안에 있는 값에, 마치 ` ${ } ` 처럼 [동적인 값을 적용하기 위함이다]!!
 
     방법: 
@@ -232,7 +246,7 @@
 
         => return 으로 코드를 멈추는 것도 잊지말자
 
-
+        
 [8. 사용자에게 메일을 보내는 html태그 <adress></adress> , mailto:]
     <adress> <a href = "mailto: [메일주소]"> </a> </adress>
 
@@ -280,6 +294,94 @@
 
     * 참고 : 기계가 읽을 수 잇는 시간값으로 변경 => toISOString()
     * 자세한건 MDN에 toLocaleDateString 검색
+
+[13. 동적라우트 /:id 는 아무대나 붙일 수 있다.]
+    
+    "/posts/:id" 뿐 아니라
+    "/posts/:id/edit" 까지
+
+
+[14. ejs에서 받아온 파일로, 데이터베이스 업데이트 = 블로그 글 수정]
+
+    router.post("/posts/:id/edit", async function(req,res){
+
+        await db.query("UPDATE post SET title = ?, summary =? , body = ? WHERE id =? "
+        ,[req.body.title,
+        req.body.summary,
+        req.body.content,
+        req.params.id])
+            
+        res.redirect("/posts")
+    })
+
+-   ejs의 값을 받는 [req.body.content] 에서 [content] 는 ejs의 [name] 임을 명심하자
+
+[15. 데이터베이스 값 삭제하기 = 블로그 글 삭제하기]
+-   : 삭제에도 URL 이 필요하다. [ 동적라우트를 활용해 ] /post/:id/delete 페이지에 들어가면, 처리되도록 하게 만든다.
+    
+    form에 action을 /post/:id/delete 처럼 동적으로 처리
+    나머지는 똑같이 query 로 DELETE SQL코드를 사용하면된다.
+        db.query("DELETE FROM post WHERE id = ?", [req.params.id])
+    redirect 로 다시 메인페이지로 돌아가게 만들자.
+
+[16. sort(function(A,B)) 를 사용해 , 정렬버튼 만들기 [복습]]
+
+    1. [ejs에서 매개변수 생성]
+
+    <form action = "/현페이지" method = get>
+        <input type = "hidden" value ="right" name = "order">
+        <button> arrange </button>
+    <form>
+    ==>> domain?order=right  이라는 쿼리 매개변수 생성
+
+    2. [ 데이터베이스에서 정렬할 값을 가져옴]
+    async function(req,res){
+        const [post] = await db.query("SELECT * FROM 데이테이블")
+    }
+        ==> [post] 라는 [ {}, {}, {} ... ] 의 배열을 생성
+
+    3. [정렬 식 만듬]
+
+    post.sort(function(A,B){
+        if(A.title > B.title){
+            return 1
+        }
+        return -1
+    })
+        ==>> 정렬 식 만드는데, 정렬 기준(ex title or name or 등...) 은 객체 값 에서 알아서 뽑아서
+        
+    4. [매개변수 받아오고 버튼 눌렀을때, 쿼리매개변수가 바뀔 로직 생성]
+
+    let queryData =  req.query.order
+    let orderLaw = "right"
+
+    if(queryData === "right"){
+        orderLaw = "left"
+    }
+
+    render("asd", {orderLaw : orderLaw})
+
+        ==>> [ejs에 orderLaw를 넘기고], [다시 받아오는 queryData가 orderLaw의 값과 같아지면] [orderLaw를 변경하여 다시 넘기는 스위치코드]
+        * order는 ejs에서 만든 value 의 name
+
+    5. ejs에서 value 값을 동적으로 변경
+
+    ... value = <%= orderLaw %>
+
+    6. [정렬식 완성]
+
+    post.sort(function(A,B){
+        if( orderLaw ==="right" && A.title > B.title){
+            return 1
+        }
+        else if( orderLaw ==="left" && B.title > A.title){
+            return 1
+        }
+        return -1
+    })
+        
+
+    
 
 
 =================================================================================================================

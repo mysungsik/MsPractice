@@ -9,7 +9,15 @@
 <body>
   <%- include('includes/header') %>
   <main id="all-posts">
-    <h1>All Posts</h1>
+    <h1>All Posts</h1> 
+    
+    <form action="/posts" method="get" >
+
+      <input type="hidden" value="<%=orderLaw %>" name="order">
+      <button> arrangement </button>
+    </form>
+
+
     <% if(!posts || posts.length === 0 ) { %> <!-- 빈 배열은 false 임을 기억하자-->
       <p>no post here</p>
     <% }else  {%>
