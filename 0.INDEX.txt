@@ -1,4 +1,4 @@
-- Start
+- 0.EXPLANTION
 
 [1. 기존 배우던, 데이터를 파일에 쓰고, 읽고, 수정하는데 문제점]
 [2. CRUD Operations]
