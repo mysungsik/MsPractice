@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('includes/head', { title: 'All Posts' }) %>
+  <link rel="stylesheet" href="/styles/posts.css">
+</head>
+
+<body>
+  <%- include('includes/header') %>
+  <main id="all-posts">
+    <h1>All Posts</h1>
+    <% if(!fromDatabase || fromDatabase.length === 0) {%>
+      <p> YOu have no post. Please write a new post</p>
+      <a class="btn"  href="/new-posts"> Create a new post</a>
+    <% } else {%>
+      <ol id="post-list">
+        <% for(const listdata of fromDatabase) {%>
+          <li>
+            <%- include("includes/post-item", {fromDatabase : listdata})%>
+          </li>
+        <% }%>
+      </ol>
+    <% } %>
+
+    
+  </main> 
+</body>
+
+</html>

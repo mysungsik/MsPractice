@@ -1,0 +1,251 @@
+- 3.BackendConnectMongoDB
+
+[0. 절대법칙 : 왜 [백엔드에 데이터베이스를 연결해야하는가]] 
+[0. 절대법칙2 : mongoDB의 컬렉션 분할의 목적은 [불러오기 쉬운 가장 간결한 쿼리], [컬렉션 안에 들어갈 데이터의 양], [따로 쓰여질 컬렉션인지의 여부] 이다.]
+[1. 블로그를 mongoDB 를 활용해 만들기 [준비단계]]
+    1) 가장 간결한 쿼리를 위한 컬렉션 구조의 선택
+    2) 데이터베이스에 기본적인 데이터 집어넣어두기
+
+[2. 백엔드[nodejs]에 mongoDB 연결하기]
+    1) mongodb 패키지 설치
+    2) 데이터베이스와 연결할 파일 만들기
+    3) 파일 안에 연결 코드 만들기
+    4) 사용할 곳에 임포트하기 (require)
+        1) [데이터베이스 서버]를 [최종파일에 연결] - db.connectToDatabase().then()
+        2) [데이터베이스]를 [사용할 곳마다 연결]   - db.getDb().collection("컬렉션이름").find().toArray()
+
+[3. mongoDB에서 데이터를 가져오기 ==>> db.getDb().collection("컬렉션이름").find({조건}).toArray() ]
+    1) [사용할 폴더]에 [데이터베이스] 연결, [그리고 쿼리]
+    2) [특정 값을 검색하여 가져오기] + [원하는 키 값만 가져오기]  *****
+
+[4. mongoDB에 데이터를 제출하기 ==>> db.getDb().collection("컬렉션이름").insertOne({})]
+    1) [ejs]에서 [데이터 추출하여 하나의 객체로 만들기] + [다른 컬렉션 불러와서] [제출할 객체에 같이 끼워넣기] *****
+    2) [데이터베이스에 데이터를 삽입하기]
+
+[만들다가 자꾸 까먹는것들]
+
+1. find() 에서 find.toArray() 를 자꾸 빼먹음
+2. 데이터베이스를 불러올때, [데이터베이스에 값이 없는 경우] if를 사용하여, 다른 글을 표시하게끔 하는 [ 선택적 처리과정을 자꾸 놓침]
+3. [받아온 아이디를 데이터베이스로 보낼때에는(요청이든, 값을보내는것이든)] [반드시 ObjectId를 사용하여 변환시킬것]
+
+
+
+
+
+
+
+
+
+
+
+[0. 절대법칙 : 왜 [백엔드에 데이터베이스를 연결해야하는가]] 
+
+    : * 절대 [프론트엔드사이드]에 데이터베이스를 연결하지 말것.
+    - 브라우저사이드에서 실행되는 [프론트엔드사이드]에서 [데이터를 연결한다면]
+    - 감춰져야하는 데이터들이 [클라이언트들에게 보이고, 수정될 수 있다] ****
+    - 어쨋건 [자바스크립트코드는  누구든 [개발자도구에서 볼 수 있으니까]]  == 매우 간단한 해킹
+
+    : ** [백엔드서버에] 데이터베이스를 연결해야한다.
+
+[0. 절대법칙2 : mongoDB의 [컬렉션 분할의 목적]은 [불러오기 쉬운 가장 간결한 쿼리], [컬렉션 안에 들어갈 데이터의 양], [따로 쓰여질 컬렉션인지의 여부] 이다.]
+
+
+[1. 블로그를 mongoDB 를 활용해 만들기 [준비단계]]
+
+    1) [가장 간결한 쿼리를 위한 컬렉션 구조의 선택]
+
+        1. 블로그 포스트를 쓸때, [작성자의 이름이 드롭다운으로 나올것이다.] => 이름의 철자 틀리는 것을 방지하기 위해
+            ==>> 따로 컬렉션을 뺀다 [author 컬렉션]
+
+        2. 블로그 글에 대한 데이터베이스가 값을 뽑는다
+            ==>> [post 컬렉션]
+
+        3. 블로그 글에는 author의 이름, 주소, 메일 등이 들어가야한다.
+            ==>> [post 컬렉션안]에 [author 컬렉션을 연결한다]
+            ==>> [post 컬렉션 안]에 [author폴더를 만들어 중첩된 객체]로 [ author :{ authorid : ? , name : ?}] 등을 정한다. 
+
+            * name 이 두개의 컬렉션 안에서 중복될수 있다.
+            * 중복되도 되는지의 여부는 [쉽게 변경할 데이터인가의 여부를 따져봐야한다.]
+            * [만약 쉽게 변경될것 같다면, 중복을 피하는 것이 좋다.]
+            * [수정할때 중복된(즉, 연관된) 모든 값을 수정해야 하기 때문에]
+
+    2) [ 데이터베이스에 기본적인 데이터 집어넣어두기]
+
+        1. use blog
+        2. db.컬렉션이름.insertoNe({ 키: 밸류 ...})
+
+            * authors 컬렉션
+                name, email
+            * posts 컬렉션
+                title, summary, body, date, (authorid,authorname) : authors 컬렉션과 연결될 폴더
+
+[2. 백엔드[nodejs]에 mongoDB 연결하기]
+
+    [1. mongodb 패키지 설치]
+        : npm install mongodb
+
+    [2. 데이터베이스와 연결할 파일 만들기]  - data폴더, database.js 파일 만들기
+
+-   [3. 파일 안에 연결 코드 만들기]
+
+        const mongodb = require("mongodb")                      // 패키지 require
+        const MongoClient = mongodb.MongoClient;                // 패키지 안에서 Mongoclient 빼기
+        
+        let database;                                           // 전역변수 database 를 생성
+
+        async function connect(){
+            const client = await MongoClient.connet(url)        // [mongoClinet 에서 URL 을 통해 [데이터베이스 서버]를 연결하고]
+            database = client.db("데이터베이스이름")             // [그 안의 데이터베이스를 연결]
+        }
+
+        function getDb(){  
+            if(!database){
+                throw {message: "database connection not established!"}
+            }                                     // [database 의 값을 가져오기 위한 function]
+            retrun database;
+        }
+
+        module.exports = {connectToDatabase : connect, getDb : getDb}   
+                                                                // [함수의 exports] ==>  6-0.backend [util 폴더 참조]
+
+            * local [데이터베이스 서버]의 url 은  url = 'mongodb://localhost:27017'; or 'mongodb://127.0.0.1:27017'
+            * [데이터베이스 서버]를 불러오는것은 [오래걸리는 비동기작업이므로] [function에 넣어 async, awiat를 써준것]
+            * MongoClient.connect() 는 [자동으로 pool] 이며, [여러 연결이 된다]. 
+            * [데이터베이스]는  [미리 만들어놓은 데이터베이스의 이름 (blog) 를 연결해주면된다.]
+
+                참조: https://attacomsian.com/blog/nodejs-mongodb-local-connection
+
+-   [4. 사용할 곳에 임포트하기 (require)]
+
+        1) [데이터베이스서버]의 연결
+
+        *** mySQL 과는 다르게, noSQL인 [mongoDB의 연결]은 [직접 사용할 곳이 아닌]
+-            [최종 목적지인 app폴더의 listen("포트") 에 타겟한다.]
+
+            <app.js 폴더>
+            
+            const db = require("./data/database")
+            ...
+
+            db.connectToDatabase().then(function(){
+                app.listen(3000)
+            })
+
+            ** connectToDatabase() 의 원형 connect() 는 [비동기 데이터베이스 연결 함수이다.]
+                ==> 오래걸리므로, [임포트해서 사용해도, 비동기작업을 실행하여야 하는데]
+                    [async, await 를 사용할 수 없으]므로, [.then() 을 사용]한다.    (promise 의 기본적인 사용형태)
+
+        2) [데이터베이스]의 연결
+
+            *** [mongoDB] 의 [데이터를 불러오는 것]은 [직접 사용할 곳에 임포트한다.]
+
+            <router 폴더>
+
+            const db = require("../data/database")
+            ...
+    -       [사용할 곳에 쿼리]
+
+            db.getDb().collection("컬렉션이름").find().toArray();
+                * 비동기니까 async, await 까먹지말것.
+
+
+[3. mongoDB에서 데이터를 가져오기 ==>> db.getDb().collection("컬렉션이름").find({조건}).toArray() ]
+    
+
+    1) [사용할 폴더]에 [데이터베이스] 연결, [그리고 쿼리]
+
+-       <router폴더>
+
+        const db = require("../data/database")
+        ...
+
+        router.get('/new-post', async function(req, res) {
+            const authors = await db.getDb().collection("authors").find().toArray()
+            res.render('create-post', {authors:authors});
+        });
+
+            ** mySQL 처럼 [두개의 배열이 딸려와서, 첫번째 배열만 따로 빼, 저장할 필요 없음 // const [data] = ... 처럼 ]
+            ** mySQL 처럼 [ 데이터베이스에서 오는 [텍스트 코드]를 [자바스크립트코드] 로 변경해주는 [미들웨어] [필요없음] ]
+            ** 명령어는 [database.js 파일에 만들어놓은 대로 사용] - getDb()
+
+-       <ejs 폴더>
+
+        <select id="author" name="author">
+        <% for(const data of authors) {%>
+          <option value="<%= data._id %>"> <%= data.name %> </option>                                                                   "
+        <% }%>          
+        </select>
+
+            ** option 의 value 를 id 로 지정함으로써, 제출할때 구분이 가능하게 만듬
+
+
+    2) [특정 값을 검색하여 가져오기] + [원하는 키 값만 가져오기]
+
+-       [원하는 키값만]
+        router.get('/posts', async function(req, res) {
+        const fromDatabase = await db.getDb().collection("posts").find({},{title:1 , summary:1, "author.name" :1}).toArray()
+        res.render('posts-list',{fromDatabase:fromDatabase});
+        });
+
+-       [특정 조건을 검색]
+        router.get("/posts/:id", async function(req,res){
+        
+        let pageId = ObjectId(req.params.id) 
+        const fromDatabase = await db.getDb().collection("posts").findOne({_id: pageId})
+        res.render("post-detail", {fromDatabase:fromDatabase})
+        })
+
+-        [받아온 아이디를 데이터베이스로 보낼때에는(요청이든, 값을보내는것이든)] [반드시 ObjectId를 사용하여 변환시킬것]
+
+
+
+[4. mongoDB에 데이터를 제출하기 ==>> db.getDb().collection("컬렉션이름").insertOne()]
+
+    1) [ejs]에서 [데이터 추출하여 하나의 객체로 만들기] + [다른 컬렉션 불러와서] [제출할 객체에 같이 끼워넣기]
+            
+    -   ObjectId 를 쓰기위한 require
+        const mongodb = require("mongodb")
+
+    -   몽고db에서 쓰는 [특수한 성격의 id 값으로, 반환해주는 코드]
+        const ObjectId = mongodb.ObjectId
+
+        router.post("/posts", async function(req,res){
+        
+    -       const authorId =  new ObjectId(req.body.author)
+    -       const author = await db.getDb().collection("authors").findOne({_id: authorId})
+            
+            const newPost = {title: req.body.title,
+            summary : req.body.summary,
+            body : req.body.content,
+            date : new Date(),
+            author : 
+            {id: authorId , 
+            name: author.name,
+            email: author.email } 
+            }
+            
+        })
+
+        ==>  create-post의 [form]에는 [author.name 에 넣을 값이 없다].
+        ==>  그러므로, ejs에서 받아온 objectid(= author.id) 로, [데이터베이스에서 찾아서, 따로 데이터를 넣어줄것이다.]
+        ==>  다른 컬렉션을 가져오고싶으면, [병합]이 아니라 [다른컬렉션을 한번 더 쿼리해라]
+
+        ==>  [authorId] 는 [데이터베이스의 author._id 에서 온 값이므로, 검색조건에 적합하다. ]
+
+    2) [데이터베이스에 데이터를 삽입하기]
+
+        await db.getDb().collection("posts").insertOne(newPost)
+        res.redirect("/post")
+
+** [특징]
+        1. new ObjectId() 라는 [id라는 특수한 데이터를 집어넣을때 사용되는 코드]
+        2. [다른 컬렉션의 연관된 값을 사용할때는, 조건[id값 등]을 붙인 새로은 쿼리를 사용하여, 집어넣어준다.]
+
+====================================================================================================================================================
+[만들다가 자꾸 까먹는것들]
+
+1. find() 에서 find.toArray() 를 자꾸 빼먹음
+
+2. 데이터베이스를 불러올때, [데이터베이스에 값이 없는 경우] if를 사용하여, 다른 글을 표시하게끔 하는 [ 선택적 처리과정을 자꾸 놓침]
+
+3. [받아온 아이디를 데이터베이스로 보낼때에는] [반드시 ObjectId를 사용하여 변환시킬것]
