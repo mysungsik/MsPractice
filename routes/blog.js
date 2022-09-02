@@ -78,6 +78,7 @@ router.get("/posts/:id", async function(req,res){
     `
     const [datas] = await db.query(query, [pageId])
 
+    // 데이터베이스에서 받아온 값, 수정하여, 사용하기
     const dataData = {
         ...datas[0],
         date : datas[0].date.toISOString(),
@@ -85,7 +86,7 @@ router.get("/posts/:id", async function(req,res){
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
         })
     }
-    // datas[0] = 객체이므로, dataData 객체로 받는다
+    // datas[0] = 객체이므로, dataData 객체로 받는다 ,[0]를 사용하는이유 = 있는 데이터는 하나지만 그래도, 명시하는것 [기계는 모름, 쓴사람만ㅁ 알지]
     // js toLocaleDateString [구글검색 - 사용법나옴]
 
     if(!datas || datas.length ===0){

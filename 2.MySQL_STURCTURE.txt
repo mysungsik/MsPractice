@@ -1,3 +1,13 @@
+- 2.MySQL_STURCTURE
+
+[0. 사용]
+[0. 데이터를 가져오는 형태]
+[1. 서로다른 데이터테이블을 연결하기]
+
+
+
+
+
 [0.코드]
 1. CURRENT_TIMESTAMP
     : DATATIME 타입을 사용할때 [default/Expression] 에 사용
