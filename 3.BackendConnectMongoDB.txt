@@ -14,19 +14,42 @@
         1) [데이터베이스 서버]를 [최종파일에 연결] - db.connectToDatabase().then()
         2) [데이터베이스]를 [사용할 곳마다 연결]   - db.getDb().collection("컬렉션이름").find().toArray()
 
-[3. mongoDB에서 데이터를 가져오기 ==>> db.getDb().collection("컬렉션이름").find({조건}).toArray() ]
+[3. [블로그 글 생성] mongoDB에서 데이터를 가져오기 ==>> db.getDb().collection("컬렉션이름").find({조건}).toArray() ]
     1) [사용할 폴더]에 [데이터베이스] 연결, [그리고 쿼리]
     2) [특정 값을 검색하여 가져오기] + [원하는 키 값만 가져오기]  *****
 
-[4. mongoDB에 데이터를 제출하기 ==>> db.getDb().collection("컬렉션이름").insertOne({})]
+[4. [블로그 글 에서, 데이터베이스로 ] mongoDB에 데이터를 제출하기 ==>> db.getDb().collection("컬렉션이름").insertOne({})]
     1) [ejs]에서 [데이터 추출하여 하나의 객체로 만들기] + [다른 컬렉션 불러와서] [제출할 객체에 같이 끼워넣기] *****
     2) [데이터베이스에 데이터를 삽입하기]
+    
+[5. 메타데이터  자동으로 email 을 보내주는 <address>, 시간을 표시해주는 <time>]
+[6. 받아온 값을 수정하여, (데이터베이스에는 넣지 말고) [사용하기]]
+
+[7. [블로그 글 업데이트] mongoDB의 데이터를 업데이트하기 ==>> db.getDb().collection("컬렉션이름").updateOne({조건}, { $set : {키1:밸류1, 키2:밸류2 ...} } ) ]
+[8. [블로그 글 삭제] mongoDB의 데이터를 삭제하기 ==> db.getDb().collection("컬렉션이름").deleteOne({조건})]
+[9. 블로그 리스트 정렬하기 버튼 만들기 [2가지 옵션]]
+[10. mongoDB의 에러캐치 [ try, catch의 수동 입력]]
+
+
+
+
+
 
 [만들다가 자꾸 까먹는것들]
 
 1. find() 에서 find.toArray() 를 자꾸 빼먹음
 2. 데이터베이스를 불러올때, [데이터베이스에 값이 없는 경우] if를 사용하여, 다른 글을 표시하게끔 하는 [ 선택적 처리과정을 자꾸 놓침]
 3. [받아온 아이디를 데이터베이스로 보낼때에는(요청이든, 값을보내는것이든)] [반드시 ObjectId를 사용하여 변환시킬것]
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -241,6 +264,153 @@
         1. new ObjectId() 라는 [id라는 특수한 데이터를 집어넣을때 사용되는 코드]
         2. [다른 컬렉션의 연관된 값을 사용할때는, 조건[id값 등]을 붙인 새로은 쿼리를 사용하여, 집어넣어준다.]
 
+
+[5. 메타데이터  자동으로 email 을 보내주는 <address>, 시간을 표시해주는 <time>]
+
+    <section id="post-meta">
+        <address>
+-           <a href="mailto: <%= fromDatabase.author.email %"> > <%= fromDatabase.author.name %></a>
+        </address>
+-           <time datetime="<%= fromDatabase.date %>"> <%= fromDatabase.date %> </time>                                                        "
+    </section>
+        * mailto: 메일주소
+        * datetime : 기계가 볼 시간주소
+        * 태그 안 : 인간이 볼 시간주소
+
+[6. 받아온 값을 수정하여, (데이터베이스에는 넣지 말고) [사용하기]]
+
+const fromDatabase = await db.getDb().collection("posts").findOne({_id: pageId}, {summary:0})
+
+    const trasnformData = {
+    ...fromDatabase,
+    date : fromDatabase.date.toISOString(),
+    humandate : fromDatabase.date.toLocaleDateString("ko-KR",{
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+    }
+    res.render("post-detail", {fromDatabase:trasnformData})
+
+- js toLocaleDateString [구글검색 - 사용법나옴]
+
+
+
+[7. mongoDB의 데이터를 업데이트하기 ==>> db.getDb().collection("컬렉션이름").updateOne({조건}, { $set : {키1:밸류1, 키2:밸류2 ...} } ) ]
+
+    [업데이트페이지에 데이터 보내기]
+
+    router.get("/posts/:id/Edit", async function(req,res){
+        let pageId = new ObjectId(req.params.id)
+        const fromDatabase = await db.getDb().collection("posts").findOne({_id:pageId}, {title:1, summary:1, body:1})
+    
+        res.render("update-post", {fromDatabase:fromDatabase})
+    })
+
+    <input type="text" id="title" name="title" value="<%= fromDatabase.title %>" required>
+    <input type="text" id="summary" name="summary" value="<%= fromDatabase.summary %>" required maxlength="255">
+    
+    ...
+
+    <textarea id="content" name="content" required rows="5"> <%= fromDatabase.body %>"</textarea>
+    
+  
+  
+    [업데이트페이지에서 받아서, 업데이트]
+
+    router.post("/posts/:id/Edit", async function(req,res){
+        let pageId = new ObjectId(req.params.id)
+    
+        await db.getDb().collection("posts").updateOne({_id : pageId}, { $set : {title: req.body.title, summary : req.body.summary, body: req.body.content}} )
+    
+        res.redirect("/posts")
+    })
+
+[8. [블로그 글 삭제] mongoDB의 데이터를 삭제하기 ==> db.getDb().collection("컬렉션이름").deleteOne({조건})]
+
+
+-   [ejs]
+
+    <form action="/posts/<%= fromDatabase._id %>/Delete" method="get">
+        <button class="btn btn-alt">Delete Post</button>                                                                                 "
+    </form>                                                                                                               
+
+-   [nodejs]
+
+    router.get("/posts/:id/Delete", async function(req,res){
+        let pageId = new ObjectId(req.params.id)
+    
+        await db.getDb().collection("posts").deleteOne({ _id: pageId})
+    
+        res.redirect("/posts")
+    })
+
+    * [동적페이지로 form의 action을 만들어, [ 동적라우트로 진입해 삭제시키고, res.redirect()]]
+
+
+
+[9. 블로그 리스트 정렬하기 버튼 만들기 [2가지 옵션]]
+
+    router.get('/posts', async function(req, res) {
+
+        const fromDatabase = await db.getDb().collection("posts").find({},{title:1 , summary:1, "author.name" :1}).toArray()
+      
+        
+        let authororder = req.query.authororder;
+        let titleorder = req.query.titleorder;
+      
+        let orderdata = "right"
+      
+        if(titleorder == "right" || authororder == "right"){
+          orderdata = "left"
+        }
+      
+        if( !authororder){
+          fromDatabase.sort(function(A,B){
+            if(orderdata =="right" && A.title > B.title){
+              return 1 
+            }
+            else if(orderdata =="left" && B.title > A.title){
+              return 1
+            }
+            return -1
+          })
+        }
+        else if( !titleorder){
+          fromDatabase.sort(function(A,B){
+            if(orderdata =="right" && A.author.name > B.author.name){
+              return 1 
+            }
+            else if(orderdata =="left" && B.author.name > A.author.name){
+              return 1
+            }
+            return -1
+          })
+        }
+      
+        res.render('posts-list',{fromDatabase:fromDatabase, orderdata:orderdata});
+      });
+
+
+  
+[10. mongoDB의 에러캐치 [ try, catch의 수동 입력]]
+
+    : [try catch]로 [혹시 주소를 잘못입력하여 [데이터베이스에서 해당_id 값으로 데이터를 찾을 수 없는 경우] ]
+        mySQL 의 경우에는 [ 오류처리 미들웨어로 자연스럽게 넘어가지만] [noSQL]인 [mongoDB 에서는 수동으로 처리해주어야한다.]
+
+    router.get("/posts/:id", async function(req,res){
+
+    let pageId;
+
+    try{
+        pageId = new ObjectId(req.params.id) 
+    }
+    catch(error){
+        res.status(404).render("404")
+    }
+
+    const fromDatabase = await db.getDb().collection("posts").findOne({_id: pageId}, {summary:0})
+
+    ...
+
+
 ====================================================================================================================================================
 [만들다가 자꾸 까먹는것들]
 
@@ -249,3 +419,5 @@
 2. 데이터베이스를 불러올때, [데이터베이스에 값이 없는 경우] if를 사용하여, 다른 글을 표시하게끔 하는 [ 선택적 처리과정을 자꾸 놓침]
 
 3. [받아온 아이디를 데이터베이스로 보낼때에는] [반드시 ObjectId를 사용하여 변환시킬것]
+
+4. mongoDB database 에서 [오는 id는 _id] 이다.

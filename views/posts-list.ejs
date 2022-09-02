@@ -10,9 +10,18 @@
   <%- include('includes/header') %>
   <main id="all-posts">
     <h1>All Posts</h1>
+    <form>
+      <input type="hidden" value="<%= orderdata%>" name="titleorder">
+      <button> titleorder</button>
+    </form>
+    <form>
+      <input type="hidden" value="<%= orderdata%>" name="authororder">
+      <button> authororder</button>
+    </form>
+
     <% if(!fromDatabase || fromDatabase.length === 0) {%>
       <p> YOu have no post. Please write a new post</p>
-      <a class="btn"  href="/new-posts"> Create a new post</a>
+      <a class="btn" href="/new-post"> Create a new post</a>
     <% } else {%>
       <ol id="post-list">
         <% for(const listdata of fromDatabase) {%>

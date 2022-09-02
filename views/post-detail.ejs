@@ -11,11 +11,14 @@
   <main id="post-detail">
     <h1> <%= fromDatabase.title %></h1>
     <section id="post-meta">
-      <a href="mailto:"></a>
+      <address>
+        <a href="mailto: <%= fromDatabase.author.email %> "> <%= fromDatabase.author.name %></a>
+      </address>
+      <time datetime="<%= fromDatabase.date %>"> <%= fromDatabase.humandate %></time>
     </section>
     <hr>
     <section>
-      <p id="body">...</p>
+      <p id="body"><%= fromDatabase.body %></p>
     </section>
   </main>
 </body>
