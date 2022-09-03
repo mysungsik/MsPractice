@@ -1,0 +1,208 @@
+[0.기능]
+    1. 파일을 업로드하고 [ 데이터베이스 + 하드디스크]
+    2. 업로드 된 파일을 [ 유저 프로필을 만드는데 활용]
+    3. 미리보기 기능 구현
+
+[1. 파일을 업로드하기 - HTML PART]
+    1) 3가지 필수사항 [form enctype="multipart/form-data"] [input type = "file"] [name, accept]
+    
+[2. 파일을 업로드하기 - NODEJS PART]
+    1) 패키지설치 [Multer]
+    2) [사용할 라우터]에 require(), 사용준비
+    3) [파일을 처리할 미들웨어 추가] - upload.single(" [name] ")  ,req.file
+    4) [파일을 저장하는 공간]
+-   5) const upload = multer({ dest: "경로"}) 의 문제점
+-   6) 완벽한 multer의 경로설정 [const upload = multer({ stroage: "파일저장정보" } ) ]
+-   7) 데이터베이스에 [저장자 이름] [파일 경로!! ] 를 [저장]
+    [정리] 
+
+
+[3. [데이터베이스에 저장된 파일의 정보] 와 [ 하드디스크에 저장된 파일]을 [ ejs로 불러오기]
+    0) 미들웨어 static의 이해
+    0) [유저가 엑세스할 수 있는 파일, 없는 파일]
+    0) [미들웨어에 경로 지정하기]
+    1) [데이터베이스에 저장된 파일의 정보] 와 [ 하드디스크에 저장된 파일]을 [불러오기]
+
+[4. 이미지 미리보기 기능 만들기]
+    1) 자바스크립트 되돌아보기      
+    2) [이벤트 리스너 "change" - 변경시 표시]
+    3) [자바스크립트로 이미지 미리보기 만들기]
+
+
+===================================================================================================================================================================
+
+
+
+[1. 파일을 업로드하기 - HTML PART]
+
+-   1) 3가지 필수사항 [form enctype="multipart/form-data"] [input type = "file"] [name, accept]
+    html [enctype, input type ="file" 정하기]
+
+    <form action= "...", method = "...." enctype  = "multipart/form-data"> 
+    input type = :"file" ... name .. id ... accept = " .jpg, .jpeg, .png, ..."  or accept = "image/jpg, image/png ..." or accept = "image/*"
+
+[2. 파일을 업로드하기 - NODEJS PART]
+
+    1) 패키지설치 [Multer]
+        : express용 파일처리도구
+
+    2) [사용할 라우터]에 require(), 사용준비
+
+        const multer = require("multer")
+
+        const upload = multer({ dest: "경로"})
+            * dest = destianation
+
+-   3) [파일을 처리할 미들웨어 추가] - upload.single(" [name] ")  ,req.file
+
+        * [미들웨어의 새로운 사용법 : 라우터 안에 미들웨어 넣기] ( 사실 라우터 안에는 무한히 많은 미들웨어를 집어넣을 수 있다.)
+        * [평소 사용했던 방법은 ] : [모든 요청에 대하여 use를 사용하여 처리]
+                [새로운 방법은] : [처리하고 싶은 라우터에만 미들웨어 적용]
+            
+        router.post("/...", upload.single("image") , function(req,res){
+            
+            const uploadedImageFile = req.file
+            const userData = req.body
+
+        } )
+
+            * [form에서 input의 name]이 "image" 라서 upload.single.("image")
+            * [req.file] 은 [저장된 파일을 가지고 있는 것이 아니다]
+                        [단순히 파일의 이름, 경로 등의 추가적 파일 정보를 저장하고 있는 [객체이다] ]
+
+            * 반드시, console.log(uploadedImageFile)을 통해 [어떤 정보가 들어있는지 한번씩 확인해보자]
+
+        ==>> multer는 [자동으로 받아온 파일을] [서버에 저장할것이다]
+        
+-       그렇다면 대체 어디다가 저장할것인가?
+
+    4) [파일을 저장하는 공간]
+        * 데이터베이스는 [파일을 저장하는 공간이 아니다!!]
+
+        : [우리는 파일을] [파일 시스템 = 하드드라이브]에 저장할것이다.
+            , 그리고 [그 주소를 데이터베이스에 저장할 것이다.]
+
+    5) const upload = multer({ dest: "경로"}) 의 문제점
+
+        : upload 변수에 [단순히 multer({dest: "경로"})] 만 지정하게되면 한가지 [커다란 문제가 발생하는데]
+            ==>> [req.file] 을 했을경우 [확장자가 따로 저장되지 않는다는 문제가있다]
+
+        ==>> [저장할때 확실한 방식을 지정해줄 코드로 변경해야한다.]
+
+
+-   6) 완벽한 multer의 경로설정 [const upload = multer({ stroage: "파일저장정보" } ) ]
+            - multer.diskStorage({destianation, filename}) , function({req,file,cb}), cb(에러처리, "폴더이름")
+        
+        1)[사용 이유]
+            : [dest만 지정하면 [req.file에서 받아올 저장정보가 빈 것이 있음] [특히, 확장자]]
+
+
+-       2) [사용]
+
+        <파일저장정보>
+        const stroageConfig = multer.diskStorage({
+            destianation: function(req, file, cb){
+                cb(에러처리, "폴더이름");
+            },
+            filename : function(req,file,cb){
+                cb(에러처리, Date.now() + "-" + file.originalname)
+            }
+
+        })
+            * cb : CallBack함수 => 무언가실행되면 그때 실행되는 함수
+            * cb(에러처리, "name")
+            * 에러처리 ==>> null : 에러가 없음을 나타냄
+            * Date.now() [밀리세컨드까지 써주는 시간스탬프]
+            * originalname : 파일의 본 이름을 저장해줌 [원래는 랜덤한 이름이 맞음] + [확장자가 포함되어있게된다.]
+                ==>> [파일이 복잡해지면 복잡해질수록, 파일 이름의 중복을 피하기위해, 자동으로 짜주는 [랜덤이름]을 사용할것이다.]
+
+
+-   7) 데이터베이스에 [저장자 이름] [파일경로]를 [저장]
+        : 데이터베이스에 저장될 것은 [이름과 경로 뿐이다] [다시말하지만 파일 자체는 하드디스크에 저장하는것이다.]
+
+        router.post("/profiles", upload.single("image"), async function(req,res){
+            const fileData = req.file;
+            const userData = req.body;
+          
+            await db.getDb().collection("usersfile").insertOne({
+              name : userData.username,
+              imagePath : fileData.path})
+          
+            console.log(fileData)
+            res.redirect("/")
+          })
+
+
+    [정리]  1. [multer 설치]
+            2. [ejs에 파일선택기 생성]  ==>>     ejs의 <form enctype =...> , input type ="file" accept = ...
+            3. [multer에 넘길 구체적인 파일자료 생성] =>>  uploadedImageFile = multer.diskStorage(){ destianation: function(req,file,cs){} ...}
+            4. [multer에게 전달]  ==> upload = multer({stroage: uploadedImageFile })
+            5. [받는 라우트에 미들웨어로 upload를 사용] ==> router.post("/" , upload.single("이미지있는폴더이름") , function(){...})
+            6. 데이터베이스에 [파일경로 저장]
+
+
+
+[3. [데이터베이스에 저장된 파일의 정보] 와 [ 하드디스크에 저장된 파일]을 [ ejs로 불러오기]
+
+    0) [미들웨어 static의 이해]
+          : 미들웨어는 [유저들이] [스스로!] [파일에 접근할 수 있게 만들 수 있다.] 
+-           [가장 자주쓰는 예시로] [static 이 있다.]
+
+          ==>> 미들웨어 static은 [모든 사용자가 그 폴더 안에 담긴 파일에 접근하여 볼 수 있게 한다!!] 
+            : 모든사람들이 봐야하는 [사용자의 프로필사진 등이 여기 해당된다.]
+
+                ex) use(express.static("public"))
+
+    0) [유저가 엑세스할 수 있는 파일, 없는 파일]
+-         : [보내는 사람이] [render 하는 것 이외]에 유저는 [서버측에 있는 어떤 파일도 볼 수 없다.]          
+-           + [미들웨어를 사용해 접근가능하게 하는것도 접근 할 수 있다.] 역시나 예시로는 static이 있따.
+                ex) render("/"), use(express.static("public"))
+
+    0) [미들웨어에 경로 지정하기]
+          :미들웨어도 경로를 지정할 수 있다. [경로가 지정된 미들웨어는, 그 폴더에 접근할 때만 활성화 될것이다.] [다른 폴더로의 요청은 무시될것이다.]
+                ex) app.use("/images" , express.static("images"))
+
+
+
+    1) [데이터베이스에 저장된 파일의 정보] 와 [ 하드디스크에 저장된 파일]을 [불러오기]
+         
+        1. db.getDb.collection.find
+
+        2. ejs에 <img src = " [이미지의 경로를 동적으로전달] ">
+
+        3. image가 담긴 images 폴더의 static [클라이언트에게 공개]
+        
+            app.use("/images", express.static("images"))
+
+
+[4. 이미지 미리보기 기능 만들기]
+    : 유저와 딜레이없는 연결을 위해 [자바스크립트를 사용하여 미리보기]
+
+    1) 자바스크립트 되돌아보기
+          :자바스크립트는 [유저와 딜레이없는 직접적인 소통이 가능하다]
+           [서버측 코드처럼] [새로고침을 해야만 적용되는 것이 아니라] [즉발적이다]
+          
+    2) [이벤트 리스너 "change" - 변경시 표시]
+
+        addeventListner ("change", function)
+
+    3) [자바스크립트로 이미지 미리보기 만들기]
+    
+        function(){
+        const files = file선택기.files;
+                        * 파일선택기에 담긴 파일을 볼때는 ==> files [복수이다.]
+
+        if(!files || files.length ===0){
+            미리보기미지.style.display = "none"
+        }
+
+        const pickedFile = files[0]
+        미리보기이미지.src = URL.createObjectURL(pickedFile)
+        미리보기이미지.style.display = "block"
+    }
+
+    + 추가적으로 [미리보기이미지 자체를 안보이게 해두자. 파일이 생성되면 자바스크립트에 의해 켜지도록]
+
+    ==>> 선택된 파일은 아직 [서버로 넘어가지 않았고,] [단순히 유저의 로컬컴퓨터에서만 이루어지는 작업임을 명심하자]
+
+    ==>> 자바스크립트의 [딜레이없는 반응때문에 사용한다는 것을 잊지말자.] + 로컬컴퓨터실행
