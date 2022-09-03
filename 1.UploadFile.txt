@@ -23,10 +23,10 @@
     0) [미들웨어에 경로 지정하기]
     1) [데이터베이스에 저장된 파일의 정보] 와 [ 하드디스크에 저장된 파일]을 [불러오기]
 
-[4. 이미지 미리보기 기능 만들기]
+[4. 이미지 미리보기 기능 만들기] 
     1) 자바스크립트 되돌아보기      
     2) [이벤트 리스너 "change" - 변경시 표시]
-    3) [자바스크립트로 이미지 미리보기 만들기]
+    3) [자바스크립트로 이미지 미리보기 만들기] - URL.createObjectURL()
 
 
 ===================================================================================================================================================================
@@ -76,11 +76,15 @@
         
 -       그렇다면 대체 어디다가 저장할것인가?
 
+
+
     4) [파일을 저장하는 공간]
         * 데이터베이스는 [파일을 저장하는 공간이 아니다!!]
 
         : [우리는 파일을] [파일 시스템 = 하드드라이브]에 저장할것이다.
             , 그리고 [그 주소를 데이터베이스에 저장할 것이다.]
+
+
 
     5) const upload = multer({ dest: "경로"}) 의 문제점
 
@@ -90,6 +94,8 @@
         ==>> [저장할때 확실한 방식을 지정해줄 코드로 변경해야한다.]
 
 
+
+
 -   6) 완벽한 multer의 경로설정 [const upload = multer({ stroage: "파일저장정보" } ) ]
             - multer.diskStorage({destianation, filename}) , function({req,file,cb}), cb(에러처리, "폴더이름")
         
@@ -97,9 +103,10 @@
             : [dest만 지정하면 [req.file에서 받아올 저장정보가 빈 것이 있음] [특히, 확장자]]
 
 
--       2) [사용]
+        2) [사용]
 
-        <파일저장정보>
+        const upload = multer({storage: storageData})
+
         const stroageConfig = multer.diskStorage({
             destianation: function(req, file, cb){
                 cb(에러처리, "폴더이름");
@@ -109,6 +116,7 @@
             }
 
         })
+
             * cb : CallBack함수 => 무언가실행되면 그때 실행되는 함수
             * cb(에러처리, "name")
             * 에러처리 ==>> null : 에러가 없음을 나타냄
@@ -186,23 +194,28 @@
 
         addeventListner ("change", function)
 
-    3) [자바스크립트로 이미지 미리보기 만들기]
+    3) [자바스크립트로 이미지 미리보기 만들기]  -   URL.createObjectURL(파일정보)
     
-        function(){
-        const files = file선택기.files;
-                        * 파일선택기에 담긴 파일을 볼때는 ==> files [복수이다.]
-
-        if(!files || files.length ===0){
-            미리보기미지.style.display = "none"
+        const uploadedImg = document.getElementById("inputImage");
+        const previewImg = document.getElementById("preview-image");
+        
+        function change(){
+            const files = uploadedImg.files;
+            const pickedFile = files[0]
+        
+            previewImg.src = URL.createObjectURL(pickedFile)
         }
+        
+        uploadedImg.addEventListener("change",change)
 
-        const pickedFile = files[0]
-        미리보기이미지.src = URL.createObjectURL(pickedFile)
-        미리보기이미지.style.display = "block"
-    }
+    *추가적으로 [미리보기이미지 자체를 안보이게 해두자. 파일이 생성되면 자바스크립트에 의해 켜지도록]
 
-    + 추가적으로 [미리보기이미지 자체를 안보이게 해두자. 파일이 생성되면 자바스크립트에 의해 켜지도록]
+-   addEventListener 는 [file편집기] 가 [바뀔때] 이미지가 보여야 하므로, [file편집기에 다는 것이다.]!!
+-   스크립트 연결할때 [ / scripts / js파일이름 ] 으로 하는 것을 잊지말자.
+
+-   [files] 는 [file편집기에 등록된 file 의 정보를 담고있다.] [배열 형태로]
+        [file의 정보를 URL로 바꾸어 "src"의 주소로 사용하게 만들어 주는 코드가]
+            [ URL.createObjectURL(파일정보) ]
 
     ==>> 선택된 파일은 아직 [서버로 넘어가지 않았고,] [단순히 유저의 로컬컴퓨터에서만 이루어지는 작업임을 명심하자]
-
     ==>> 자바스크립트의 [딜레이없는 반응때문에 사용한다는 것을 잊지말자.] + 로컬컴퓨터실행

@@ -7,6 +7,8 @@
   <title>New Profile</title>
   <link rel="stylesheet" href="/styles/base.css">
   <link rel="stylesheet" href="/styles/profiles.css">
+  <script src="/scripts/profilescripts.js" defer></script>
+
 </head>
 <body>
   <main id="new-user">
@@ -16,8 +18,10 @@
         <input type="text" id="username" name="username" required>
       </div>
       <div class="form-control">
+        <img id="preview-image" alt="no image" src="">
         <label for="image">User image</label>
-        <input type="file" name="image" id="image" required accept="image/*">
+        <input type="file" name="inputImage" id="inputImage" accept="image/*" required>
+        
       </div>
       <button class="btn">Save User</button>
     </form>

@@ -7,20 +7,27 @@
   <title>All Profiles</title>
   <link rel="stylesheet" href="/styles/base.css">
   <link rel="stylesheet" href="/styles/profiles.css">
+  
 </head>
 <body>
   <main>
     <section id="user-controls">
       <a class="btn" href="/new-user">Add a New User</a>
     </section>
+
     <section id="user-profiles">
       <ul>
-        <li class="user-item">
-          <article>
-            <img src="" alt="The image of the user.">
-            <h2>User name</h2>
-          </article>
-        </li>
+        <% for(const userdata of userdatas){ %> 
+          <li class="user-item">
+            <article>
+              <img src="<%= userdata.filePath %>" alt="The image of the user.">
+              <h2><%= userdata.username %></h2>
+              <form action="/delete/<%= userdata._id %>" method="get">
+                <button> delete </button>
+              </form>
+            </article>
+          </li>
+        <% } %> 
       </ul>
     </section>
   </main>
