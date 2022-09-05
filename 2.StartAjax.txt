@@ -1,0 +1,224 @@
+[INDEX]
+[0. 간단정리]
+[1. Ajax 요청 보내는 방법 3가지]
+*[2. fetch() 를 사용하여, [수동으로(버튼을 눌러서) 요청을 보내고, 응답받기] ]
+*[3. 응답받은 데이터로 페이지 변경시키기]
+*[4. Ajax를 사용하여, 서버로 데이터 보내기 ]
+
+
+============================================================================================================================================================================================================
+
+
+
+[0. 간단정리]
+
+    기존 ==> form  ==> post or get 요청 ==> nodejs(서버) ==> [데이터를 받아 넣기 or 데이터를 읽어 보내주기] ==> ejs에서 받아 처리
+    현재 ==> js ==> 요청 ==> 서버 ==> [데이터 받아넣기 or 읽어 보내주기] ==> js 에서 받아 처리
+
+[1. Ajax 요청 보내는 방법 3가지]
+    방법1.  XMLHttpRequest
+    방법2.  XMLHttpRequest를 다루기 위한 Axiox 타사패키지
+-   방법3.  fetch()
+        * 가장 간단하고, 최신화되어있는 [빌트인 함수인 ] [fetch 함수]를 사용하여 [Ajax 요청을 보낸다]
+
+
+[2. fetch() 를 사용하여, [수동으로(버튼을 눌러서) 요청을 보내고, 응답받기] ]
+-   : 기본적으로 fetch 는 GET REQUEST 를 보낸다.
+
+    1) fetch("URL") - [동적 데이터 보내기]
+
+        [fetch의 첫번째 속성은 URL 이다]. 예시로, fetch("/post/.../comments")
+
+        그렇다면 ...에 들어갈 [동적인 id 값이 있어야 하는데]
+       <button id=..., class= ... > 으로 되어있는 [버튼을 눌럿을때], [URL이 아닌 값으로 동적인 값을 보낼 방법을 찾아야한다.]
+-           * 여태까지는 [form 형식] 혹은 [링크형식 = 앵커태그]로 [URL 주소를 동적으로 바꾸어], [렌더를 하여] [다른 페이지를 로드했다]
+-           * Ajax를 사용하기 위해 <form> 을 <button> 으로 교체한다.
+
+
+    2) 동적 데이터 보내기 [data-id] => ejs to javascript
+    
+        전에 배웠던 data- 를 기억해라
+        <button id=..., class= ... data-postid = "<%= post._id %> ">                                                                                                "
+
+
+    3) 동적 데이터 받기 [dataset.id] 
+
+        1. 버튼의 id값으로 연결하고
+        2. 버튼에 클릭리스너 를 달고
+        3. 버튼의 데이터 정보를 뽑아서 [ 변수 = 버튼쿼리.dataset.id]
+-       4. fetch 로 동적 URL에 담는다.  [   fetch(` / post / ${변수} / comment`)  ]
+
+
+    [ejs]====================================================================  : [서버]에서 가져온 동적데이터로 [버튼에 연결]
+
+    <button ... id="loadBtn" data-postid=<%=post._id%>   ...     > 클릭버튼 </button>
+
+    [javascript]============================================================    : [ 수동으로 ] [요청 보내기]  * form이나 링크를 사용할때는 페이지가 로드되면 자동으로 get 요청을보냈다.
+                                                                                    +[ 응답을 받고, 받은 응답을 javascript 코드로 변형하기]
+    const loadBtn = document.getElementById("load-comments")
+
+    async function loadComments(){
+        const postId = loadBtn.dataset.postid;
+        const response =  await fetch(`/posts/${postId}/comments`)      ==>> [라우터로 요청보냄(fetch)] + [요청받음(response)] 동시에 [promise의 힘]
+        const responseData = await response.json()      ==> .json 은 json 파일을 자바스크립트코드로 변형시키는 코드
+
+        console.log(responseData)
+    }
+
+    loadBtn.addEventListener("click",loadComments)
+
+        * fetch 는 [프로미스] 를 사용할 수 있다.
+        * fetch 는 [기본적으로 GET REQUEST]이다
+
+    [nodeJS]============================================================    : [받은 요청에 응답하기]
+
+    router.get('/posts/:id/comments', async function (req, res) {
+        const postId = new ObjectId(req.params.id);
+        const post = await db.getDb().collection('posts').findOne({ _id: postId });
+        const comments = await db.getDb().collection('comments').find({ postId: postId }).toArray();
+      
+-       res.json(comments);
+      });
+            * [응답으로 json 형식으로된 comments 데이터를 보내겠다 라는 뜻]
+
+    ========================================================================================================================
+
+    * Javascript 의 .json() ==>> [json 으로 온 데이터]를 [javascript 코드로 구문분석]하는것
+    *   NODEJS의 .json()    ==>> [javascript 코드로 온 데이터]를 [json 형식으로 만들어 보내는것]
+
+        이유 : [JSON은 기계가 읽을 수 있는 데이터 형태이므로] [서버와 클라이언트 간의] [데이터!!!] [교환에 사용된다.]
+                fetch 는 [단순히 요청을 보내는 것이기에 보내는 것이지만]
+                nodeJS 는 [데이터를 보내기 때문에 json 형식으로 보내는 것이고]
+                response 로 [데이터를 받아왔기에, 다시 자바스크립트로 구문분석하는것이다.]
+
+    [기존과 비교]
+    1. button[data] >> fetch("URL") ==> [form] or [link] 의 href="URL"  // 서버에 요청을 보냄
+    2. response, responseData       ==> res.render("")                  // 응답을 받은 것(response)을, Javascript 코드로 구문분석(responseData)
+    3. res.json(comments)           ==> res.render("")                  // 받은 요청에 대해, json 형식의 데이터로, 응답을 보냄
+
+
+
+[3. 응답받은 데이터로 페이지 변경시키기]
+
+    1. [ejs의 화면 넣고싶은 섹션을 자바스크립트로 가져와] - comments 섹션
+    2. [그걸 기준으로 스크립트코드 작성 [innerHTML]      - [복습] 자바스크립트에서 DOM을 조작하여 ,HTML 태그 만들어 집어넣기
+    3. 가져온 데이터를 innerHTML 안에 넣어준다.
+
+    const loadBtn = document.getElementById("load-comments")
+    const commentsSection = document.getElementById("comments");
+
+    function createListFunction(comments){
+        const commentsList = document.createElement("ol")
+
+        for(const comment of comments){
+            const commentsListItem = document.createElement("li") 
+            commentsListItem.innerHTML =`
+            <article class="comment-item">
+                <h2> ${comment.title} </h2>
+                <p> ${comment.text} </p>
+            </article>
+            `
+            commentsList.append(commentsListItem)
+        }
+        return commentsList
+    }
+
+    async function loadComments(){
+        const postId = loadBtn.dataset.postid;
+        const response =  await fetch(`/posts/${postId}/comments`) 
+        const responseData = await response.json()
+
+        const commentsList = createListFunction(responseData)
+        commentsSection.innerHTML =""  
+        commentsSection.append(commentsList) 
+
+
+        console.log(responseData)
+    }
+
+    loadBtn.addEventListener("click",loadComments)
+            
+[4. Ajax를 사용하여, 서버로 데이터 보내기 ]
+    : [ form을 활용하여, [페이지를 넘기지 않고], 데이터를 전송할것이다.]
+
+    1) form에 id값과 data- 값을 넣어, [자바스크립트에서 동적인 post 요청 보내게하기]
+    2) [자바스크립트에서] [Ajax의 POST 요청방법에 따라, POST 요청 보내기]
+
+        * [[수동으로 보낼 값]과, [메타데이터를 지정]해야 함을 명심] - aciton, method 를 사용한 form의 경우는 자동으로 전부 들어가있었다.
+        * [수동으로 서버에 보낼 데이터는 [데이터 교환 법칙에 의해 반드시 json 형태로 변형해야함을 명심]]
+
+    3) [라우트에서 값을 받아 데이터베이스에 집어넣음]
+
+        * 값을 받는 [name] 은 [자바스크립트에서 보낸 [name 임을 명심]]
+            ==>> [text: req.body.text] 에서 [기존은 form의 name이였지만] , [ 이젠 [수동으로 보낸 값]의 키 값임을 명심]
+
+    4) [지정한 메타데이터를 토대로, 메인 app.js 파일에서 [들어온 json 파일을, 사용가능한 자바스크립트코드로 변형하는 미들웨어를 만듬] 
+            * 미들웨어의 처리방식에 의하여, [메타데이터가 필터의 기능을 했음을 알기]
+
+
+
+    [ejs]====================================================================  : [form에 id와 data 값을 넣음]
+
+    <form ... id="form-id" data-postid=<%=post._id%>   ...     >  </form>
+    <input type="text" id="title" name="title" required />
+    <textarea name="text" id="text" rows="3" required> </textarea>
+
+    [javascript]============================================================    : [자바스크립트에서 post요청 보내기]
+    
+    function sendCommentsData(event){
+        event.preventDefault()
+
+        const pageId = commentsDataForm.dataset.postid;
+        const commentsTextValue = commentsText.value;
+        const commentsTitleValue = commentsTitle.value;
+
+        const commentsData = {
+            title : commentsTitleValue,
+            text : commentsTextValue
+        }
+
+        fetch(`/posts/${pageId}/comments`,{
+            method: "POST",
+            body : JSON.stringify(commentsData),
+            headers : {
+                "Content-Type" : "application/json"
+            }
+            
+        })
+    }
+-       * Ajax의 POST 요청 방법 (fetch는 기본적으로 get임을 기억)
+-       * [HTML에서 Form을 통해, [서버로 정보를 보낼때에는] [모든 정보가 자동으로 서버로 이동했지만]]
+           [javascript의 ajax를 사용하여 보낼때에는, [수동으로 보낼 데이터들을 지정해야한다.] ] - fetch의 body 파트
+-       * [자바스크립트와 서버 사이에 [요청이 아닌] [데이터의 이동방식]은 [항상 JSON 파일로 이루어져야 한다] ]
+-       * [미들웨어의 활성화조건 확인]
+            미들웨어는 [들어오는 meta-data의 형태에 따라 urlencoded면 urlencoded() 미들웨어가, ]
+                                [meta-data가 json형태이면 json() 미들웨어가 활성화되는것이다.]
+
+            [기존에 form 으로 작업할때에는 [브라우저가 알아서 meta-data 를 만들어 보냈지만]]
+            [지금은 수동으로 데이터를 보내고 있기 때문에, mata-data를 적어서 보내야한다.]
+            [그러므로 서버에 데이터를 보낼때, [헤더에 메타데이터를 추가해서 보내야한다.]]
+
+                                                                                
+    [nodeJS - router]============================================================    : []
+
+    router.post("/posts/:id/comments", async function(req,res){
+        const pageId = ObjectId(req.params.id)
+      
+        const insertData ={
+          postId: pageId,
+          text: req.body.text ,
+          title: req.body.title
+        }
+        await db.getDb().collection("comments").insertOne(insertData)
+      
+      })
+      
+    [nodeJS - app.js]============================================================    : []  
+      
+    app.use(express.json())
+
+-     * [서버에서 json 데이터를 자동으로 javascript 코드로 분석해주는 [미들웨어]를 추가해야한다.] - app.use(express.json())
+-        기존에는 form 의 데이터를 자동으로  javascript 코드로 분석해주는 [미들웨어인] - app.use(express.urlencoded()) 를 사용하였다.
+-     * [미들웨어의 활성화조건 다시한번 확인하자]
+    ============================================================  ============================================================  ============================================================  
+
