@@ -1,5 +1,7 @@
 const loadBtn = document.getElementById("load-comments")
 const commentsSection = document.getElementById("comments");
+const commentsP = document.getElementById("commentsP");
+
 const commentsDataForm = document.getElementById("comments-data-form")
 const commentsText = document.getElementById("text")
 const commentsTitle = document.getElementById("title")
@@ -29,9 +31,14 @@ async function loadComments(){
     const response =  await fetch(`/posts/${postId}/comments`)  // [서버에서 데이터 요청과 받는 것을 동시에]
     const responseData = await response.json()
 
-    const commentsLists = createListFunction(responseData)        // ol 안에 서버에서 받은 data로 만든 li가 잔뜩 담긴, OL 완성
-    commentsSection.innerHTML =""                               // 부모요소 한번 초기화하고
-    commentsSection.append(commentsLists)                        // 만든거 집어넣기
+    if(!responseData || responseData.length ===0){
+        commentsP.textContent = "you have no commnets"
+    }
+    else{
+        const commentsLists = createListFunction(responseData)        // ol 안에 서버에서 받은 data로 만든 li가 잔뜩 담긴, OL 완성
+        commentsSection.innerHTML =""                               // 부모요소 한번 초기화하고
+        commentsSection.append(commentsLists)                        // 만든거 집어넣기
+    }
 
 
     console.log(responseData)
@@ -74,7 +81,10 @@ function sendCommentsData(event){
         }
         
     })
+
+    loadComments()
 }
 
-commentsDataForm.addEventListener("submit",sendCommentsData)
+
 loadBtn.addEventListener("click",loadComments)
+commentsDataForm.addEventListener("submit",sendCommentsData)

@@ -137,6 +137,9 @@ router.post("/posts/:id/comments", async function(req,res){
   }
   await db.getDb().collection("comments").insertOne(insertData)
 
+  res.json({message : " adding compelete!"})
+  // 응답으로 json형식의 메시지를 보내겠다.
+
 })
 
 
