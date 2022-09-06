@@ -1,0 +1,375 @@
+==============================================================================================================================================================================
+
+[0. Authentication(인증)]
+[ 1. 간단한 가입기능 추가 ]
+[ 2. 해싱(Hashing)]
+[ 3. 로그인하기 ==> bcryptjs.compare(x,y) ]
+[ 4. 간단한 가입기능에 [검증조건 추가] ]
+[ 5. 웹의 기능을 잠그고, 특정 로그인 정보를 가진 사용자에게만 액세스 권한 부여하기(이론편)]
+[ 6. 웹의 기능을 잠그고, 특정 로그인 정보를 가진 사용자에게만 액세스 권한 부여하기(실전편) ******************************]
+    [0. 세션과 쿠키의 타사패키지]
+    [1. express-session 패키지 설치  [npm install express-session]     
+    [2. 세션기능 구현 [세션 패키지, 세션 스토어 패키지]]
+    [3. 세션에 데이터 저장 [ 로그인시, 로그인이메일로, 세션 부여 및 데이터베이스에 저장] [req.session]
+    [4. 저장된 세션의 정보를 확인 ==> [페이지에 접속하는 액세스 권한 부여 ]
+    [5. 로그아웃 ==>> 세션데이터 지우기 ]
+    [6. 쿠키에 관하여]
+    [7. 세션에 관하여(인증 이상의 기능) + 잘못된조건으로 가입에 실패하고, redirect 되어도!, 쓰던게 아직 입력되어있는 행복한 웹사이트 만들기 with the session]
+
+[7. 정리]
+
+[0. Authorization (권한 부여)]
+
+========================================================================================================================================================================
+[0. 나만의 팁]
+
+    1. [세션]은 [백엔드의 어느 라우트든 코드를 적으면], [브라우저 상에서 저장되기때문에 (물론 데이터베이스에도 같이)] 브라우저와 함꼐 계속해서 유지된다. 
+-       그러므로, [데이터베이스에서 불러오거나 그럴 필요 없이 아무대서나 사용가능하다], 마치 자바스크립트의 한 페이지를 쓰는것처럼]
+
+
+
+
+[0. Authentication(인증)]
+    : [로그인, 사용자증명에 관한 모든것]
+
+
+[ 1. 간단한 가입기능 추가 ]
+
+        router.post('/signup', async function (req, res) {
+            const userData = req.body;
+            const enteredEmail = userData.email; // userDatra["email"]
+            const enteredCongfirmEmail = userData["confirm-email"] // 간단한팁: '-' 쓸 수 없는 문자를 가진, name 을 받을때 (.)을 사용하지말고 []를 사용하면된다.
+                                                            // userData["confirm-email"] =>> userData.confirm-email [하지만 - 를 쓸 수없으니 전자로 대체]
+            const enteredPassword = userData.password;   
+        
+            const user = {
+            email : enteredEmail,
+            password : enteredPassword
+            }
+        
+            await db.getDb().collection("users").insertOne(user)
+        
+            res.redirect("/login")
+        
+        });
+
+        -  ==>> 엄청난 문제점 : [해킹당하면 데이터베이스에 유저들의 아이디와 비밀번호가 평문으로 전부 저장되어, 전부 다 보인다]
+        ==>> [해싱(Hashing)] 을 이용하여, 암호의 저장을 암호화
+
+[ 2. 해싱(Hashing)]
+        : 해싱알고리즘을 통해, 문자를 비밀코드로 변환하여 저장 ex) test --> asdjh#4321@s231s@dhsa
+        : 저장된 비밀코드는 [다시 되돌릴 수 없음 ==> 해킹되어도 본래의 비밀번호를 알 수 없음]
+            [비밀번호의 확인은] [ 기존 비밀번호를 해싱알고리즘으로 다시 뽑았을때, 기존의 해싱알고리즘에 의해 저장된 비밀번호와 동일한지 보는것]
+        
+        1) 패키지설치 [bcryptjs]
+            npm install bcryptjs
+
+        2) 패스워드 해싱
+            await bcryptjs.hash(해싱할패스워드, 강도(int))
+            ex) await bcryptjs.hash(enteredPassword, 12)
+
+        router("/..." function(){...
+
+            const hashedPassword = await bcryptjs.hash(enteredPassword, 12)
+
+            const user = {
+            email : enteredEmail,
+            password : hashedPassword
+            }
+
+        })
+
+[ 3. 로그인하기 ==> bcryptjs.compare(x,y) ]
+        : 회원가입을 완료했다. [로그인페이지에서 값을 서버에 보내고] [서버에서 확인한다.]
+
+        router.post('/login', async function (req, res) {
+
+            const userData = req.body;
+            const enteredEmail = userData.email;
+            const enteredPassword = userData.password;
+
+            const existingUsers = await db.getDb().collection("users").findOne({email:enteredEmail}) // 이메일로, 사용자가 존재하는지 찾기
+
+            if(!existingUsers){
+                return res.redirect("/login")
+            }
+
+            const passwordIsEqual = await bcryptjs.compare(enteredPassword,existingUsers.password) 
+
+
+            if(!passwordIsEqual){
+                console.log("wrong password")
+                return res.redirect("/login")
+            }
+
+            console.log("user is authenticated")
+            res.redirect("/admin")
+
+        });
+
+        * bcryptjs.compare(받은데이터, 해쉬된 데이터베이스의 데이터)
+            [bcryptjs의 내장 매소드]로 [입력한 패스워드, 해싱된 데이터베이스의 패스워드] 를 서로 비교,
+            결과값은 [불리언]으로 나온다.
+       
+
+[ 4. 간단한 가입기능에 [검증조건 추가] ]
+
+        router.post('/signup', async function (req, res) {
+            const userData = req.body;
+            const enteredEmail = userData.email; 
+
+            ...
+            
+        -   가입 입력이 잘못되었을경우들의 경우들
+            if(enteredEmail !== enteredCongfirmEmail || !enteredPassword || !enteredEmail || !enteredEmail.includes("@") || enteredPassword.length < 6 ){
+                console.log("please check your email again")
+                return res.redirect("/signup")
+            }
+
+        -   이미 유저가 존재했을때의 경우
+            const existingUsers = await db.getDb().collection("users").findOne({email:enteredEmail}) 
+            if(existingUsers){
+                console.log("user already exists")
+
+                return res.redirect("/signup")
+            }
+
+            await db.getDb().collection("users").insertOne(user)
+            res.redirect("/signup")
+        });
+
+        ==>> 모든 return들을 전부 통과하면, 데이터베이스에 저장된다.
+
+[ 5. 웹의 기능을 잠그고, 특정 로그인 정보를 가진 사용자에게만 액세스 권한 부여하기(이론편)]
+    : 일종의 [티켓팅] 이 필요
+    : [데이터베이스 접근 티켓을 만들어] [복사하고] [유저들에게 나누어준다.] [맞는 사본을 들고왔다면 입장가능한] [티켓팅 시스템이 필요]
+
+    1) 기본적인 프로세스
+
+        >> [클라이언트(유저)] 는 [서버] 에 [로그인정보를 전달( send login credential)]
+        >> [서버] 는 [로그인정보를 받아 유효성검사를 진행]
+        >> [서버가 유효성검사를 마치고 티켓을 발급.] 그 티켓 이름이 [세션]. [세션을 가진 유저는 데이터베이스에 접근 가능]
+            * 세션 : 데이터베이스에 저장하는 [유니크한 아이디를 가진] 데이터
+        >> [가끔 서버는 미리 각 유저가 가진] [고유의 세션을 미리 지급하여] [유저는 자신의 컴퓨터에 그 세션을 보관] ==> [다음에 접속할때 바로 접속이 가능]
+            ==>> 이것이 바로 [쿠키]
+
+    2) 세션 과 쿠키
+
+        [저장]
+            세션 : [서버에 저장(대부분 데이터베이스)]
+            쿠키 : [클라이언트가 컴퓨터에 저장]
+
+        [특징]
+            세션 : 세션은 그저 데이터 덩어리. [어떤 데이터를 넣는지가 중요], [대부분을 인증하는데 사용할 뿐] [인증 전용이 아니라, 그저 데이터 덩어리]
+            쿠키 : 쿠키들 중 [세션 ID를 저장하는] [세션쿠키] 는 [오래오래 지속...] , 세션쿠키를 제외한 대부분의 쿠키는 [귀찮은 광고, 추적에 사용됨]
+
+
+[ 6. 웹의 기능을 잠그고, 특정 로그인 정보를 가진 사용자에게만 액세스 권한 부여하기(실전편) ******************************] 
+    : 무거운 세션과 쿠키를 다루기위해, 타사패키지를 설치, 세션과 쿠키를 사용해보자
+
+
+0. [세션과 쿠키의 타사패키지]
+        세션 : express-session 패키지, 
+        쿠키 : cookie-parser 패키지.
+            * cookie-parser 패키지를 설치하지 않아도, 기본적으로 express-session 패키지에서 쿠키를 처리할 수 있는 기능은 있다.
+
+1. express-session 패키지 설치  [npm install express-session]   
+        : express에서 간단한 동작으로 세션을 지원해주는 패키지
+    
+2. [세션기능 구현 [세션 패키지, 세션 스토어 패키지]]
+
+        1. 세션은 [express-session 패키지 를 이용해], [모든사용자가] 하는 [모든 요청에 대하여] [확인해야한다.] - 미들웨어사용
+        2. 세션을 이미 가지고 있는(쿠키) 유저에 대하여, [이미 생성된 세션에 관하여 식별한다.]
+
+        3. [세션 패키지]를 통해 [세션을 생성하고], [세션 스토어 패키지]를 통해 [세션을 데이터베이스에 저장한다.]
+            * 세션패키지로 [express-session], 세션 스토어패키지로는 [ connect-mongodb-session ] 패키지를 사용해본다.
+-           * 세션관리를 위한 타사패키지 설치
+                [npm express-session]을 [구글에서검색해서] 들어가면, Compatible Session Stores 파트가 있다. 
+                [express-session과 같이 쓸 수 있는] [세션 스토어(저장) 패키지가 많이보인다.]
+
+        const session = require("express-session")                                      // 세션패키지
+        const mongodbStore = require("connect-mongodb-session")                         // 세션 저장 패키지
+
+        const MongoDBStore = mongodbStore(session)                                      // 세션 저장 패키지를 통해, 세션 연결
+
+        const sessionStore = new MongoDBStore({                                         // 세션 저장 패키지를 통해, 저장소 연결
+            uri : "데이터베이스 주소"
+            databaseName : "데이터베이스 이름(현재의 경우 auth-demo)"
+            collection : "세션 저장할 콜렉션이름"
+        })
+
+        app.use(session({                                                               // 세션 패키지를 통해, 세션 저장기능사용
+            secret: "super-srcret",
+            resave : false,
+            saveUninitialized: false,
+            store : sessionStore
+            
+        }))
+            * secret : 세션을 보호할 [패스워드 문자열] - 복잡할수록 좋다
+            * resave : [세션의 데이터가 변하지 않아도] [새 세션에 저장할지 판단] ==> true : 변하지안하도 새 세션에 저장 (오류 많으므로 false로)
+            * saveUninitialized : 세션이 [데이터베이스에만 저장되게 하거나], [저장하고싶은 어디든 저장하게한다..?]
+-           * store : 세션데이터가 저장되는 공간을 정함
+                1. 메모리에 저장 : 서버재시작시 메모리가 깨짐 등등... 실제론 안씀 [개발용]
+                2. 파일메모리에 저장 : 나쁘지않음
+                3. 데이터베이스에 저장 : 최고
+
+3. 세션에 데이터 저장 [ 로그인시, 로그인이메일로, 세션 부여 및 데이터베이스에 저장] [req.session]
+
+    : 세션에 사용자의 이메일과 같은 정보를 넣고, [세션을 부여]하여, 
+        후에 사용자의 로그인정보가 [세션 데이터 정보 안에 있다면], 오케이
+
+    router.post("/login" function(){
+
+        const existingUsers = await db.getDb().collection("users").findOne({email:enteredEmail})
+
+        ...
+
+        req.session.user = { id: existingUsers._id , email : existingUsers.email ...}        // 패키지에 의해, 데이터베이스에 자동저장
+        req.session.isAuthenticated = true                                                 //인증여부확인
+
+        req.session.save(function(){
+            res.redirect("/admin")
+        });
+
+    })
+
+    ==> req.session.user 를 통해, [user 의 정보를 세션에 저장] - Session 콜렉션 안에, 한 폴더 안의, 데이터 한조각으로 저장
+        : 이렇게만 해도 [express-session 패키지에 의해, 자동으로 세션데이터가 데이터베이스에 저장된다.]
+-       [세션이 저장될 경로는 미리 정해두었으므로, 없다고 헷갈리지 말자 ]
+
+-  * 저장 작업은 비동기작업이므로, 시간이 조금 걸린다. [ 작업중 redirect("/")를 통해 이동하면 안되므로, 조치를 취해야한다.]
+        ==> req.session.save() 를 통해, [강제로 세션에 정보를 저장], 콜백함수로 저장이 완료되면 콜백함수가 호출되게 만든다.
+
+
+4. [저장된 세션의 정보를 확인 ==> [페이지에 접속하는 액세스 권한 부여 ]
+
+    : 세션에 [저장해둔 데이터를 활용해], [액세스권한을 부여하는 단계]
+        [로그인 중이라면, 세션이 활성화 되어있을 것이고], [로그아웃하는 순간 부여한 세션을 제거하여] [액세스권한을 조절] 
+                * 로그아웃하면 세션을 제거하는것은 아직 안만들었음
+
+
+    router.get("/admin", function(req,res){
+        ...
+
+        if (!isAuthenticated ){             // [인증되지 않았다면], 혹은, 세션에등록된정보가없다면 (!req.session.user)
+            return res.status(401).render("401")        //인증오류
+        }
+        
+        res.render("/admin")            // if를 통과하면, 권한이 있는것으로 보고, 페이지를 로딩한다.
+
+    })
+
+    ==> 올바르게 로그인하면, 세션이 저장되고, 쿠키가 생성되며, 세션(쿠키)이 만료될때까지, 자유롭게 액세스할수 있다.
+-     * /admin 페이지에서, 읽지도 않은 데이터베이스의 파일에 들어있는 isAuthenticated 라는 데이터를 어떻게 파악하는가?
+        ==>> [쿠키가 알려준다]. 그러니까, [데이터 읽어서 찾을 필요 없이], [바로가능]
+
+
+5. [로그아웃 ==>> 세션데이터 지우기 ]
+
+    : 로그아웃은 post를 사용한다.
+    : 세션의 데이터를 [전부 지우는 것이 아니라, 해당 세션의 USER 에 대한 값만 NULL 로 지웠다]
+        이유는 [쇼핑몰의 비회원 구입처럼, 아이디는 없어도, 세션을 부여해 해당 유저만의 쇼핑목록을 가져오기 위해]
+        -       이때 세션은 [인증용이 아니라!!] [데이터 저장용이다!]
+        * 세션은 절대로 [인증용이 아니다. 인증에 주로 쓰이는것이다.]
+
+    req.session.user = null;
+    req.session.isAuthenticated = false;
+    res.redirect("/")
+
+
+
+
+
+
+
+[6. 쿠키에 관하여]
+
+    1. 쿠키는 어떻게 생성되는가?
+        : [세션이 생성될때! 패키지에 의해 [자동으로 생성]되어 [브라우저가 자동으로 저장]한다.] * 세션과 관련되지 않은 쿠키를 다룰때는 cookie parser 패키지
+
+    2. 쿠키(저장된 세션)은 어떻게 제출되는가?(전송되는가?)
+        : 브라우저가 요청 (form이든 ajax든, get, post 등의 요청들) 할때, 자동으로 제출된다. [알아서!]
+
+[7. 세션에 관하여(인증 이상의 기능) + 잘못된조건으로 가입에 실패하고, redirect 되어도!, 쓰던게 아직 입력되어있는 행복한 웹사이트 만들기 with the session]
+
+    * 단어설명 : req.session.[필드데이터]  ex) req.session.user ==>> user: 필드데이터
+    
+    [가입실패 예상]
+
+    router.post("/signup", function(){
+        const enteredEmail= 이메일텍스트.vlaue
+        const enteredCongfirmEmail = 컨펌이메일텍스트.value
+        const enteredPassword = 비밀번호텍스트.value
+    
+        if( 인증조건 불통과 ){
+            req.session.userinput = {
+                haserror : ture,
+                message: "asd",
+                email : enteredEmail,
+                confirmemail : enteredCongfirmEmail,
+                password : enteredPassword
+            }
+        
+            req.session.save(function(){
+                res.redirect("/signup")
+            })
+            return
+        }
+    
+        res.redirect("/login")
+    })
+
+        ==>> 인증조건 불통과시 리디렉트만 되는것이 아니라, [세션에 썻던데이터를 저장함]
+
+    [다시 방문했을때, 세션이 존재하는지 확인]]
+
+    router.get("/signup", function(){
+
+        let sessionInputData = req.session.userinput;       ==>> [저장된 세션에서 불러옴]  // 왜 이게 되는지 궁금하면 다시 맨 위로 올려볼것 [0.나만의팁]
+
+        if(!sessionInputData){                              ==>> [저장된 세션이 없다면], [값들을 초기화한다.]
+            haserror : false,
+            message: "",
+            email : "",
+            confirmemail : "",
+            password : ""
+
+        }
+
+        req.session.userinput = null                        ==>> [플래싱] : 잠깐 데이터 값을 생성했다가, 사라지게하는 기술
+                                                                 [계속 세션에 데이터가 남아있으면 안되므로, 변수에 옮겨놓고 세션데이터는 삭제]
+
+        res.render("signup", {inpudata:sessionInputData})   ==>> [세션이 있다면, 세션값이 ejs로 들어갈것이고, ]
+                                                                 [세션이 없다면, 빈 데이터가 ejs로 들어갈것이다.]
+    })
+
+    [ejs파일]
+
+        값들을 전부 백엔드에서 받은 값으로 교체한다.
+        +if를 사용하여, 틀렸다면, 틀렸다고 표시해주자
+
+
+
+[7. 최종정리]
+
+    1. express-session 은 세션을 만든다
+    2. connect-mongodb-session 은 세션 저장소를 관리해준다.
+    3. 세션은 전방위적으로 돌아다니는 [데이터 덩어리다] 주로, 인증을 위해 사용되지만, 전방위적으로 돌아다닐 데이터를 만들때도 사용한다.
+    4. 세션을 만드는 일은 async 이다. 세션이 저장된 후 움직이게 만들기 위해서는 [req.session.save() 안에 콜백함수]로 작업시켜준다.
+    5. req.session.[필드데이터] 에서, 필드데이터 값은 아무거나 가능하다. 다만 기억하고 있어야한다.
+
+
+==============================================================================================================================================================================
+
+[0. Authorization (권한 부여)]
+    : Authentication(인증) 은 [세션을 활용해, 제한된 액세스권한을 사용자에게 부여하는 것]
+        ex) 로그인을 해야만 페이지에 들어갈 수 있음
+
+    : Authorization (권한 부여) 는 [ 제한된 액세스를 넘어, 기능 사용을 제한할 수 있음]
+        ex) 로그인을 한 누군가는 [댓글기능이 막혀있지만], 또다른 로그인을 한 누군가는 [댓글을 쓸 수있고, 블로그를 관리 할 수 잇음]
+
+1. 권한부여하기
+    : 데이터베이스에서 한 유저의 데이터에 isAdmin : ture 를 추가하자    [ 권한부여의 방법이 될 순 있지만 실제론 이렇게 안한다. 연습용임]
+
+2. 
+
