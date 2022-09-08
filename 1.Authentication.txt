@@ -157,7 +157,7 @@
 
         [저장]
             세션 : [서버에 저장(대부분 데이터베이스)]
-            쿠키 : [클라이언트가 컴퓨터에 저장]
+            쿠키 : [서버에서 브라우저로 전송되, 브라우저에 저장되는 데이터조각, 모든 요청과 함께 브라우저에서 자동으로 서버로 전송]
 
         [특징]
             세션 : 세션은 그저 데이터 덩어리. [어떤 데이터를 넣는지가 중요], [대부분을 인증하는데 사용할 뿐] [인증 전용이 아니라, 그저 데이터 덩어리]
@@ -225,7 +225,7 @@
         ...
 
         req.session.user = { id: existingUsers._id , email : existingUsers.email ...}        // 패키지에 의해, 데이터베이스에 자동저장
-        req.session.isAuthenticated = true                                                 //인증여부확인
+        req.session.isAuthenticated = true                                                  // 인증여부확인[이렇게 빼놔야 편함]
 
         req.session.save(function(){
             res.redirect("/admin")
@@ -251,7 +251,7 @@
     router.get("/admin", function(req,res){
         ...
 
-        if (!isAuthenticated ){             // [인증되지 않았다면], 혹은, 세션에등록된정보가없다면 (!req.session.user)
+        if (!req.session.isAuthenticated ){             // [인증되지 않았다면], 혹은, 세션에등록된정보가없다면 (!req.session.user)
             return res.status(401).render("401")        //인증오류
         }
         
@@ -319,7 +319,9 @@
         res.redirect("/login")
     })
 
-        ==>> 인증조건 불통과시 리디렉트만 되는것이 아니라, [세션에 썻던데이터를 저장함]
+        ==>> [인증조건 불통과시 리디렉트와 더불어], [세션에 썻던데이터를 저장함]
+        ==>> return을 밖으로 빼주어야, 다음 코드로 안넘어간다.
+
 
     [다시 방문했을때, 세션이 존재하는지 확인]]
 
@@ -346,17 +348,119 @@
     [ejs파일]
 
         값들을 전부 백엔드에서 받은 값으로 교체한다.
-        +if를 사용하여, 틀렸다면, 틀렸다고 표시해주자
 
-
-
-[7. 최종정리]
+[정리]
 
     1. express-session 은 세션을 만든다
     2. connect-mongodb-session 은 세션 저장소를 관리해준다.
     3. 세션은 전방위적으로 돌아다니는 [데이터 덩어리다] 주로, 인증을 위해 사용되지만, 전방위적으로 돌아다닐 데이터를 만들때도 사용한다.
     4. 세션을 만드는 일은 async 이다. 세션이 저장된 후 움직이게 만들기 위해서는 [req.session.save() 안에 콜백함수]로 작업시켜준다.
     5. req.session.[필드데이터] 에서, 필드데이터 값은 아무거나 가능하다. 다만 기억하고 있어야한다.
+
+
+
+[8. 유저가 어느페이지에 접속했는지 인식하고 동적 페이지 만들기 + [미들웨어와 res.locals 의 활용]]
+
+    : [유저가 접속하고 있는 페이지에 따라], [헤더의 모양이 변하는 페이지] 를 만든다.
+
+    [현재까지 아는 방법으로는]
+        각 페이지마다, 렌더를 통해, 템플릿인 ejs파일의 헤더 리스트를 동적으로 바꾼다.
+        [이는, 모든 라우트에서, 모든 템플릿으로 전달해야하는 코드를 하나하나 다 적어야하기에]
+        [비효율적인 것을 넘어, 오류가 발생하기 쉽다.]
+
+    index
+        1) app.js 에서 모든 템플에서 사용가능한 미들웨어를 만들 수있다.
+        2) app.use(function(req,res, next){}) 를 통해 [모든 요청에 대하여 값을 거치게 만든다.] 
+        3) 조건은 [req.session.user, req.session.isAuthenticated]
+-       4) 미들웨어 안에 res.locals 를 통해 [모든 템플릿에 전달되는 동적값을 만든다.]
+        5) 템플릿에 조건문을 추가하여, 헤더가 보이고 안보이고 하게 만든다.
+
+        ***) 위치의 중요성 : 지금 생성하려는 미들웨어에는 [인증정보가 담겨있으므로], [라우트를 처리하는 미들웨어보다 위에 위치해야한다]
+
+                app.use(function(req,res,next){})
+                app.use(demoRoute)
+
+
+-       * 미들웨어에서 next() 의 용도
+            : [값을 다음 라우트로 옮겨야한다? 다음 미들웨어로 옮겨서 처리해야한다?]
+            ==> 적절하게 처리할만큼 했다면, 이제 현 미들웨에서 벗어나는 용도
+
+-       * res.locals 
+            [라우트 안에 적은 일반변수 등을 불러와] [현재의 요청에만 사용되고, 버리는] 잠시동안 [ 전 역 변 수 ] 화 시켜주는 코드
+-           [미들웨어에 사용했으므로] [ 모든 템플릿에(ejs)!! ] 에 동적으로 사용 가능한 값이 완성된것
+            [마치,  session 처럼!] 근데 [모든 요청에 대해 응답하는 미들웨어에 사용했으니, 모든 템플릿에도 가는!]
+-           [거기에다가, session 처럼 모든 라우트에도 옮겨다니는!]
+            
+
+                ex) const isAuth = req.session.isAuthenticated
+                
+                    res.locals.isAuth = isAuth
+
+                ==>> [현재 진행중인 요청이 끝날때까지, isAuth  는 모든 템플릿, 모든 라우트에서 사용가능하다]
+-                       템플릿에서도    <%= locals.isAuth %>  로 사용가능
+                ==>> 라우트에서, 인증을위해 만든 코드를 가져와, [전역(라우트 + 템플릿)]으로 사용하게 만듬
+                ==>> 기존에 있던, [ req.session.isAuthenticated ] 를 전부 [ locals.isAuth ] 로 교체 가능
+
+                    <% if (locals.isAuth) { %>
+                        <li> ... </li>
+                    <%  }   %>
+                    
+                ==>> [한 페이지에서만] 원하는 데이터를 res.render{} 로 보냈다면
+                ==>> [모든 페이지]에서 필요한 데이터는 res.locals. 로 보내는것이다.
+
+
+    [정리]
+        1. 로그인된 정보에 따라, [헤더(ejs템플릿)가 바뀌는 페이지를 만들고싶다.]
+        2. [로그인된정보] = [인증과 권한이 필요]
+        3. [인증 => 세션에서, 권한 => 데이터베이스의 admin이 true인지 에서 나온다.]
+        4. [확인된 인증과 권한을 res.locals 로 전역으로 만들고]
+        5. [ejs 템플릿 수정]
+
+        app.use(async function(req, res, next){             // 4-0 모든 요청에 처리되는 미들웨어를 생성
+
+            const user = req.session.user;                                              // 4-1 세션에 저장된 유저가 있다면(로그인했다면)
+            const isAuth = req.session.isAuthenticated;                                  // 4-2 인증서를 주고,
+          
+            if(!user || !isAuth){
+              return next();                // 4-3 세션에 저장된 유저가 없다면(로그인하지 않았다면), 이 라우터(미들웨어) 를 넘어가라 [여기까지만 실행하고, 다음 라우트를 실행해라]
+            }
+          
+            
+            const userDoc = await db.getDb().collection("users").findOne({_id : user.id})   //  4-4 데이터베이스에서, 인증한 유저와 같은 유저데이터를 찾아 저장
+            const isAdmin = userDoc.isAdmin;                                                //  4-4 그 유저가 관리자 인지도 파악  [ 미리 데이터베이스에 업데이트해서 admin = true 넣어둔 아이디가 있음]
+          
+            res.locals.isAuth = isAuth;             // 4-5 인증이 되어있는지에 대하여 [ 전역변수처리(모든 라우트, 모든 템플릿까지! )]
+            res.locals.isAdmin = isAdmin;           // 4-5 관리자인지 아닌지에 대하여 [ 전역변수처리(모든 라우트, 모든 템플릿까지! )]
+          
+            next();
+          })
+          
+        app.use(demoRoutes);
+
+        <ejs 템플릿>
+
+        <li><a href="/">Home</a></li>
+        <% if( !locals.isAuth ){ %>
+          <li><a href="/signup">Signup</a></li>
+          <li><a href="/login">Login</a></li>
+        <% } %>
+        <% if( locals.isAdmin ){ %>
+          <li><a href="/admin">Admin</a></li>
+        <% } %>
+        <% if( locals.isAuth ){ %>
+        <li>
+          <form action="/logout" method="POST">
+            <button>Logout</button>
+          </form>
+        </li>
+        <% } %>
+
+
+
+
+
+
+
 
 
 ==============================================================================================================================================================================
@@ -368,8 +472,26 @@
     : Authorization (권한 부여) 는 [ 제한된 액세스를 넘어, 기능 사용을 제한할 수 있음]
         ex) 로그인을 한 누군가는 [댓글기능이 막혀있지만], 또다른 로그인을 한 누군가는 [댓글을 쓸 수있고, 블로그를 관리 할 수 잇음]
 
-1. 권한부여하기
-    : 데이터베이스에서 한 유저의 데이터에 isAdmin : ture 를 추가하자    [ 권한부여의 방법이 될 순 있지만 실제론 이렇게 안한다. 연습용임]
+-    가장 큰 차이점
+    [인증] : 세션작업
+    [권한부여] : 데이터베이스에서 작업
 
-2. 
+1. 권한부여하기
+    : [데이터베이스에서] 한 [유저의 데이터에 isAdmin : ture] 를 추가하자    [ 권한부여의 방법이 될 순 있지만 실제론 이렇게 안한다. 연습용임]
+
+2. 권한을 부여하고자 하는 페이지에, 먼저 인증을 한다.
+    - 사전작업으로 403페이지, profile.ejs 를 만든다. + 인증되면 /admin 이 아니라 /profile 로 들어가게 한다.
+
+    router.get("/admin", function(req,res){
+
+        const user = await db.getDb().collection("users").findOne({ _id : req.session.user.id})
+-                           * [인증을 위한 session.user] 안에 집어넣은 값이 있다는 것을 잊지말자.
+-                           * id : 로그인한 사람의 [ _id ] 를 넣어놨다.
+        if (!user || !user.isAdmin){            // 유저가없거나, 유저의 관리자권한이 없다면, 오류페이지를 렌더
+            res.status(403).render("403")
+        }
+
+        res.render("admin")                     // 관리자 권한이 있다면 admin을 렌더
+
+    })
 
