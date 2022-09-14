@@ -25,11 +25,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
-app.use(session({                     // 5. 세션을 통과하는 미들웨어 만들기
+app.use(session({                     // 5. 세션을 만드는 미들웨어 만들기
   secret : "super-secret",
   resave : false,
   saveUninitialized : false,
-  store : SessionStore
+  store : SessionStore,
+  cookie : {
+    maxAge: 2 * 24 * 60 * 60  * 1000, //밀리세컨드단위의 쿠키 만기날자 설정
+  }
 }))
 
 
