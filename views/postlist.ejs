@@ -1,0 +1,35 @@
+<%- include("includes/head")%>
+<link rel="stylesheet" href="/style/post.css">
+<link rel="stylesheet" href="/style/postlist.css">
+
+</head>
+<body>
+    <%- include("includes/header")%>
+
+    <section id="post-section">
+        <form id="arrayForm">
+            <h2>  post-list</h2>
+            <input type="hidden" name = "order" value="<%= arrayOrder %>">
+            <div>
+
+                <button> array </button>
+            </div>
+        </form>
+        <% for(const userPost of allUserPost ){ %>
+            <ol id="ol">
+                <li id="li">
+                    <div>
+                        <h2> <%= userPost.authorPenName %></h2>
+                        <p> <%= userPost.text %> </p>
+                    </div>
+                    <div id="a">
+                        <a id ="aa" href="/post-list/<%= userPost._id %>"> Detail </a>
+                    </div>
+                </li>
+            </ol>
+        <% }%>
+
+
+    </section>
+</body>
+</html>

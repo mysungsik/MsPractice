@@ -1,0 +1,30 @@
+#post-section{
+    width: 30rem;
+    height: 30rem;
+    margin: 2rem auto;
+    text-align: center;
+    box-shadow: 2px 2px 2px 2px gray;
+    overflow: scroll;
+}
+
+#post-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+input{
+    width: 80%;
+}
+
+#post-author, #post-nickname{
+    width: 15rem;
+    text-align: center;
+    font-weight: 800;
+    background-color: rgb(255, 228, 196, 0.5);
+}
+textarea{
+    width: 80%;
+    height: 5rem;
+    resize: none;
+}

@@ -1,0 +1,126 @@
+1. 나눌 폴더 생성
+    data, public,style, routes,views, inlculdes
+
+2. npm init 및 설치
+    express, nodemon, mongodb, ejs
+
+3. 데이터베이스 연결(database.js)
+
+4. 서버연결(app.js) + 데이터베이스 서버 연결
+    express = require("express"), app = express()
+    db = require(./data/database)
+    db.connectToDatabase().then(function(){
+        listen("3000")
+    })
+
+5. ejs 템플릿 연결
+    app.set("view engine", "ejs")
+    app.set("views", path.join(__dirname,"views"))
+    * path 사용하기위한, path require
+
+6. route 연결 + 라우트  대강 작성
+    <routes폴더>
+    const express = require("express")
+    const db = require(../data/database)
+    const route = express.Router();
+    module.exports = route
+    <app.js>
+    const route = require("./route/route")
+    app.use(route)
+
+7. nodemon 세팅
+
+8. ejs 태그한줄, style 작성, css연결확인
+    <%- include("includes/head")%>
+
+    <head.ejs>
+      <link rel="stylesheet" href="/style/main.css">
+
+    <app.js>
+      app.use(express.static("pulic"))
+
+9. ejs, css 싹 적기 간단하게
+    <%- include("includes/header")%> 하고 헤더에서 헤더작업
+    ,메인작업,
+    마무리작업, css작업
+
+10. 로그인용 세션 구현
+    install express-session, connect-mongodb-session
+
+11. 가입페이지에 비밀번호 저장을위한 암호화패키지 설치, signup page 구현
+    bcrypt
+    bcrypt = require("bcrypt")
+    await bcrypt.hash()
+    
+12. req.body 를 가져오기위한 미들웨어
+    app.use(express.urlencoded({extend : false}))
+
+13. 로그인 했을때 세션을 부여하여, 글쓰기 페이지 접근가능하게하기
+    req.session.user = {
+        1. 로그인정보를 담은 데이터베이스의 id
+        2. 그 유저의 email
+    }
+    req.session.isAuthenticated = ture
+
+    저장하면 페이지 넘어가게 만들기
+
+14. 오류페이지만들고, 세션이 없다면, 페이지 못넘어가게 post 막기
+
+15. 로그아웃 구현
+    req.session.user = {
+        1. id = ""
+        2. email = ""
+    }
+    req.session.isAuthenticated = false
+
+    저장하면 페이지 넘기기
+
+16. author과 text가 있는 post 만들기, 시간추가
+    new Date().toISOString()
+
+    
+
+17. postlist 페이지에, 포스트들 모아서 글 촤작 올리게하기, 정렬
+    
+    allUserPost.sort( function(A,B){
+        if( arrayOrder =="right" && A.authorPenName > B.authorPenName ){
+            return 1
+        }
+        else if(arrayOrder =="left" && B.authorPenName > A.authorPenName ){
+            return 1
+        }
+        return -1
+    })
+
+18. postlist 에 각각 버튼을 달아, 자세히보기 페이지 만들기
+
+    req.params.id 할때, 반드시 ObjectId 로 빼주어야 몽고db에서 읽을 수 있다,.
+
+    mongodb = require("mongodb")
+    ObjectId = mongodb.ObjectId
+
+    postId = ObjectId(req.params.id)
+    findOne({_id:postId})
+
+19. 세션활용, 로그인 했을경우, 안했을경우, [헤더페이지 바뀌게하기] 미들웨어 + locals
+
+    app.use(async function(req,res,next){
+
+    })
+    모든것이 통과되는 미들웨어 안에, 유저의 세션정보를 받아와
+        issAuth = req.session.isAuthenticated
+    
+    없다면 다음 라우트로 넘겨
+
+        return next()
+
+    있다면, locals 로 [템플릿 및 nodejs 전역으로 넘김]
+
+        res.locals.isAuth = issAuth
+
+-    반드시 미들웨어는 [세션 생성 다음],  [라우트 미들웨어 이전] 에 위치해야한다.
+-       세션을 받아야 하므로, [세션 다음]에, [템플릿을 동적으로 관리할것이므로, 렌더 이전에 조건을 넣어줘야 하므로, 라우트 미들웨어 이전에!] 
+
+-   retun 빼먹지 말자.
+
+20. 보안 시작 (csurf 코드 부여)

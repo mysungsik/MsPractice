@@ -1,0 +1,19 @@
+<header>
+
+    <ul id="headerUL">
+        <li> <a href="/home">home</a></li>
+        <li> <a href="/signup">signup</a></li>
+        <% if(!locals.isAuth){%>
+            <li> <a href="/login">login</a></li>
+        <%}%>
+    
+        <% if(locals.isAuth){%>
+            <li> <a href="/post">post</a></li>
+            <li> <a href="/post-list">post list</a></li>
+            <form action="/logout" method="get">
+                <button> logout</button>
+            </form>
+        <%}%>   
+    </ul>
+
+</header>

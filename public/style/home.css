@@ -1,0 +1,9 @@
+#home-section{
+    width: 40rem;
+    height: 30rem;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}

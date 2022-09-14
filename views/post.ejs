@@ -1,0 +1,26 @@
+<%- include("includes/head")%>
+<link rel="stylesheet" href="/style/post.css">
+
+</head>
+<body>
+    <%- include("includes/header")%>
+
+    <section id="post-section">
+        <form action="/post" method="post" id="post-form" name="post-form">
+            <h2>post</h2>
+
+            <label for="post-author"> author email</label>
+            <input type="text" id = "post-author" name="postAuthorEmail" value="<%= authorname %>" required>
+
+            <label for="post-nickname"> pen name</label>
+            <input type="text" id = "post-nickname" name="postAuthorNick" required>
+
+            <label for="post-text"> Text</label>
+            <textarea id="post-text" name="postText"></textarea>
+
+            <button> post</button>
+        </form>
+
+    </section>
+</body>
+</html>

@@ -1,0 +1,47 @@
+#post-section{
+    height: 35rem;
+}
+
+#ol{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+}
+
+#li{
+    border: 1px solid;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#a{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: end;
+}
+
+#aa{
+    padding: 0.5rem 1rem;
+    margin: 0.3rem;
+    border: 1px solid;
+}
+
+#arrayForm{
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+button{
+    width: 4rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+#arrayForm div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

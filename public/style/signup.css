@@ -1,0 +1,21 @@
+#signup-section{
+    width: 30rem;
+    height: 27rem;
+    margin: auto;
+    margin-top: 2rem;
+    box-shadow: 2px 2px 2px 5px grey;
+}
+#signup-form{
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 1rem;
+}
+label{
+    width: 10rem;
+    display: flex;
+    justify-content: center;
+}
+input{
+    width: 80%;
+}
