@@ -7,7 +7,7 @@
 
     <section id="signup-section">
         <form action="/signup" method="post" id="signup-form" name="signup-form">
-
+            <input type="hidden" value="<%= csrftoken %>" name="_csrf">
             <h2>signup</h2>
 
             <label for="signup-email"> email</label>

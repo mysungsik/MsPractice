@@ -8,22 +8,27 @@ const route = express.Router();
 const db = require("../data/database")
 
 route.get("/", function(req,res){
-    res.redirect("home")
+    const csrftoken = req.csrfToken()
+    res.redirect("home", {csrftoken:csrftoken})
 })
 
 route.get("/home", function(req,res){
-    res.render("home")
+    const csrftoken = req.csrfToken()
+    res.render("home", {csrftoken:csrftoken})
 })
 
 route.get("/signup", function(req,res){
-    res.render("signup")
+    const csrftoken = req.csrfToken()
+    res.render("signup", {csrftoken:csrftoken})
 })
 
 route.get("/login", function(req,res){
-    res.render("login")
+    const csrftoken = req.csrfToken()
+    res.render("login", {csrftoken:csrftoken})
 })
 
 route.get("/post", function(req,res){
+    const csrftoken = req.csrfToken()
     
     if(!req.session.isAuthenticated){
         return res.status(404).render("404")
@@ -31,10 +36,11 @@ route.get("/post", function(req,res){
 
     const authorname = req.session.user.email
 
-    res.render("post",{authorname:authorname})
+    res.render("post",{authorname:authorname, csrftoken:csrftoken})
 })
 
 route.get("/post-list", async function(req,res){
+    const csrftoken = req.csrfToken()
     
     if(!req.session.isAuthenticated){
         return res.status(404).render("404")
@@ -64,10 +70,11 @@ route.get("/post-list", async function(req,res){
     
 
 
-    res.render("postlist",{allUserPost:allUserPost, arrayOrder:arrayOrder})
+    res.render("postlist",{allUserPost:allUserPost, arrayOrder:arrayOrder , csrftoken:csrftoken})
 })
 
 route.get("/post-list/:id", async function(req,res){
+    const csrftoken = req.csrfToken()
 
     if(!req.session.isAuthenticated){
         return res.status(404).render("404")
@@ -76,12 +83,31 @@ route.get("/post-list/:id", async function(req,res){
 
     const post = await db.getDb().collection("userPost").findOne({_id:postId})
 
-    res.render("postlist-detail",{post:post})
+    res.render("postlist-detail",{post:post , csrftoken:csrftoken})
 })
 
+route.get("/post-list/:id/delete", async function(req,res){
+    const csrftoken = req.csrfToken()
+
+    const postId = ObjectId(req.params.id)
+
+    await db.getDb().collection("userPost").deleteOne({_id:postId})
+
+    res.redirect("/post-list", { csrftoken:csrftoken})
+})
+
+route.get("/post-list/:id/update", async function(req,res){
+    const csrftoken = req.csrfToken()
+
+    const postId = ObjectId(req.params.id)
+    const userPostData = await db.getDb().collection("userPost").findOne({_id:postId})
+
+    res.render("post-update",{userPostData:userPostData , csrftoken:csrftoken})
+})
 
 route.get("/logout", function(req,res){
 
+ 
     // 인증세션
     req.session.user = {
         id : "",
@@ -165,5 +191,24 @@ route.post("/post", async function(req,res){
     res.redirect("/post")
 })
 
+route.post("/post-list/:id/update", async function(req,res){
+
+    const postId = ObjectId(req.params.id)
+
+    const authorEmail = req.body.postAuthorEmail;
+    const authorPenName = req.body.postAuthorNick;
+    const postText = req.body.postText;
+    const time = new Date().toISOString();
+
+
+    await db.getDb().collection("userPost").updateOne({_id:postId}, {$set :{
+        authoremail : authorEmail,
+        authorPenName :authorPenName,
+        text : postText,
+        time : time
+    }})
+
+    res.redirect("/post-list")
+})
 
 module.exports = route

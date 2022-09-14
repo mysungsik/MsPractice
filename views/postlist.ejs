@@ -8,10 +8,10 @@
 
     <section id="post-section">
         <form id="arrayForm">
+            <input type="hidden" value="<%= csrftoken %>" name="_csrf">
             <h2>  post-list</h2>
             <input type="hidden" name = "order" value="<%= arrayOrder %>">
             <div>
-
                 <button> array </button>
             </div>
         </form>
@@ -23,7 +23,8 @@
                         <p> <%= userPost.text %> </p>
                     </div>
                     <div id="a">
-                        <a id ="aa" href="/post-list/<%= userPost._id %>"> Detail </a>
+                        <a class ="aa" href="/post-list/<%= userPost._id %>"> Detail </a>
+                        <a class ="aa" href="/post-list/<%= userPost._id %>/delete"> delete </a> 
                     </div>
                 </li>
             </ol>

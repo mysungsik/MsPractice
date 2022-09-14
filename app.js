@@ -1,10 +1,15 @@
 const path = require("path")
 const express = require("express")
 
+// 1. csurf 패키지 설치
+const csurf = require("csurf")
+
+
 // 세션 패키지 설치
 const session = require("express-session")
 const mongodbStore = require("connect-mongodb-session")
 const mongoSession = mongodbStore(session)
+
 
 //세션 저장소 데이터
 const app = express();
@@ -22,6 +27,8 @@ app.set("views", path.join(__dirname, "views"))
 app.use(express.static("public"))
 app.use(express.urlencoded({extended:false}))
 
+
+
 // 세션 생성
 app.use(session({
     secret : "super secret",
@@ -29,6 +36,9 @@ app.use(session({
     saveUninitialized : true,
     store : sessionStore
 }))
+
+// 2. csruf 토큰 활성화 미들웨어    [3번은 라우터, 4번은 템플릿]
+app.use(csurf())
 
 // locals [헤더 동적바꾸기]
 app.use(async function(req,res,next){

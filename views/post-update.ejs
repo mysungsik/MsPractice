@@ -1,0 +1,28 @@
+<%- include("includes/head")%>
+<link rel="stylesheet" href="/style/post.css">
+
+</head>
+<body>
+    <%- include("includes/header")%>
+
+    <section id="post-section">
+
+        <form action="/post-list/<%= userPostData._id %>/update" method="post" id="post-form" name="post-form">
+            <input type="hidden" value="<%= csrftoken %>" name="_csrf">
+            <h2>post update</h2>
+
+            <label for="post-author"> author email</label>
+            <input type="text" id = "post-author" name="postAuthorEmail" value="<%= userPostData.authoremail %>" required>
+
+            <label for="post-nickname"> pen name</label>
+            <input type="text" id = "post-nickname" name="postAuthorNick" value="<%= userPostData.authorPenName %>" required>
+
+            <label for="post-text"> Text</label>
+            <textarea id="post-text" name="postText"> <%= userPostData.text %></textarea>
+
+            <button> post</button>
+        </form>
+
+    </section>
+</body>
+</html>

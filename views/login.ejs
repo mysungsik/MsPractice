@@ -7,7 +7,7 @@
 
     <section id="login-section">
         <form action="/login" method="post" id="login-form" name="login-form">
-
+            <input type="hidden" value="<%= csrftoken %>" name="_csrf">
             <h2>Login</h2>
 
             <label for="login-email"> email</label>

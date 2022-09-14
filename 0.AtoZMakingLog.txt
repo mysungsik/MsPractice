@@ -123,4 +123,23 @@
 
 -   retun 빼먹지 말자.
 
-20. 보안 시작 (csurf 코드 부여)
+20. 글 지우기
+    route.get("/post-list/:id/delete", async function(req,res){
+
+21. 글 업데이트하기
+    route.get("/post-list/:id/update", async function(req,res){
+    route.post("/post-list/:id/update", async function(req,res){
+
+22. 보안 시작 (csurf 코드 부여)
+    <전체>
+    npm install csurf
+    app.use(csurf())
+    
+    <라우트>
+    const csrfToken = req.csrfToken()
+    render( {csrfToken:csrfToken} )
+
+    <템플릿>
+    <input type ="hidden" value = " <%= csrfToken%>" name = "_csrf">            "
+    
+-  반드시 csurf 미들웨어는 [세션 이후에 넣어야한다.]
