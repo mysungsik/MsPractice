@@ -1,0 +1,253 @@
+1. 라우트 리팩토링
+    [routes 폴더]
+        auth, blog
+
+        기준 : [동일한 db의 collection을 쓰는 라우트들] + [그 라우트들과 관계있는 라우트들 ] 
+            ex) [db에 collection "user"를 쓰는 라우트들 + 인증과 관련있는 라우트]
+                [db에 collection "post"를 쓰는 라우트들 + 게시글과 관련되있는 라우트들]
+
+        방법 : 복사해서, 관련없으면 지움 
+
+2. 구성성분 리팩토링
+    [config 폴더]
+        session
+
+        기준 : app.js 에서, session의 구성성분을 담당하는 부분을 리팩토링
+
+        방법 : 적절한 파라미터와, 적절한 리턴값
+
+
+3. 사용자 지정 미들웨어 리팩토링
+    [middleware 폴더]
+        auth-middleware
+
+        기준 : app.js 에서, authentication 에 관련된 [ res.locals] 부분 리팩토링
+
+        방법 : [진짜 미들웨어의 리팩토링], [그저 지나가는 미들웨어일 뿐이므로], [따로 함수 호출 X]
+                module.exports = 함수
+
+        사용 :  const 함수 = require(...)
+                app.use(함수)
+
+        설명 : 그저 지나가는 것일 뿐이므로, 호출이고 자시고 없다.
+
+
+
+- [ MVC 패턴 시작]====================================================================================================================
+
+    Model       : 데이터베이스에 접근하는 모든 로직의 저장(mongoDB CRUD)
+    View        : 탬플릿 (이미 하고있던 작업들) - view 엔진을 사용해, view를 렌더
+    Controller  : Model과 View를 이어주는 컨트롤러 (라우트의 function)
+
+-   작업 순서는 controller부터 시작해서 model 로 가는것이 좋아보인다.
+-   어차피 router에 있는거 다 옮겨놓고 시작하기때문에, 그게 덜 복잡해보인다.
+
+
+4. model 리팩토링 [작업순서는 controllers 다음]
+
+    [models 폴더]
+        post
+    
+    기준 : 데이터베이스에 접근하는 (저장, 업데이트, 삭제, 읽기)등의 로직을
+            전부 리팩토링.
+    
+    방법 :  0. CRUD용 [사용자함수(객체)] 를 만들어서, 값을 받고, 함수를 사용
+
+            1. insertOne
+                특징 : 제일 간단
+            2. updateOne
+                특징 : id값 사용, insertOne과 낑겨 사용
+            3. delete
+                특징 : 파라미터에 null 사용
+            4. find
+                특징 : static 을 사용한, 인스턴스하지않는 함수
+            5. findOne
+                특징 :  [함수에] [db에서 findOne해서 뽑은 값]을 [사용자함수(객체)의 constuctor에 넣는 코드가 필요]
+
+                        템플릿으로 렌더할때, 데이터베이스에서 받은 값을 넣는게 아니라, 객체에서 온 값을 넘기기 때문에 
+                            [템플릿에 post._id 가 아니라][post.id 라고 써야함]
+
+                * 필요에 따라 함수의 논리에 반환을 위한 return을 쓸수도, 안쓸수도
+
+            module.exports = 사용자함수
+
+    사용 : require 후,
+            필요에 따라, 인스턴화 후 함수사용
+            혹은, 직접 객체사용
+
+-           "await" 빼먹지 말것
+-           "new 사용자함수" 임을 까먹지 말것.
+-           "객체의 constuctor" 의 "키와 값"은  "=" 을 사용하고 ";" 로 마친다는 것을 헷갈리지 말것
+
+
+5. Controller 리팩토링  [ 작업순서는 model 보다 먼저]
+
+    [ Controllers 폴더]
+        post-controllers.js
+
+    기준 : 라우트 안의 [길고 긴 function안의 함수들] 들을 리팩토링
+
+    방법 :   라우트 안의 function 들을 떼어다가 따로 모아둠
+
+    사용 :  1. 라우트파일 내의 function 부분에 전부, 함수로 교체
+            2. 필요한 것들 전부 require
+
+
+
+
+- [ MVC 패턴 끝]====================================================================================================================
+
+- [ 마무리 리팩토링 시작 ]====================================================================================================================
+
+6. 리팩토링 마무리 : 컨트롤러에 중복되는 코드들을 리팩토링
+    [util폴더]
+        validation.js
+
+    기준 : [function안에 존재하는] [같은 기능, 같은 코드 = 중복된 코드] 들을 한곳에 모아, 넘김
+    
+    예시 : function에 입력실패시, session을 통해, 값을 남기는 파트
+           userinput등의 validation하는 파트
+
+-   통과의 조건을 만든다면, (안되는것들을 || 로 만들지말고)
+                            [반드시 되야하는 것들을 && 로 묶는것도 좋다.]
+
+7. res.locals 를 통해, csrf 토큰 전 템플릿에 들어가게하게 하기
+    [ middleware 폴더]
+        auth-middleware.js 에 추가 (추가적인 require를 막을 수 있음, 그저 미들웨어일 뿐이므로)
+
+    csrf 토큰 [res.locals.csrfToken] 으로 추가하여, 미들웨어화시켜서 [모든 템플릿에 뿌림]
+
+    다만, 템플릿에서 locals.csrfToken 으로 사용하여야함
+
+- [ 마무리 리팩토링 끝 ] ====================================================================================================================
+
+8. 비동기 처리의 오류처리
+
+    비동기식 의 행동에는, [수동으로 오류를 처리해야 할 필요성이 있다.]
+    [특히나, 데이터에 접근하는 모든 작업에는 [언제나 오류가 발생할 수 있음을 명심해야한다.]]
+
+    
+    <post-controllers>
+    async function getEditPost(req, res) {
+
+        const post = new Post(null,null,req.params.id)     
+        await post.findOne()
+    
+        if (!post) {
+        return res.render('404');
+        }
+    ...
+
+
+    ==>> 이 함수에서, [req.params.id 에 값을 넣으면] [constuctor 에서는 ObjectId 에 값을 넣어, 데이터베이스안을 찾게 된다.]
+        그런데, [이상한 값을 넣어] [ObjectId 안에 들어가는 값이 이상해지면, 데이터베이스에 접근하지 못하는 오류가 발생한다.]
+
+    ==>> [오류는 발생했지만] 우리의 자동처리 미들웨어는 ( app.js 의  app.use(function(error, req,res,next){ res.render('500');})   )
+            정상적인 동작으로 500페이지를 로드하지 못한다.
+-           이유는 이것이 [비동기 작업] 이기 때문이다. [ 비동기 작업이 언제 끝날지, 끝난지 정해져있는것이 아니므로, 페이지가 날아간다.]
+    ==>> [그러므로, 비동기작업은 ] [수동으로 오류를 처리하는 것이 필수이고] [우리는 promise를 받을 수 있기 때문에]
+-        try, catch를 언제든 쓸 수 있따!!
+
+    <post-controllers>
+    async function getEditPost(req, res,next) {
+    
+        try{
+            const post = new Post(null,null,req.params.id)     
+            await post.findOne()
+        }catch(error){
+            next(error)                     ==>>  를 사용해 다음 라우트로 넘겨주거나, [return은 빼먹지 말고 하도록 하자]
+            // return res.render("404")       ==>>  혹은, 404페이지를 수동으로 로드해주는것도 괜찮다. [return은 빼먹지 말고 하도록 하자]
+
+            return
+        }
+
+
+
+9. 사용자 지정 미들웨어 경로보호
+
+    1. [현재 "인증"의 방법 ]
+
+    <app의 middleware> 에서
+
+        function auth(req,res,next){
+            isAuth = req.session.isAuthenticated
+            if(!isAuth){
+                return  next()
+            }
+            res.locals.isAuth = isAuth
+            next()
+        }
+    으로, session의 isAuthenticated가 있다면, 인증을 부여하는 방식
+    그리고, 받는 render페이지에서 [locals.isAuth]가 없다면, [렌더하지 않는 방식]
+
+    2. [현재 "인증" 방법의 문제]
+
+
+    [인증 조건이 비어있는 라우트들이 많고]
+    [post 라우트들은 전부 인증조건들이 비어있음]
+        [ajax 요청으로 post라우트들에 의해, 값들이 변경되는 좋지않는 결과가 초래될 수 있음]
+
+
+-   3. [새로운 "인증" 방법]
+
+        [ funciton gaurdRoute(){} 를] [새 미들웨어에 추가하여]
+        [ 모든 조건에 대해, 이 미들웨어를 통과하게 만들어, 인증이 되지 않은 사용자는 이용이 불가능 하게 만든다.]
+
+        funciton gaurdRotue(req,res,next){
+            if(!locals.isAuth){
+                return res.redirect("/404")
+            }
+            next() 
+        }
+
+-       문제는 [이 미들웨어의 위치선정이다]
+        1. [인증토큰 부여 미들웨어] 와 [라우트들을 불러오는 미들웨어] [사이] 에 두면
+            [로그인을 해야 session이 부여되는데] [인증을 먼저 해버리고 [금지당한 이후에] 로그인을 해야하는 아이러니가 발생한다. 물론 되지도 않는다.]
+
+        2. [라우트들을 불러오는 미들웨어] [다음] 에 두면 [이미 불러와놓고, 세션이 없으니 돌아가라 할수도 없고, 사이트들은 이미 불러와진 이후이므로, 늦는다.]
+
+-       [3. 그렇다면! 이 [미들웨어가 있어야 할 자리는] [ 라우트들이 불러와지는 시간. 즉, 라우트들이 있는 자리이다.] ]
+
+
+        방법1) 기억할지 모르지만, get과 post라우트들에는 여러 파라미터가 들어갈 수 있다.
+                get([  필터(주소)  ], [  실행함수  ] ) 뿐 아니라
+-               get( [필터] [미들웨어] [미들웨어] ... [미들웨어] , [실행함수] ) 처럼 가운데 무한한 미들웨어를 추가 할 수 있었다!
+
+        방법2) 라우트들이 모여있는 폴더에도 route.use(미들웨어) 를 추가 할 수 있다. **
+
+-               인증이 필요하지 않은 getHome 함수를 제외한, 나머지 라우트들을 보호하기위해
+
+                router.get('/', blogController.getHome);
+
+                router.use (인증미들웨어)
+
+                router.get('/admin', blogController.getAdmin );
+                router.post('/posts', blogController.createPost);
+                ...
+                router.post('/posts/:id/delete', blogController.deletePost );
+
+                ==>> 처럼 사용할 수 있다.
+
+                ==>>  home 페이지를 들어가고 싶다.
+                        :  미들웨어를 거치치 않고서도 들어옴 
+
+                      admin 페이지를 들어가고 싶다
+                        : auth route에서 isAuthenticated 세션을 받은 후(login페이지에 있는)
+                            "인증미들웨어" 에서 인증을 받는다면, 들어 갈 수 있다.
+
+        [추가] : auth 라우트들은 [login 과 같은 인증을 담당한다.]
+                 blog 라우트들은 [인증 이후에, 글을 쓸 포스트들을 담당한다.]
+
+                그러므로, [인증이 필요한곳(사용되는곳) 은 blog 라우트이므로]
+                ["인증미들웨어" 는 blog 라우트에 쓰여야 하고]
+                
+                app.js  app.use(blogroute)
+                        app.use(authroute)
+                
+                의 순서로 되어있다면, [blogroute에 있는 미들웨어가] [auth route에도 적용되어]
+                    [ 인증하는 곳을 들어가려면 인증이 필요한 잘못된 결과가 도출되므로]
+                
+                app.js  app.use(authroute)
+                        app.use(blogroute)
+                
+-               의 순서로, 정확한 순서를 지켜야한다.
