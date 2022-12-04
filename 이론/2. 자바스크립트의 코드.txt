@@ -269,4 +269,82 @@
     <삭제>
 
         delete person.age
+
+
+17. Object 생성자 함수 생성 : const obj = new Object()
+    : 생성자 함수는 "객체를 찍어내는 틀" 이다. "인스턴스를 생성(값을 낼 때)할 때에는" 반드시 "new" 를 붙여준다.
+
+        사용 : 
         
+            function MakeObj(parameter){
+                this.name = parameter;
+                this.getName = function(){
+                    return  ("hello" + this.name) 
+                }
+            }
+
+            new MakeObj("ms")
+
+        단점 : 불편함
+        장점 : "동일한 프로퍼티를 갖는 객체를 여러개 생성해야 할 경우", 아주 간편하게 객체를 복사 할 수 있다.
+
+        <일반 적인 경우 : "객체 리터럴" 을 이용한 객체 생성> 
+
+                const circle1 = {
+                    radius :5,
+                    getDiameter(){
+                        return 2 * this.radius
+                    }
+                }
+
+                const circle2 = {
+                    radius :10,
+                    getDiameter(){
+                        return 2 * this.radius
+                    }
+                }
+
+                ...
+                
+        <여러개 뽑을 경우 : "생성자 함수" 를 이용한 객체 생성> 
+
+                function Circle(radius){
+                    this.radius = radius;
+                    this.getDiameter = function(){
+                        return this.radius *2
+                    }
+                }
+
+                new Circle(5)
+                new Circle(10)
+                ...
+
+18. 프로퍼티의 존재 확인   [ in 연산자]
+
+        const person = {
+            name: "ms",
+            age : 4
+        }
+
+        "name" in person    // true
+        "age" in person     // true
+        "address" in person // false
+
+19. 객체의 열거 [ for ... in ]
+
+        for( const key in person){
+            console.log( key + ":" + person[key])
+        }
+
+20. 배열의 열거 [ for ... of ], "배열도 객체이므로 in 도 가능"
+
+        const arr = [1,2,3]
+
+        for (const val of arr){
+            console.log(val)            // 1,2,3
+        }
+
+        for (const key in arr) {
+            console.log(key);           //  "1","2","3"
+          }
+          

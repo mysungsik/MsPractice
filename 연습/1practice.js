@@ -1,10 +1,9 @@
-function ms(i, x) {
-  x = i + x;
-  return x;
-}
+const increase = (function(){
+    let num = 0;
+    return function(){
+        return ++ num
+    }
+}())
 
-const nested = function (i) {
-  return i * 200;
-};
-
-console.log(ms(nested(1), 5));
+console.log(increase())
+console.log(increase())

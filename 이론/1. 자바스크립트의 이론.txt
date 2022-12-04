@@ -46,7 +46,38 @@
 41. 데이터 타입을 정하는 이유
 42. 동적 타입 언어
 43. 동적 타입 언어의 단점
-
+44. 제어문
+45. 객체
+46. 인스턴스
+47. 객체 리터럴
+48. 프로퍼티의 키 와 "" 의 관계
+49. 함수 
+50. 매개변수(parameter), 인수(argument)
+51. 함수와 식별자 와의 관계 with "정의"
+52. "함수 선언문"과 "호이스팅"
+53. 함수 호이스팅, 변수 호이스팅
+54. 함수에서, 객체를 호출, 변경 할때에도, "참조에 의한 전달" 이 되기 때문에, 객체의 원본은 훼손된다.
+55. 재귀함수
+56. 중첩함수 (nested function) ***
+57. 콜백함수 (callback function) ***
+58. 순수함수와 비순수함수
+59. 스코프
+60. let, const 와 var
+61. 프로퍼티와 프로퍼티 어트리뷰트
+62. "데이터 프로퍼티"의 "프로퍼티 어트리뷰트 의 확인", 프로퍼티 디스크립터 : Object.getOwnPropertyDescriptor()
+63. "접근자 프로퍼티" ... 어렵다 아직 이해 불가능
+64. 그래서 이거 알아서 뭐해? => "프로퍼티를 정의" 한다. => 중요한 프로퍼티를 제어할 수 있다. : Object.defineProperty()
+65. 프로퍼티의 속성을 다루었으니, 이젠, "객체" 의 속성을 다루어보자.
+66. 생성자 함수
+67. 생성자 함수의 인스턴스 생성 과정 with "new"
+68. new 연산자
+69. 생성자 함수에, 명시적 객체를 반환한다면?
+70. 생성자 함수에, 명시적 원시값을 반환한다면?
+71. 함수는 "객체이다"
+72. 함수는 내부 메서드를 가지고 있다.
+73. 오로지 일반함수 만이 construct 내부메서드를 갖는다. 화살표함수 같은건 Contruct 내부메서드가 없다.
+74. 모든 함수는 new 만 붙어있으면 생성자 함수 취급 당한다. 단, construct 내부메서드를 가지고 있어야한다.
+75. new.target 으로 "강제로 생성자 함수로 만들기"
 
 [MAIN]==============================================================================================================================
 
@@ -60,7 +91,7 @@
     : 프로그래밍 언어가 이 두개의 조합으로 표된다.
 
 4. 프로그래밍이란
-    : "요구사항을 분석"해, 적절한 "자료구조"와 "함수의 집합" 으로 변환 한 후, 그 "흐름을 제어" 하는것
+    : "요구사항을 분석"해, 적절한 "자료구조(객체, 배열)"와 "함수의 집합" 으로 변환 한 후, 그 "흐름을 제어" 하는것
 
 5. 렌더링
     : HTML, CSS, 자바스크립트로 작성된 문서를 해석해, 브라우저에 시각적으로 출력한것.
@@ -102,7 +133,7 @@
     : 프로세스 내에, "실제로 작업"을 하는 "주체"
         => 단일스레드 : 한번에 하나
 
-14. WebAPI
+14. WebAPI (브라우저)
     : DOM, AJAX(promise), time, setTimeout 등이 처리되는, "자바스크립트 엔진과는 별개의 엔진(스레드)"
         * 일반적으로 "자바크스립트 안에 포함된 개념으로 치부한다. (엔진 말고)"
 
@@ -283,7 +314,9 @@
     
     : 상속과 다형성은?
 -      1. 없으면 찾아가고, 있으면 받아쓴다.
--      2. 클래스가 아니라, 함수 를 클래스 처럼 사용
+-      2. 클래스가 아니라, 생성자 함수 를 클래스 처럼 사용 ,        ** 84 번 참조
+           "상속 할 프로퍼티, 메서드를 만들고"  [생성자함수명.prototype.상속할함수 이름 = function(){...} ]
+            "상속 할 부모를 선택 가능"          [Object.setPrototypeOf(자식, 부모)]
 
             function Cat(name, age){
                 this.name = name
@@ -349,7 +382,7 @@
     : 변수를 "선언" 하는 방법들
         "선언하면" 메모리 공간을 확보하고, 확보된 메모리 공간의 주소와 변수이름을 연결한다.
 
-        var :           "함수 레벨 스코프"
+        var :           "함수 레벨 스코프", "중복 선언 가능"
         let, const :    "블록 레벨 스코프"
 
 31. 함수 레벨 스코프
@@ -359,7 +392,17 @@
             
         2. "함수 내에서 선언"한 변수는, "지역 변수"이며, "함수 외부"에서 선언한 변수는 "모두 전역 변수이다."
 
-        => 함수 레벨 스코프는, "지역변수"로 오로지 "함수블록 내"만 인정하므로, "전역변수로 오해되기 쉽다."
+        => "var"는 "함수레벨 스코프이며", "중복 선언" 이 가능하다
+            이는 함수 블록 내에 "재선언한 var 변수가", "전역변수로 오해되기 쉽다."
+
+            예시) 
+                var x = 8
+                function(true){
+                    var x = 10
+                }
+                console.log(x)
+
+            ==> 강제로 전역변수 x가 10으로 변하는 불상사가 생겼다.
 
 32. 블록 레벨 스코프 
     : "const, let" 
@@ -632,3 +675,293 @@
             function(){
                 let x       ==> x의 스코프는 함수 안이 전부이다. (지역변수)
             }
+
+60. let, const 와 var
+
+    var :   중복선언 가능, 
+            변수 호이스팅 된다. 
+            함수레벨스코프 사용 (오로지 함수안에서만 지역변수)
+
+            => "선언", "초기화"가, "런타임 이전에 동시에실행된다."
+
+    const,let : 중복선언 불가!
+                변수 호이스팅 안된다.
+                블록 레벨 스코프 (모든 블록 안에서는 지역변수)
+
+            => "선언과 초기화가" 분리되어 진행된다. 
+                "초기화 단계 이전"에 변수에 접근하려고 하면 "참조에러" 가 발생한다.
+                    (선언은 했지만, 초기화가 안되어, 접근 불가하므로)
+
+        * const 는 "선언과 함께 초기화를 동시에 진행해야한다"
+
+            let x;          가능
+            const x;        불가능
+            const x = 1;    가능
+
+61. 프로퍼티와 프로퍼티 어트리뷰트
+
+    1) 프로퍼티는 "데이터 프로퍼티", "접근자 프로퍼티" 로 구별한다.
+
+    2) 자바스크립트 엔진 은 "프로퍼티(객체 안의 데이터)" 를 생성할때, 프로퍼티의 상태를 나타내는 "프로퍼티 어트리뷰트"를 기본값으로 자동 정의한다.
+
+62. "데이터 프로퍼티"의 "프로퍼티 어트리뷰트 의 확인", 프로퍼티 디스크립터 : Object.getOwnPropertyDescriptor()
+
+            const obj = {
+                x:1, y:2
+            }
+
+            console.log(Object.getOwnPropertyDescriptor(obj,"x"))       // 프로퍼티의 키 안에 "" 를 빼먹는 것을 조심
+
+            ==>  {value: 1, writable: true, enumerable: true, configurable: true}
+
+    데이터프로퍼티는 이와같이 4개 "프로퍼티 어트리뷰트" 속성을 가진다.
+
+        1) value        : 값
+        2) writable     : 값의 변경 가능 여부
+        3) enumerable   : 프로터티의 열거 가능 여부 ( for...in, map, filter 전부 열거 하는것이다.)
+        4) configurable : 프로퍼티 어트리뷰트 의 "재정립" 가능 여부 [어트리뷰트 안에는 "값"도 포함되므로, 해당 프로퍼티는 삭제도 불가능하다.]
+
+63. "접근자 프로퍼티" ... 어렵다 아직 이해 불가능
+
+64. 그래서 이거 알아서 뭐해? => "프로퍼티를 정의" 한다. => 중요한 프로퍼티를 제어할 수 있다. : Object.defineProperty()
+    : 프로퍼티 어트리뷰트를 "명시적으로 정의하거나", "재정의" 할 수 있다.
+
+            let obj = {
+                x: 1,
+                y: 2,
+            };
+            
+            Object.defineProperty(obj, "x", {               // 프로퍼티 x 에 대해서, "value" 를 바꾸고, "writable : false" 로 두어, 변경 불가하게 만들었다.
+                value: "lol",
+                writable: false,
+                enumerable: true,
+                configurable: true,
+            });
+            
+            obj.x = 3;
+            obj.y = 3;
+            
+            console.log(obj);   // {x: 'lol', y: 3}
+
+65. 프로퍼티의 속성을 다루었으니, 이젠, "객체" 의 속성을 다루어보자.
+    
+    1) Object.preventExtensions(obj이름) => 프로퍼티 추가               금지
+    2) Object.seal(obj이름)              => 프로퍼티 추가, 삭제         금지,      프로퍼티 어트리뷰트 재정의금지
+    3) Object.freeze(obj이름)            => 프로퍼티 추가, 삭제, 값 쓰기 금지,      프로퍼티 어트리뷰트 재정의금지
+            
+            let obj = {
+                x: 1,
+                y: 2,
+            };
+
+            Object.preventExtensions(obj)
+
+66. 생성자 함수
+    :  생성자 함수는 "객체를 찍어내는 틀" 이다. "인스턴스를 생성(값을 낼 때)할 때에는" 반드시 "new" 를 붙여준다.
+    : 일반적으로 "프로퍼티" 와 "메서드" 를 포함한다.
+        
+        < 사용 >
+        
+            function MakeObj(parameter){
+                this.name = parameter;
+                this.getName = function(){
+                    return  ("hello" + this.name) 
+                }
+            }
+
+            new MakeObj("ms")
+
+            "단점" : 불편함
+            "장점" : "동일한 프로퍼티를 갖는 객체를 여러개 생성해야 할 경우", "아주 간편하게 객체를 복사 할 수 있다."
+
+        <일반 적인 경우 : "객체 리터럴" 을 이용한 객체 생성> 
+
+                const circle1 = {
+                    radius :5,
+                    getDiameter(){
+                        return 2 * this.radius
+                    }
+                }
+
+                const circle2 = {
+                    radius :10,
+                    getDiameter(){
+                        return 2 * this.radius
+                    }
+                }
+
+                ...
+                
+        <여러개 뽑을 경우 : "생성자 함수" 를 이용한 객체 생성> 
+
+                function Circle(radius){
+                    this.radius = radius;
+                    this.getDiameter = function(){
+                        return this.radius *2
+                    }
+                }
+
+                new Circle(5)
+                new Circle(10)
+                ...
+
+
+67. 생성자 함수의 인스턴스 생성 과정 with "new"
+
+    : 생각해보면, "생성자 함수 어디에도 return 따위가 없다", 이는 아무것도 반환되는 값이 없어야 한다.
+
+        그렇지만, 
+        
+            const circle1 = new Circle(5) 
+        
+        를 하면, circle1 에는, 객체가 반환된다.
+
+            function Circle(radius) {
+                this.radius = radius,
+                this.getRound = function () {
+                    return radius * 2;
+                };
+            }
+            
+            const circle1 = new Circle(5);
+            
+            console.log(circle1);               // Circle {radius: 5, getRound: ƒ}
+            
+            console.log(circle1.getRound());    // 10
+
+       " 이는 사실 이상한 일이다."
+
+    => 생성자 함수는 자동으로 인스턴스를 반환한다
+        
+    1) 인스턴스 생성과 this 바인딩
+
+        "생성자 함수"를 만들면, 암묵적으로 "빈 인스턴스가 생성되고", "this 를 생성자함수에 바인딩"한다
+
+    2) 인스턴스 초기화
+
+        "this에 바인딩 되어있는 인스턴스를 초기화한다."
+
+    3) 인스턴스 반환
+        
+        생성자 함수의 내부처리(인스턴스 생성과 초기화) 가 끝나면, "완성된 인스턴스(초기화 했으니 사용가능)가 바인딩된" "this"가 반환된다.
+
+68. new 연산자
+    : new 연산자는, 생성자 함수를 "호출"할때, "암묵적 인스턴스를 생성, 초기화, 반환" 하는 역할을 한다.
+
+        "일반 함수나, 생성자 함수나" 특별한 형식적 차이는 없다.
+
+        그저 "new" 를 사용하여, 함수를 호출하면, "내부메서드 Contruct" 가 호출되며, "생성자 함수" 로서의 역할로 호출되는 것이다.
+
+69. 생성자 함수에, 명시적 객체를 반환한다면?
+
+        function Circle(radius) {
+            this.radius = radius,
+            this.getRound = function () {
+                return radius * 2;
+            };
+            return {}
+        }
+
+        console.log(new Circle(1))  // {}
+
+    => "명시된 객체가 반환된다".
+    ==> 훼손되므로, 생성자 함수에서는 "반드시 return 을 생략"
+
+70. 생성자 함수에, 명시적 원시값을 반환한다면?
+
+
+        function Circle(radius) {
+            this.radius = radius,
+            this.getRound = function () { 
+                return radius * 2;
+            };
+            return 13023
+        }
+
+        console.log(new Circle(5))   // Circle {radius: 5, getRound: ƒ}
+
+
+    => "원시값은 무시된다."
+
+
+71. 함수는 "객체이다"
+
+    : 객체이므로, "프로퍼티와 메서드를 소유 할 수 있다."
+
+        function ms(){}
+            ms.prop = 10                // 빈 함수에, 프로퍼티를 생성
+            ms.method = function(){     // 빈 함수에, 메서드를 생성
+                console.log(this.prop)
+        }
+
+        ms.method(prop)                 // 10
+
+72. 함수는 내부 메서드를 가지고 있다.
+
+    : "Call", "Construct" 내부 메서드
+
+        함수가 일반 함수로 호출될때는 "Call" 내부메서드에 의해, 호출되고
+        함수가 "생성자함수" 로 호출될때에는 "Contruct" 내부 메서드에 의해, 호출된다
+
+73. 오로지 일반함수 만이 construct 내부메서드를 갖는다. 화살표함수 같은건 Contruct 내부메서드가 없다.
+
+    <일반함수>
+
+        "함수 표현식" : const add = function(){ ... } 
+        "함수 선언문" : function add(){ ... } 
+
+            ==> 이것만이 메서드로서의 사용이 가능한 것이다.
+
+    <화살표함수>
+
+        const add = (x) => {
+            console.log(x);
+          };
+          
+            ==> 이런 화살표 함수는 "메서드로서 기능하지 못한다."  == "non-Contruct"
+                    * 함수의 내부메서드 Construct 가 없고, Call 만 있으므로
+          
+74. 모든 함수는 new 만 붙어있으면 생성자 함수 취급 당한다. 단, construct 내부메서드를 가지고 있어야한다.
+
+    그리고, 생성자함수는 "객체를 반환" 하므로, "객체가 반환되지 않는 함수"는 "빈 객체만 반환된다."
+
+        function add(x, y) {
+            return x + y;
+        }
+        const inst = new add(2, 3);
+        console.log(inst);          //   {} "객체가 반환되지 않았음"
+
+
+        function Add2(x, y) {
+            this.z = x + y;
+        }
+        const inst2 = new Add2(2, 3);
+        console.log(inst2);        //  Add2 {z: 5}  "객체가 반환되었음"
+
+75. new.target 으로 "강제로 생성자 함수로 만들기"
+    : new.target 은, "생성자함수로 호출되었는지, 일반함수로 호출되었는지 알려준다."
+
+        new.target 은,  "생성자 함수로 호출시"  => 함수 자신을 가르키고
+                        "일반 함수로 호출시"    => undefined 을 나타낸다.
+
+
+        <강제로 생성자 함수 만들기>
+
+            function Circle(radius) {
+
+                if(!new.target){
+                    return new Circle(radius)
+                }
+
+                this.radius = radius,
+                this.getRound = function () {
+                    return radius * 2;
+                    };
+            }
+
+        ==> 만약 "일반함수로 호출" 되어도,
+
+            new.target 이 "undefined" 를 반환하고, [ !undefined == true ] 가 되기 때문에
+                강제로 "new Circle()" 이 호출되어, "일반함수로 호출해도 생성자 함수가 호출된다." 
+
+
