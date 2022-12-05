@@ -1,9 +1,17 @@
-const increase = (function(){
-    let num = 0;
-    return function(){
-        return ++ num
-    }
-}())
+class myClass {
+  constructor(name) {
+    this.name = name;
+  }
 
-console.log(increase())
-console.log(increase())
+  getName() {
+    console.log(this.name);
+  }
+
+  static sayHello() {
+    console.log("hello" + this.name);
+  }
+}
+
+const ms = new myClass("no");
+ms.getName();
+myClass.sayHello();
