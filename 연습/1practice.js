@@ -1,17 +1,23 @@
-class myClass {
+class Base {
   constructor(name) {
     this.name = name;
   }
 
-  getName() {
-    console.log(this.name);
-  }
-
-  static sayHello() {
-    console.log("hello" + this.name);
+  sayHello() {
+    return `hi ${this.name}`;
   }
 }
 
-const ms = new myClass("no");
-ms.getName();
-myClass.sayHello();
+class Derived extends Base {
+  constructor(name) {
+    super(name);
+  }
+
+  sayHi() {
+    return `${super.sayHello()}`;
+  }
+}
+
+const ms = new Derived("ms");
+
+console.log(ms.sayHi());
