@@ -1,23 +1,16 @@
-class Base {
-  constructor(name) {
-    this.name = name;
-  }
+const base = {
+  name: "Lee",
+  sayHi() {
+    return `Hi, ${this.name} `;
+  },
+};
 
-  sayHello() {
-    return `hi ${this.name}`;
-  }
-}
-
-class Derived extends Base {
-  constructor(name) {
-    super(name);
-  }
+const derived = {
+  __proto__: base,
 
   sayHi() {
-    return `${super.sayHello()}`;
-  }
-}
+    return `${super.sayHi()}`;
+  },
+};
 
-const ms = new Derived("ms");
-
-console.log(ms.sayHi());
+console.log(derived.sayHi());

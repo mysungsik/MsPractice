@@ -97,7 +97,7 @@
                         function sum() {
                             let res = 0;
                             for (let i = 0; i < arguments.length; i++) {
-                            res = res + arguments[i];
+                                res = res + arguments[i];
                             }
                             return res;
                         }
@@ -111,10 +111,36 @@
         4) name     : "함수 이름" 을 알려준다.              
                 const msFunction = function add(){...}       console.log(msFunction.name)    // add
 
-        5) prototype : "불리언 타입으로" 생성자 함수로 호출 가능한, "constructor 내부메서드를 가지고 있는 함수 만이, true 로 나온다."   ***
-                            * constructor 내부메서드를 가지고 있는 함수 : 화살표함수, 무명의 리터럴 함수 를 제외한 함수전부
+        5) prototype : "불리언 타입으로" 생성자 함수로 호출 가능한, "construct 내부메서드를 가지고 있는 함수 만이, true 로 나온다."   ***
+                            * construct 내부메서드를 가지고 있는 함수 : "화살표함수", "객체 안의 메서드" 를 제외한 함수전부
 
-78. 추가. "오로지 함수 객체 만이", prototype 을 가진다.(상속을 위한) ==  constructor 내부메서드를 가지고 있는 것은 "함수 객체 뿐이다"
+            ** ES6 메서드는, "인스턴스 생성이 불가능한, non-constructor"다. ==> 생성자 함수로 호출 불가능하다.
+
+            ** ES6 메서드란, 객체 안에서, "축약표현 으로 정의된 함수만"을 가르킨다.
+
+                    const obj = {
+
+                        foo(){                  // 메서드
+                            ...
+                        }
+
+                        bar : function(){       // 일반 함수
+
+                        }
+                    }
+            
+
+[정리] : "prototype" 이 "true"다 ==> "contruct 내부메서드가 존재한다"
+
+            "construct 내부메서드가 존재하는 함수들"은 "화살표함수, 메서드 제외한", "모든 함수"이다.
+
+            "construct 내부매서드가 존재한다면" 그 함수는 "생성자 함수로 호출이 가능하다"
+
+                즉, "화살표함수와 ES6 메서드"는 "생성자 함수로 호출이 불가능하다"
+
+            생성자함수로 호출 불가능한 함수는 "non-constructor"이다.
+
+78. 추가. "오로지 함수 객체 만이", prototype 을 가진다.(상속을 위한) ==  construct 내부메서드를 가지고 있는 것은 "함수 객체 뿐이다"
 
 79. "자바스크립트"는 "명령형, 함수형, 프로토타입 기반 객체지향 프로그래밍을 지원하는 "멀티 패러다임 프로그래밍이다"
 
@@ -364,7 +390,7 @@
                     }
                 }
 
-            ==> this 가, 객체 자신을 가르킨다.
+            ==> this 가, "호출한 객체 자신"을 가르킨다.
 
         [3) 생성자 함수에서의 this]
 
@@ -379,8 +405,7 @@
                 console.log(circle.getDiameter())                   // "자신이 생성할 인스턴스, circle1" 을 가르킨 것이다.
 
             ==> this 가, "자신이 생성할 인스턴스" 를 가르킨다. 
-
-                ==  생성자 함수에서 this는 "호출한" "인스턴스"의 "메서드"를 가르킨다.
+                ==>  생성자 함수에서 this는 "호출한" "인스턴스"의 "메서드"를 가르킨다.
 
         [4) 메서드 의 this]
 
@@ -983,7 +1008,7 @@
 
 129. super 호출시 주의사항
 
-    1) 자식 클래스가, this 를 참조하려면 반드시 "super 키워드로 super class 를 호출 한 이후에 this 를 참조할 수 있다"
+-   1) "자식 클래스"가, [this 를 참조하려면] 반드시 "super 키워드로 super class 를 호출 한 이후에 this 를 참조할 수 있다"
 
             class Derived extends Base {
                 constructor(a, b, c) {
@@ -991,7 +1016,7 @@
                 }
             }
 
-    2) super 키워드는 반드시 "자식 클래스의, constructor" 에만 사용 가능하다
+-   2) super 키워드는 반드시 "자식 클래스의, constructor" 에만 사용 가능하다
 
 130. super 키워드 - "참조"
 
@@ -1021,5 +1046,26 @@
             
             console.log(ms.sayHi());
       
-            
+
+[추가. 일반 객체에서의 super 사용]
+
+    : HomeObject 내부 슬롯을 갖는, "메서드 축약표현으로 정의된 메서드"를 정의했을때, 그 메서드는, super 키워드를 사용 할 수 있다.
+
+    : 일반 객체에서는, super를 사용하기 전, [__proto__ : 부모객체] 를 "자식객체"에 정의하고 시작한다.
+        마치 "클래스"에서, "extends 를 사용"하여, "부모와 자식객체를 상속시키듯"
+
+            const base = {
+                name:"Lee",
+                sayHi(){
+                    return `Hi, ${this.name} `
+                }
+            }
+
+            const derived = {
+                __proto__:base         // "__proto__ 를 이용하여, 원하는 부모를 선택하여 super 키워드(상위객체의 필드, 메서드를 받는행위) 사용가능"
+                
+                sayHi(){
+                    return
+                }
+            }
                     
